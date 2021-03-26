@@ -20,12 +20,12 @@ def test_median(Ps, Tint, lint, nodes_in_order): #take a list of vectors, push u
 				Ps_pushed.append(P_pushed)
 		median = L2U.mean_of_vectors(Ps_pushed)
 		median_inverse = L2U.inverse_push_up(median, Tint, lint, nodes_in_order)
-		print (np.sum(median_inverse < 0))
+		#print (np.sum(median_inverse < 0))
 		return np.any(median_inverse < 0)
 
 is_negative = []
 num_its = 1
-for num_vectors in range(3, len(samples), 5):
+for num_vectors in range(3, 4, 1):
 		print (num_vectors)
 		for i in range(num_its):
 				selected_samples = np.random.choice(list(samples), num_vectors, replace=False)
