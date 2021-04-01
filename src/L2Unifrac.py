@@ -97,11 +97,13 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 	return Z
 
 def push_up(P, Tint, lint, nodes_in_order):
-	print(P, Tint, lint, nodes_in_order)
+	#print(P, Tint, lint, nodes_in_order)
 	P_pushed = P + 0  # don't want to stomp on P
 	for i in range(len(nodes_in_order) - 1):
+		#print(i, Tint[i])
 		if lint[i, Tint[i]] == 0:
 			lint[i, Tint[i]] = epsilon
+		#print(P_pushed)
 		P_pushed[Tint[i]] += P_pushed[i]  # push mass up
 		P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
 		#P_pushed[i] *= P_pushed[i]  # multiply mass at this node by edge length above it (TODO: P_push squared)
@@ -121,11 +123,9 @@ def inverse_push_up(P, Tint, lint, nodes_in_order):
 		else:
 			edge_length = lint[i, Tint[i]]
 		p_val = P[i]
-		P_pushed[i] += 1/np.sqrt(edge_length) * p_val  # re-adjust edge lengths (TODO: P_push squared/sqrt)
+		P_pushed[i] += 1/np.sqrt(edge_length) * p_val  # re-adjust edge lengths
 		if P_pushed[i] < epsilon:
-			print(p_val, P_pushed[i])
 			P_pushed[i] = 0
-		#P_pushed[i] = np.sqrt(P_pushed[i])
 		P_pushed[Tint[i]] -= 1/np.sqrt(edge_length) * p_val  # propagate mass upward, via subtraction, only using immediate descendants
 	root = len(nodes_in_order) - 1
 	P_pushed[root] += P[root]
@@ -192,3 +192,12 @@ def parse_envs(envs, nodes_in_order):
 	return (envs_prob_dict, samples)
 
 
+#P1 = np.array([0.1, 0.2, 0,  0.3, 0, 0.3, 0.1])
+#T1 = {0: 4, 1: 4, 2: 5, 3: 5, 4: 6, 5: 6}
+#l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
+#nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
+#P_pushed1 = push_up(P1, T1, l1, nodes1)
+#P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
+#assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
+
+#print(np.sum(abs(P1 - P_inversed1)))
