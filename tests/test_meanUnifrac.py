@@ -2,7 +2,7 @@ import sys
 sys.path.append('../L2Unifrac')
 sys.path.append('../L2Unifrac/src')
 sys.path.append('../src')
-import L2Unifrac as L2U
+import L2Unifrac as L2U 
 import numpy as np
 
 try:
