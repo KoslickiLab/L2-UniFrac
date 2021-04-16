@@ -192,12 +192,15 @@ def parse_envs(envs, nodes_in_order):
 	return (envs_prob_dict, samples)
 
 
-#P1 = np.array([0.1, 0.2, 0,  0.3, 0, 0.3, 0.1])
-#T1 = {0: 4, 1: 4, 2: 5, 3: 5, 4: 6, 5: 6}
-#l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
-#nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
-#P_pushed1 = push_up(P1, T1, l1, nodes1)
-#P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
-#assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
+P1 = np.array([0.1, 0.2, 0,  0.3, 0, 0.3, 0.1])
+T1 = {0: 4, 1: 4, 2: 5, 3: 5, 4: 6, 5: 6}
+l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
+nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
+P_pushed1 = push_up(P1, T1, l1, nodes1)
+P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
+assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
 
-#print(np.sum(abs(P1 - P_inversed1)))
+print(np.sum(abs(P1 - P_inversed1)))
+
+weight = L2Unifrac_weighted_plain(T1, l1, nodes1, P1, P1)
+print(weight)
