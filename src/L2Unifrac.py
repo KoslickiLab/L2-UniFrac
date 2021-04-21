@@ -86,13 +86,16 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 	Z = 0
 	eps = 1e-8
 	partial_sums = P - Q # Vector of partial sums obtained by computing the difference between probabilities of two samples. 
+	print(partial_sums)
+	print(ancestors)
 	total_mass = 1 
 
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
+		print(partial_sums, val)
 		if abs(val) > eps:
-			partial_sums[ancestors[i]] += val
-			Z += np.sqrt(edge_lengths[i, ancestors[i]])*(val**2)
+			partial_sums[ancestors[i]] += abs(val)
+			Z += np.sqrt(edge_lengths[i, ancestors[i]])*abs(val)#(val**2)
 	Z = np.sqrt(Z)
 	return Z
 
@@ -200,7 +203,21 @@ P_pushed1 = push_up(P1, T1, l1, nodes1)
 P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
 assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
 
-print(np.sum(abs(P1 - P_inversed1)))
+#print(np.sum(abs(P1 - P_inversed1)))
 
-weight = L2Unifrac_weighted_plain(T1, l1, nodes1, P1, P1)
-print(weight)
+#weight = L2Unifrac_weighted_plain(T1, l1, nodes1, P1, P1)
+#print(weight)
+
+tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+(T1, l1, nodes1) = parse_tree(tree_str)
+nodes_samples = {
+    'C': {'sample1': 1, 'sample2': 0},
+    'B': {'sample1': 1, 'sample2': 1},
+    'A': {'sample1': 0, 'sample2': 0},
+    'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+(nodes_weighted, samples_temp) = parse_envs(nodes_samples, nodes1)
+print(nodes_weighted, samples_temp)
+unifrac2 = np.linalg.norm(push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
+              push_up(nodes_weighted['sample2'], T1, l1, nodes1))
+EMDUnifrac = L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+print(unifrac2, EMDUnifrac**2)
