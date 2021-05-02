@@ -94,8 +94,9 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 		val = partial_sums[i]
 		print(partial_sums, val)
 		if abs(val) > eps:
-			partial_sums[ancestors[i]] += abs(val)
-			Z += np.sqrt(edge_lengths[i, ancestors[i]])*abs(val)#(val**2)
+			partial_sums[ancestors[i]] += val
+			Z += edge_lengths[i, ancestors[i]]*(val**2)#(val**2)
+	print(Z, np.sqrt(Z))
 	Z = np.sqrt(Z)
 	return Z
 
@@ -220,4 +221,4 @@ print(nodes_weighted, samples_temp)
 unifrac2 = np.linalg.norm(push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
               push_up(nodes_weighted['sample2'], T1, l1, nodes1))
 EMDUnifrac = L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-print(unifrac2, EMDUnifrac**2)
+print(unifrac2, EMDUnifrac)

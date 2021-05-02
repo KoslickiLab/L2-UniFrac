@@ -59,8 +59,8 @@ def test_push_up():
     unifrac2 = np.linalg.norm(L2U.push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
                   L2U.push_up(nodes_weighted['sample2'], T1, l1, nodes1))
     EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-    print(unifrac2, EMDUnifrac**2)
-    assert np.abs(unifrac2 - EMDUnifrac**2) < 10**-8
+    print(unifrac2, EMDUnifrac)
+    assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
     #assert unifrac1 == 0.25
     #test with real data
     P = env_prob_dict['232.M9Okey217']
@@ -68,8 +68,8 @@ def test_push_up():
     unifrac2 = np.linalg.norm(L2U.push_up(P, Tint, lint, nodes_in_order) -
                              L2U.push_up(Q, Tint, lint, nodes_in_order))
     EMDUnifrac = L2U.L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
-    print(unifrac2, EMDUnifrac**2)
-    assert np.abs(unifrac2 - EMDUnifrac**2) < 10**-8
+    print(unifrac2, EMDUnifrac)
+    assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
 
 def run_tests():
     #test_parse_tree()
