@@ -86,17 +86,17 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 	Z = 0
 	eps = 1e-8
 	partial_sums = P - Q # Vector of partial sums obtained by computing the difference between probabilities of two samples. 
-	print(partial_sums)
-	print(ancestors)
+	#print(f"partial_sums: {partial_sums}")
+	#print(f"ancestors: {ancestors}")
 	total_mass = 1 
 
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
-		print(partial_sums, val)
+		#print(f"partial_sums in loop: {partial_sums}")
+		#print(f"val: {val}")
 		if abs(val) > eps:
-			partial_sums[ancestors[i]] += val
-			Z += edge_lengths[i, ancestors[i]]*(val**2)#(val**2)
-	print(Z, np.sqrt(Z))
+			partial_sums[ancestors[i]] += abs(val)
+			Z += edge_lengths[i, ancestors[i]]*(val**2)
 	Z = np.sqrt(Z)
 	return Z
 
@@ -196,29 +196,44 @@ def parse_envs(envs, nodes_in_order):
 	return (envs_prob_dict, samples)
 
 
-P1 = np.array([0.1, 0.2, 0,  0.3, 0, 0.3, 0.1])
-T1 = {0: 4, 1: 4, 2: 5, 3: 5, 4: 6, 5: 6}
-l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
-nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
-P_pushed1 = push_up(P1, T1, l1, nodes1)
-P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
-assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
+def test_push_up():
+	P1 = np.array([0.1, 0.2, 0,  0.3, 0, 0.3, 0.1])
+	T1 = {0: 4, 1: 4, 2: 5, 3: 5, 4: 6, 5: 6}
+	l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
+	nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
+	P_pushed1 = push_up(P1, T1, l1, nodes1)
+	P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
+	assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
 
 #print(np.sum(abs(P1 - P_inversed1)))
 
 #weight = L2Unifrac_weighted_plain(T1, l1, nodes1, P1, P1)
 #print(weight)
 
-tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
-(T1, l1, nodes1) = parse_tree(tree_str)
-nodes_samples = {
-    'C': {'sample1': 1, 'sample2': 0},
-    'B': {'sample1': 1, 'sample2': 1},
-    'A': {'sample1': 0, 'sample2': 0},
-    'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
-(nodes_weighted, samples_temp) = parse_envs(nodes_samples, nodes1)
-print(nodes_weighted, samples_temp)
-unifrac2 = np.linalg.norm(push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
-              push_up(nodes_weighted['sample2'], T1, l1, nodes1))
-EMDUnifrac = L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-print(unifrac2, EMDUnifrac)
+def test_weighted_plain():
+	tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+	(T1, l1, nodes1) = parse_tree(tree_str)
+	nodes_samples = {
+	    'C': {'sample1': 1, 'sample2': 0},
+	    'B': {'sample1': 1, 'sample2': 1},
+	    'A': {'sample1': 0, 'sample2': 0},
+	    'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+	(nodes_weighted, samples_temp) = parse_envs(nodes_samples, nodes1)
+	#print(f"nodes weighted: {nodes_weighted}")
+	#print(f"samples_temp: {samples_temp}")
+	push_unifrac = np.linalg.norm(push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
+	              push_up(nodes_weighted['sample2'], T1, l1, nodes1))
+	plain_unifrac = L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+	print(f"push_unifrac: {push_unifrac}")
+	print(f"plain_unifrac: {plain_unifrac}")
+	#print(f"plain_unifrac^2: {plain_unifrac**2}")
+	#print(f"plain_unifrac sqrt: {np.sqrt(plain_unifrac)}")
+	assert np.sum(np.abs(push_unifrac-plain_unifrac)) < 10**-10
+
+def run_tests():
+	test_push_up()
+	test_weighted_plain()
+
+
+if __name__ == '__main__':
+	run_tests()
