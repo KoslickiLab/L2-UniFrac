@@ -23,6 +23,26 @@ def extract_biom(address):
 		nodes_samples[phylogenetic_tree_nodes[i]] = {sample_ids[j]:row_vector[j] for j in range(len(sample_ids))}
 	return nodes_samples
 
+def extract_samples(address):
+
+	# Load table into the biom Table format.
+	Biom = biom.load_table(address)
+
+	# Grab the sample IDs (i.e. '1928.SRS045191.SRX021470.SRR052699')
+	sample_ids = Biom.ids()
+
+	return sample_ids
+
+def extract_nodes(address):
+
+	# Load table into the biom Table format.
+	Biom = biom.load_table(address)
+
+	# Grab the node IDs for the tree (i.e. '858026')
+	phylogenetic_tree_nodes = Biom.ids(axis='observation')
+
+	return phylogenetic_tree_nodes
+
 if __name__ == '__main__':
 	nodes_sample = extract_biom('../data/60982-reference-hit.biom')
 	#print(nodes_sample['4479984'])
