@@ -210,6 +210,7 @@ def test_push_up():
 #weight = L2Unifrac_weighted_plain(T1, l1, nodes1, P1, P1)
 #print(weight)
 
+
 def test_weighted_plain():
 	tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
 	(T1, l1, nodes1) = parse_tree(tree_str)

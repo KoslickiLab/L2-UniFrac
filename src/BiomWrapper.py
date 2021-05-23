@@ -9,12 +9,8 @@ def extract_biom(address):
 	# Grab the sample IDs (i.e. '1928.SRS045191.SRX021470.SRR052699')
 	sample_ids = Biom.ids()
 
-	print(sample_ids)
-
 	# Grab the node IDs for the tree (i.e. '858026')
 	phylogenetic_tree_nodes = Biom.ids(axis='observation')
-
-	print(phylogenetic_tree_nodes)
 
 	# Formulate the dictionary required for L2 Unifrac by associating each sample weight to its node ID.
 	nodes_samples = {}

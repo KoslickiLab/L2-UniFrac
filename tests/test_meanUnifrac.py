@@ -6,11 +6,11 @@ import L2Unifrac as L2U
 import numpy as np
 
 try:
-    (Tint, lint, nodes_in_order) = L2U.parse_tree_file('data/97_otus_unannotated.tree')
-    env_dict = L2U.create_env('data/289_seqs_otus.txt')
+    (Tint, lint, nodes_in_order) = L2U.parse_tree_file('data/old_UniFrac/97_otus_unannotated.tree')
+    env_dict = L2U.create_env('data/old_UniFrac/289_seqs_otus.txt')
 except FileNotFoundError:
-    (Tint, lint, nodes_in_order) = L2U.parse_tree_file('../data/97_otus_unannotated.tree')
-    env_dict = L2U.create_env('../data/289_seqs_otus.txt')
+    (Tint, lint, nodes_in_order) = L2U.parse_tree_file('../data/old_UniFrac/97_otus_unannotated.tree')
+    env_dict = L2U.create_env('../data/old_UniFrac/289_seqs_otus.txt')
 (env_prob_dict, samples) = L2U.parse_envs(env_dict, nodes_in_order)
 
 #test parse_tree
@@ -61,6 +61,7 @@ def test_push_up():
     EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
     print(unifrac2, EMDUnifrac)
     assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
+    assert np.sum(np.abs(unifrac2 - EMDUnifrac)) < 10**-10
     #assert unifrac1 == 0.25
     #test with real data
     P = env_prob_dict['232.M9Okey217']
@@ -70,6 +71,7 @@ def test_push_up():
     EMDUnifrac = L2U.L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
     print(unifrac2, EMDUnifrac)
     assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
+    assert np.sum(np.abs(unifrac2 - EMDUnifrac)) < 10**-10
 
 def run_tests():
     #test_parse_tree()
