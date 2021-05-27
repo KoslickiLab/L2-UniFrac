@@ -61,6 +61,20 @@ def test_push_up():
     EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
     print(unifrac2, EMDUnifrac)
     assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
+
+    tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+    (T1, l1, nodes1) = L2U.parse_tree(tree_str)
+    nodes_samples = {
+        'C': {'sample1': 1, 'sample2': 0},
+        'B': {'sample1': 1, 'sample2': 1},
+        'A': {'sample1': 1, 'sample2': 0},
+        'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+    (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
+    unifrac2 = np.linalg.norm(L2U.push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
+                  L2U.push_up(nodes_weighted['sample2'], T1, l1, nodes1))
+    EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_samples, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+    print(unifrac2, EMDUnifrac)
+    assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
     #assert np.sum(np.abs(unifrac2 - EMDUnifrac)) < 10**-10
     #assert unifrac1 == 0.25
     #test with real data

@@ -41,4 +41,4 @@ def extract_nodes(address):
 
 if __name__ == '__main__':
 	nodes_sample = extract_biom('../data/60982-reference-hit.biom')
-	#print(nodes_sample['4479984'])
+	#print(extract_biom('../data/sampleBiom.biom'))
