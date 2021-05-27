@@ -4,6 +4,7 @@ import sys
 import warnings
 
 epsilon = sys.float_info.epsilon
+print(epsilon)
 
 def parse_tree(tree_str):
 	'''

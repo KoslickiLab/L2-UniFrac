@@ -29,16 +29,17 @@ def test_inverse():
     l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
     nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
     P_pushed1 = L2U.push_up(P1, T1, l1, nodes1)
-    x = L2U.epsilon * 0.3
-    answer1 = np.array([0.01, 0.02, 0, x, 0.06, 0.12, 1])
+    x = np.sqrt(L2U.epsilon) * 0.3
+    answer1 = np.array([0.0316227766, 0.0632455532, 0, x, 0.134164079, 0.268328157, 1])
     assert all(np.abs(P_pushed1 - answer1) < 0.00000001) #test push_up
     assert P_pushed1[3] > 10**-18 #P_pushed[3] (edge length 0) is non-zero
     P_inversed1 = L2U.inverse_push_up(P_pushed1, T1, l1, nodes1)
     assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
     l2 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0} # more than one edge with 0 edge length, involving the root.
-    y = L2U.epsilon * 0.6
+    y = np.sqrt(L2U.epsilon) * 0.6
     P_pushed2 = L2U.push_up(P1, T1, l2, nodes1)
-    answer2 = np.array([0.01, 0.02, 0, x, 0.06, y, 1])
+    answer2 = np.array([0.0316227766, 0.0632455532, 0, x, 0.134164079, y, 1])
+    print(P_pushed2)
     assert all(np.abs(P_pushed2 - answer2) < 0.00000001)
     #test with real data
     Q = env_prob_dict['232.M2Lsft217']
@@ -89,7 +90,7 @@ def test_push_up():
 
 def run_tests():
     #test_parse_tree()
-    #test_inverse()
+    test_inverse()
     test_push_up()
 
 run_tests()
