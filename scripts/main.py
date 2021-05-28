@@ -24,10 +24,14 @@ if __name__ == "__main__":
 		print(f"Iteration row: {i}")
 		tmp_row = []
 		for j in range(num_samples):
-			if i != j:
+			if i < j:
 				EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[i]], nodes_weighted[PCoA_Samples[j]])
 				print(f"    Inner loop: {j} | EMDUnifrac: {EMDUnifrac} | Sample 1: {PCoA_Samples[i]} | Sample 2: {PCoA_Samples[j]}")
-				tmp_row.append(EMDUnifrac)
+			elif i > j:
+				EMDUnifrac = Distance_Matrix[j][i]
+			else:
+				EMDUnifrac = 0.0
+			tmp_row.append(EMDUnifrac)
 		Distance_Matrix.append(tmp_row)
 
 	print(Distance_Matrix)
