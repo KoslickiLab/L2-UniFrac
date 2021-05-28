@@ -6,14 +6,14 @@ import L2Unifrac as L2U
 import numpy as np
 
 try:
-		(Tint, lint, nodes_in_order) = L2U.parse_tree_file('../data/97_otus_unannotated.tree')
-		env_dict = L2U.create_env('../data/289_seqs_otus.txt')
+		(Tint, lint, nodes_in_order) = L2U.parse_tree_file('../data/old_UniFrac/97_otus_unannotated.tree')
+		env_dict = L2U.create_env('../data/old_UniFrac/289_seqs_otus.txt')
 except FileNotFoundError:
-		(Tint, lint, nodes_in_order) = L2U.parse_tree_file('../data/97_otus_unannotated.tree')
-		env_dict = L2U.create_env('../data/289_seqs_otus.txt')
+		(Tint, lint, nodes_in_order) = L2U.parse_tree_file('../data/old_UniFrac/97_otus_unannotated.tree')
+		env_dict = L2U.create_env('../data/old_UniFrac/289_seqs_otus.txt')
 (env_prob_dict, samples) = L2U.parse_envs(env_dict, nodes_in_order)
 
-def test_median(Ps, Tint, lint, nodes_in_order): #take a list of vectors, push up, take median, then push down
+def test_mean(Ps, Tint, lint, nodes_in_order): #take a list of vectors, push up, take mean, then push down
 		Ps_pushed = []
 		for P in Ps:
 				P_pushed = L2U.push_up(P, Tint, lint, nodes_in_order)
@@ -32,7 +32,9 @@ for num_vectors in range(5, 50, 5):
 				Ps = []
 				for sample in selected_samples:
 						Ps.append(env_prob_dict[sample])
-				is_negative.append(test_median(Ps, Tint, lint, nodes_in_order))
+				is_negative.append(test_mean(Ps, Tint, lint, nodes_in_order))
 
 print (np.sum(is_negative))
 print (np.sum(is_negative)/(len(is_negative)))
+
+assert (np.sum(is_negative)/(len(is_negative))) < 10**-8
