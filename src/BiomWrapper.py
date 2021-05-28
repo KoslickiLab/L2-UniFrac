@@ -40,5 +40,8 @@ def extract_nodes(address):
 	return phylogenetic_tree_nodes
 
 if __name__ == '__main__':
-	nodes_sample = extract_biom('../data/60982-reference-hit.biom')
+	nodes_sample = extract_biom('../data/47422_otu_table.biom')
+	print(len(nodes_sample))
+	print(nodes_sample)
 	#print(extract_biom('../data/sampleBiom.biom'))
+	print(len(extract_samples('../data/47422_otu_table.biom')))
