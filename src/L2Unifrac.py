@@ -96,7 +96,7 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 		print(f"partial_sums in loop: {partial_sums}")
 		print(f"val: {val}")
 		if abs(val) > eps:
-			partial_sums[ancestors[i]] += abs(val)
+			partial_sums[ancestors[i]] += val
 			Z += edge_lengths[i, ancestors[i]]*(val**2)
 	print(f"final Z: {Z}")
 	Z = np.sqrt(Z)
