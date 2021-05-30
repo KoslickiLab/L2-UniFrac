@@ -18,7 +18,7 @@ import csv
 ## Inputs       : elem_list - List of elements to write from query.
 ## Outputs      : 0 if successful, -1 if failure.
 
-def write_spreadsheet(name, dist_list):
+def write(name, dist_list):
 
     try:
         with open(name, 'a', newline='') as csvfile:
@@ -32,4 +32,4 @@ def write_spreadsheet(name, dist_list):
         return ( -1 ) # Failure
 
 if __name__ == "__main__":
-    write_spreadsheet('distance_matrix.csv', [0.3, 0.2, 0.4])
+    write('distance_matrix.csv', [0.3, 0.2, 0.4])
