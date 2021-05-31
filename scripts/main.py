@@ -4,9 +4,17 @@ sys.path.append('../L2Unifrac/src')
 sys.path.append('../src')
 import L2Unifrac as L2U 
 import BiomWrapper as BW
-import dendropy
-import numpy as np
 import write_to_csv as CSV
+
+T1 = None
+l1 = None
+nodes_in_order = None
+nodes_weighted = None
+PCoA_Samples = None
+
+def unifrac_worker(samp1num, samp2num):
+	L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
+	return L2UniFrac, f"    Inner loop: {samp2num} | L2-UniFrac: {L2UniFrac} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
 if __name__ == "__main__":
 	nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
@@ -25,13 +33,14 @@ if __name__ == "__main__":
 		print(f"Iteration row: {i}")
 		tmp_row = []
 		for j in range(num_samples):
-			if i < j:
-				L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[i]], nodes_weighted[PCoA_Samples[j]])
-				print(f"    Inner loop: {j} | L2-UniFrac: {L2UniFrac} | Sample 1: {PCoA_Samples[i]} | Sample 2: {PCoA_Samples[j]}")
-			elif i > j:
-				L2UniFrac = Distance_Matrix[j][i]
-			else:
-				L2UniFrac = 0.0
+			#if i < j:
+			L2UniFrac, out = unifrac_worker(i, j)
+			#print(f"    Inner loop: {j} | L2-UniFrac: {L2UniFrac} | Sample 1: {PCoA_Samples[i]} | Sample 2: {PCoA_Samples[j]}")
+			print(out)
+			#elif i > j:
+			#	L2UniFrac = Distance_Matrix[j][i]
+			#else:
+			#	L2UniFrac = 0.0
 			tmp_row.append(L2UniFrac)
 		
 		Distance_Matrix.append(tmp_row)
