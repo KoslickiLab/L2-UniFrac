@@ -5,6 +5,7 @@ sys.path.append('../src')
 import L2Unifrac as L2U 
 import BiomWrapper as BW
 import write_to_csv as CSV
+import multiprocessing as mp
 
 T1 = None
 l1 = None
@@ -14,7 +15,8 @@ PCoA_Samples = None
 
 def unifrac_worker(samp1num, samp2num):
 	L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
-	return L2UniFrac, f"    Inner loop: {samp2num} | L2-UniFrac: {L2UniFrac} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
+	formatted_L2 = "{:.16f}".format(L2UniFrac)
+	return L2UniFrac, f"\tInner loop: {str(samp2num).ljust(4)} | L2-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
 if __name__ == "__main__":
 	nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
@@ -25,14 +27,20 @@ if __name__ == "__main__":
 	print(L2UniFrac)
 
 	PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
-	num_samples = len(PCoA_Samples)
-	#print(PCoA_Samples)
+
 	Distance_Matrix = []
 
-	for i in range(num_samples):
+	# Testing subset of samples...
+	PCoA_Samples = PCoA_Samples[:8]
+
+	local_vars = list(locals().items())
+	for var, obj in local_vars:
+	    print(f"{var.ljust(17)}: {sys.getsizeof(obj)}")
+
+	for i in range(len(PCoA_Samples)):
 		print(f"Iteration row: {i}")
 		tmp_row = []
-		for j in range(num_samples):
+		for j in range(len(PCoA_Samples)):
 			#if i < j:
 			L2UniFrac, out = unifrac_worker(i, j)
 			#print(f"    Inner loop: {j} | L2-UniFrac: {L2UniFrac} | Sample 1: {PCoA_Samples[i]} | Sample 2: {PCoA_Samples[j]}")
