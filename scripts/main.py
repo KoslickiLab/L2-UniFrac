@@ -16,7 +16,7 @@ PCoA_Samples = None
 def unifrac_worker(samp1num, samp2num):
 	L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
 	formatted_L2 = "{:.16f}".format(L2UniFrac)
-	return L2UniFrac, f"\tInner loop: {str(samp2num).ljust(4)} | L2-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
+	return L2UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L2-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
 if __name__ == "__main__":
 	nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
