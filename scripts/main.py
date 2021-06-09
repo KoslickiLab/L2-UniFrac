@@ -13,15 +13,12 @@ nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
 T1, l1, nodes_in_order = L2U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
 (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 #print(samples_temp)
-L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted['1928.SRS058420.SRX020544.SRR045915'], nodes_weighted['1928.SRS011433.SRX020669.SRR045315'])
-print(L2UniFrac)
+#L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted['1928.SRS058420.SRX020544.SRR045915'], nodes_weighted['1928.SRS011433.SRX020669.SRR045315'])
+#print(L2UniFrac)
 
 PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 
 Distance_Matrix = []
-
-# Testing subset of samples...
-PCoA_Samples = PCoA_Samples[:512]
 
 def unifrac_work_wrapper(args):
 	#print(args)
@@ -46,15 +43,16 @@ if __name__ == "__main__":
 		debug = 0
 
 	if debug == 1:
+		print(f"Running Debugging Multiprocess on {cores-1} Cores...")
+
+		# Testing subset of samples...
+		PCoA_Samples = PCoA_Samples[:64]
+		
 		local_vars = list(locals().items())
 		for var, obj in local_vars:
 			print(f"{var.ljust(17)}: {sys.getsizeof(obj)}")
 
 	# Multi Core Method
-	#for i in range(len(PCoA_Samples)):
-
-	#        print(f"Iteration row: {i}")
-
 	row = [(i, j) for j in range(len(PCoA_Samples)) for i in range(len(PCoA_Samples))]
 
 	with multiprocessing.Pool(processes=cores-1) as pool:
