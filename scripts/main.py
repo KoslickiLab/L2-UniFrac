@@ -7,6 +7,8 @@ import BiomWrapper as BW
 import write_to_csv as CSV
 import multiprocessing
 
+cores = multiprocessing.cpu_count()
+
 nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
 T1, l1, nodes_in_order = L2U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
 (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
@@ -43,14 +45,14 @@ if __name__ == "__main__":
 
 		row = [(i, j) for j in range(len(PCoA_Samples))]
 
-		with multiprocessing.Pool(nprocess) as pool:
+		with multiprocessing.Pool(processes=2) as pool:
 			result = pool.map(unifrac_work_wrapper, row)
 		
 		#pool.close()
 		#pool.join()
 
 		for j in range(len(result)):
-			print(result[1])
+			print(result[j][1])
 
 	# Single Core Method
 	#for i in range(len(PCoA_Samples)):
