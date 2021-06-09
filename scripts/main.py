@@ -21,7 +21,7 @@ PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 Distance_Matrix = []
 
 # Testing subset of samples...
-PCoA_Samples = PCoA_Samples[:64]
+PCoA_Samples = PCoA_Samples[:512]
 
 def unifrac_work_wrapper(args):
 	#print(args)
@@ -36,9 +36,19 @@ def unifrac_worker(samp1num, samp2num):
 
 if __name__ == "__main__":
 
-	local_vars = list(locals().items())
-	for var, obj in local_vars:
-		print(f"{var.ljust(17)}: {sys.getsizeof(obj)}")
+	args = sys.argv
+	if len(args) > 1:
+		if args[1] == "1":
+			debug = 1
+		else:
+			debug = 0
+	else:
+		debug = 0
+
+	if debug == 1:
+		local_vars = list(locals().items())
+		for var, obj in local_vars:
+			print(f"{var.ljust(17)}: {sys.getsizeof(obj)}")
 
 	# Multi Core Method
 	#for i in range(len(PCoA_Samples)):
@@ -54,7 +64,8 @@ if __name__ == "__main__":
 		dist_list = []
 		for j in range(len(PCoA_Samples)):
 			dist_list.append(result[i*len(PCoA_Samples)+j][0])
-			print(result[i*len(PCoA_Samples)+j][1])
+			if debug == 1:
+				print(result[i*len(PCoA_Samples)+j][1])
 
 		CSV.write('L2-UniFrac-Out.csv', dist_list)
 
