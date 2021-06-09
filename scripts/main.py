@@ -21,38 +21,42 @@ PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 Distance_Matrix = []
 
 # Testing subset of samples...
-PCoA_Samples = PCoA_Samples[:8]
+PCoA_Samples = PCoA_Samples[:64]
 
 def unifrac_work_wrapper(args):
-	print(args)
-	return unifrac_worker(*args)
+		#print(args)
+		return unifrac_worker(*args)
 
 def unifrac_worker(samp1num, samp2num):
-	print(f"Samples: {samp1num}, {samp2num}")
-	print(f"PCoA_Samples: {PCoA_Samples}")
-	L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
-	formatted_L2 = "{:.16f}".format(L2UniFrac)
-	return L2UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L2-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
+		#print(f"Samples: {samp1num}, {samp2num}")
+		#print(f"PCoA_Samples: {PCoA_Samples}")
+		L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
+		formatted_L2 = "{:.16f}".format(L2UniFrac)
+		return L2UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L2-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
 if __name__ == "__main__":
 
-	local_vars = list(locals().items())
-	for var, obj in local_vars:
-		print(f"{var.ljust(17)}: {sys.getsizeof(obj)}")
+		local_vars = list(locals().items())
+		for var, obj in local_vars:
+				print(f"{var.ljust(17)}: {sys.getsizeof(obj)}")
 
-	# Multi Core Method
-	for i in range(len(PCoA_Samples)):
+		# Multi Core Method
+		#for i in range(len(PCoA_Samples)):
 
-		row = [(i, j) for j in range(len(PCoA_Samples))]
+		#        print(f"Iteration row: {i}")
 
-		with multiprocessing.Pool(processes=2) as pool:
+		row = [[(i, j) for j in range(len(PCoA_Samples))] for i in range(len(PCoA_Samples))]
+
+		with multiprocessing.Pool(processes=128) as pool:
 			result = pool.map(unifrac_work_wrapper, row)
-		
-		#pool.close()
-		#pool.join()
 
-		for j in range(len(result)):
-			print(result[j][1])
+		for i in range(len(PCoA_Samples)):
+			dist_list = []
+			for j in range(len(PCoA_Samples)):
+					dist_list.append(result[i][j])
+					print(result[j][1])
+
+			CSV.write('L2-UniFrac-Out.csv', dist_list)
 
 	# Single Core Method
 	#for i in range(len(PCoA_Samples)):
