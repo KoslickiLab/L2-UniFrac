@@ -43,10 +43,11 @@ if __name__ == "__main__":
 
 		row = [(i, j) for j in range(len(PCoA_Samples))]
 
-		p = Pool()
-		result = p.map(unifrac_work_wrapper, row)
-		p.close()
-		p.join()
+		with multiprocessing.Pool(nprocess) as pool:
+        	result = pool.map(unifrac_work_wrapper, row)
+		
+		#pool.close()
+		#pool.join()
 
 		for j in range(len(result)):
 			print(result[1])
