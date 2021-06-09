@@ -54,7 +54,7 @@ if __name__ == "__main__":
 			dist_list = []
 			for j in range(len(PCoA_Samples)):
 					dist_list.append(result[i][j])
-					print(result[j][1])
+					print(result[i*len(PCoA_Samples)+j])
 
 			CSV.write('L2-UniFrac-Out.csv', dist_list)
 
