@@ -33,6 +33,7 @@ result = pcoa(sk_distance_matrix)
 print(result)
 
 fig = result.plot(df=pd_metadata, column='site',
+						axis_labels=('PC 1', 'PC 2', 'PC 3'),
 						title='Samples colored by body site',
 						cmap='Set1', s=50)
 
