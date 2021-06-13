@@ -18,7 +18,7 @@ def extract_metadata(extension):
 
 		meta_dict = {}
 		for i in range(len(metadata)):
-			meta_dict[metadata[i][0]] = metadata[i][3][7:]
+			meta_dict[metadata[i][0]] = {'body_site': metadata[i][3][7:]}
 
 		return meta_dict
 
