@@ -75,8 +75,6 @@ def test_push_up():
     EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
     print(unifrac2, EMDUnifrac)
     assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
-    #assert np.sum(np.abs(unifrac2 - EMDUnifrac)) < 10**-10
-    #assert unifrac1 == 0.25
     #test with real data
     P = env_prob_dict['232.M9Okey217']
     Q = env_prob_dict['232.M3Indl217']
