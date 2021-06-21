@@ -5,15 +5,16 @@ sys.path.append('../src')
 import L2Unifrac as L2U
 import BiomWrapper as BW
 import write_to_csv as CSV
-import multiprocessing
+import metadata_wrapper as meta
+import multiprocessing as mp
 
-cores = multiprocessing.cpu_count()
+cores = mp.cpu_count()
 
 #nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
 #T1, l1, nodes_in_order = L2U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
 #(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
-#PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
+PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 
 def unifrac_work_wrapper(args):
 	return unifrac_worker(*args)
@@ -37,7 +38,7 @@ def Total_Pairwise(debug):
 	# Multi Core Method
 	row = [(i, j) for j in range(len(PCoA_Samples)) for i in range(len(PCoA_Samples))]
 
-	with multiprocessing.Pool(processes=cores-1) as pool:
+	with mp.Pool(processes=cores-1) as pool:
 		result = pool.map(unifrac_work_wrapper, row)
 
 	for i in range(len(PCoA_Samples)):
@@ -50,7 +51,17 @@ def Total_Pairwise(debug):
 		CSV.write('L2-UniFrac-Out.csv', dist_list)
 
 def Group_Pairwise(debug):
-	pass
+	metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
+	sample_groups = []
+	groups_temp = list(metadata.values())
+	groups = []
+	for i in range(len(groups_temp)):
+		if groups_temp[i]['body_site'] not in groups:
+			groups.append(groups_temp[i]['body_site'])
+	print(groups)
+	#for i in range(len(groups)):
+
+	print(metadata, PCoA_Samples)
 
 if __name__ == "__main__":
 
