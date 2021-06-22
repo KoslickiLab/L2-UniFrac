@@ -10,11 +10,11 @@ import multiprocessing as mp
 
 cores = mp.cpu_count()
 
-#nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
-#T1, l1, nodes_in_order = L2U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
-#(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
+nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
+T1, l1, nodes_in_order = L2U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
+(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
-#PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
+PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 
 def unifrac_work_wrapper(args):
 	return unifrac_worker(*args)
