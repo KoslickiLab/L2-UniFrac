@@ -15,7 +15,7 @@ if __name__ == "__main__":
 	args = sys.argv
 	if len(args) > 3:
 		raise Exception("Invalid number of parameters.")
-	elif len(args) == 2:
+	elif len(args) == 1:
 		file = 'L2-UniFrac-Out.csv'
 	else:
 		file = args[1]
