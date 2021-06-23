@@ -10,24 +10,36 @@ import pandas as pd
 from skbio import DistanceMatrix
 import matplotlib.pyplot as plt
 
-f = open('L2-UniFrac-Out.csv', 'r')
-read = csv.reader(f, delimiter=';')
-distance_matrix = []
-for i in read:
-	distance_matrix.append(list(map(float, i[0].split(","))))
+if __name__ == "__main__":
 
-sk_distance_matrix = DistanceMatrix(distance_matrix, BW.extract_samples('../data/47422_otu_table.biom'))
+	args = sys.argv
+	if len(args) > 3:
+		raise Exception("Invalid number of parameters.")
+	elif len(args) == 2:
+		file = 'L2-UniFrac-Out.csv'
+	else:
+		file = args[1]
 
-metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
+	assert(isinstance(file, str))
 
-pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
+	f = open(file, 'r')
+	read = csv.reader(f, delimiter=';')
+	distance_matrix = []
+	for i in read:
+		distance_matrix.append(list(map(float, i[0].split(","))))
 
-result = pcoa(sk_distance_matrix)
-print(result)
+	sk_distance_matrix = DistanceMatrix(distance_matrix, BW.extract_samples('../data/47422_otu_table.biom'))
 
-fig = result.plot(df=pd_metadata, column='body_site',
-						axis_labels=('PC 1', 'PC 2', 'PC 3'),
-						title='Samples colored by body site',
-						cmap='Set1', s=50)
+	metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
 
-plt.show()
+	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
+
+	result = pcoa(sk_distance_matrix)
+	print(result)
+
+	fig = result.plot(df=pd_metadata, column='body_site',
+							axis_labels=('PC 1', 'PC 2', 'PC 3'),
+							title='Samples colored by body site',
+							cmap='Set1', s=50)
+
+	plt.show()

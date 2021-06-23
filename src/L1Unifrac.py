@@ -39,7 +39,7 @@ def parse_tree(tree_str):
 
 
 
-def parse_tree_file(tree_str_file, suppress_internal_node_taxa=False, suppress_leaf_node_taxa=False):
+def parse_tree_file(tree_str_file, suppress_internal_node_taxa=True, suppress_leaf_node_taxa=False):
 	'''
 	(Tint,lint,nodes_in_order) = parse_tree(tree_str_file) 
 	This function will parse a newick tree file (in the file given by tree_str_file) and return the dictionary of ancestors Tint.

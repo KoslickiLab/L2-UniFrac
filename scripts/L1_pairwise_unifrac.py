@@ -22,9 +22,11 @@ def unifrac_work_wrapper(args):
 def unifrac_worker(samp1num, samp2num):
 	L1UniFrac = L1U.EMDUnifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
 	formatted_L1 = "{:.16f}".format(L1UniFrac)
-	return L1UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L1-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
+	return L1UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L1-UniFrac: {formatted_L1} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
 def Total_Pairwise(debug):
+	global PCoA_Samples
+
 	if debug == 1:
 		print(f"Running Debugging Multiprocess on {cores-1} Cores...")
 
@@ -51,6 +53,8 @@ def Total_Pairwise(debug):
 		CSV.write('L1-UniFrac-Out.csv', dist_list)
 
 def Group_Pairwise(debug, group_num):
+	global PCoA_Samples
+	
 	group_num -= 1
 	metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
 	sample_groups = []
