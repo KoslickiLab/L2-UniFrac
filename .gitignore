@@ -1,3 +1,4 @@
 *.pyc
 src/__pycache__/*
 scripts/L2-UniFrac-Out.csv
+*/L*.csv
