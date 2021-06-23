@@ -2,7 +2,7 @@ import sys
 sys.path.append('../L2Unifrac')
 sys.path.append('../L2Unifrac/src')
 sys.path.append('../src')
-import L2Unifrac as L2U
+import L1Unifrac as L1U
 import BiomWrapper as BW
 import write_to_csv as CSV
 import metadata_wrapper as meta
@@ -11,8 +11,8 @@ import multiprocessing as mp
 cores = mp.cpu_count()
 
 nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
-T1, l1, nodes_in_order = L2U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
-(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
+T1, l1, nodes_in_order = L1U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
+(nodes_weighted, samples_temp) = L1U.parse_envs(nodes_samples, nodes_in_order)
 
 PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 
@@ -20,9 +20,9 @@ def unifrac_work_wrapper(args):
 	return unifrac_worker(*args)
 
 def unifrac_worker(samp1num, samp2num):
-	L2UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
-	formatted_L2 = "{:.16f}".format(L2UniFrac)
-	return L2UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L2-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
+	L1UniFrac = L1U.EMDUnifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
+	formatted_L1 = "{:.16f}".format(L1UniFrac)
+	return L1UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L1-UniFrac: {formatted_L2} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
 def Total_Pairwise(debug):
 	if debug == 1:
@@ -48,7 +48,7 @@ def Total_Pairwise(debug):
 			if debug == 1:
 				print(result[i*len(PCoA_Samples)+j][1])
 
-		CSV.write('L2-UniFrac-Out.csv', dist_list)
+		CSV.write('L1-UniFrac-Out.csv', dist_list)
 
 def Group_Pairwise(debug, group_num):
 	group_num -= 1
@@ -93,7 +93,7 @@ def Group_Pairwise(debug, group_num):
 			if debug == 1:
 				print(result[i*len(sample_sites[group_num])+j][1])
 
-		CSV.write('L2-UniFrac-Out-' + groups[group_num] + '.csv', dist_list)
+		CSV.write('L1-UniFrac-Out-' + groups[group_num] + '.csv', dist_list)
 
 if __name__ == "__main__":
 
