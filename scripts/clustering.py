@@ -31,7 +31,7 @@ if __name__ == "__main__":
 	for i in read:
 		distance_matrix.append(list(map(float, i[0].split(","))))
 
-	cluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='precomputed', linkage = 'complete').fit_predict(distance_matrix)  
+	cluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='precomputed', linkage='complete').fit_predict(distance_matrix)  
 
 	print(cluster)
 
@@ -42,10 +42,64 @@ if __name__ == "__main__":
 
 	PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
 	metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
+	region_names = []
 	for i in range(len(PCoA_Samples)):
-		PCoA_Samples[i] = metadata[PCoA_Samples[i]]['body_site']
+		if metadata[PCoA_Samples[i]]['body_site'] not in region_names:
+			region_names.append(metadata[PCoA_Samples[i]]['body_site'])
+		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
+	np.set_printoptions(threshold=sys.maxsize)
+	print(cluster)
 	print(PCoA_Samples)
+
+	count_dict = [[0 for j in range(num_clusters)] for i in range(num_clusters)]
+	for i in range(len(cluster)):
+		count_dict[cluster[i]][PCoA_Samples[i]] += 1
+
+	disallowed_set = []
+	disallowed_match = []
+	translation_dict = {}
+	for iteration in range(num_clusters):
+		print(count_dict)
+		most_probable_set = None
+		most_probable_match = None
+		for i in range(num_clusters):
+			for j in range(num_clusters):
+				if most_probable_set == None and most_probable_match == None and i not in disallowed_set and j not in disallowed_match:
+					most_probable_set = i
+					most_probable_match = j
+				elif i not in disallowed_set and j not in disallowed_match:
+					if count_dict[i][j]/sum(count_dict[i]) > count_dict[most_probable_set][most_probable_match]/sum(count_dict[most_probable_set]) and i not in disallowed_set and j not in disallowed_match:
+						most_probable_set = i
+						most_probable_match = j
+		print(count_dict[most_probable_set][most_probable_match]/sum(count_dict[most_probable_set]))
+		disallowed_set.append(most_probable_set)
+		disallowed_match.append(most_probable_match)
+		translation_dict[most_probable_set] = most_probable_match
+		print(most_probable_set, most_probable_match, disallowed_match) # 46.3%, 84.9%, 41.4%, 76.7%, 81.5%
+
+	for i in range(len(cluster)):
+		cluster[i] = translation_dict[cluster[i]]
+
+	print(cluster)
+
+	#for iteration in range(num_clusters):
+	#	print(count_dict)
+	#	most_probable_set = None
+	#	most_probable_match = None
+	#	for i in range(num_clusters-iteration):
+	#		for j in range(num_clusters-iteration):
+	#			if most_probable_set == None and j not in disallowed_match and i not in disallowed_set:
+	#				most_probable_set = i
+	#				most_probable_match = j
+	#			elif j not in disallowed_match and i not in disallowed_set:
+	#				if count_dict[i][j]/sum(count_dict[i]) > count_dict[most_probable_set][most_probable_match]/sum(count_dict[most_probable_set]) and j not in disallowed_match and i not in disallowed_set:
+	#					most_probable_set = i
+	#					most_probable_match = j
+	#	print(count_dict[most_probable_set][most_probable_match]/sum(count_dict[most_probable_set]))
+	#	disallowed_set.append(most_probable_set)
+	#	disallowed_match.append(most_probable_match)
+	#	print(most_probable_set, most_probable_match, disallowed_set, disallowed_match) # 46.3%, 84.9%, 41.4%, 76.7%, 81.5%
 
 	#for i in range(len(cluster_arr)):
 		#for j in range(len(cluster_arr[i])):
