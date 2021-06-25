@@ -5,7 +5,7 @@ sys.path.append('../src')
 import L1Unifrac as L1U
 import BiomWrapper as BW
 import write_to_csv as CSV
-import metadata_wrapper as meta
+import MetadataWrapper as meta
 import multiprocessing as mp
 
 cores = mp.cpu_count()

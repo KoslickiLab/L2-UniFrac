@@ -5,7 +5,7 @@ sys.path.append('../src')
 from skbio.stats.ordination import pcoa
 import csv
 import BiomWrapper as BW
-import metadata_wrapper as meta
+import MetadataWrapper as meta
 import pandas as pd
 from skbio import DistanceMatrix
 import matplotlib.pyplot as plt

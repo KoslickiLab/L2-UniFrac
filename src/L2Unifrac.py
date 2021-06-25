@@ -104,12 +104,6 @@ def push_up(P, Tint, lint, nodes_in_order):
 		P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
 	return P_pushed
 
-# 1) Push up and inverse push up on some vector and see if I get that vector back again.
-# 2) Error most likely in either pushup or inverse pushup. Error is most likely in push up since test does not use inverse.
-#    We could be potentially stomping on P_pushed as it propagates up.
-#     a) Draw small tree, explicitly write mass and, by hand write what the pushup should be according to page 92/93 of thesis.
-#	  b) Try permutations of push up to run test and see if it works.
-
 def inverse_push_up(P, Tint, lint, nodes_in_order):
 	P_pushed = np.zeros(P.shape)  # don't want to stomp on P
 	for i in range(len(nodes_in_order) - 1):

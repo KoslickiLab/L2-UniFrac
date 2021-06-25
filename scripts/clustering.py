@@ -12,7 +12,7 @@ from sklearn.metrics.cluster import fowlkes_mallows_score
 from sklearn.metrics import rand_score
 from sklearn_extra.cluster import KMedoids
 import BiomWrapper as BW
-import metadata_wrapper as meta
+import MetadataWrapper as meta
 
 if __name__ == "__main__":
 
