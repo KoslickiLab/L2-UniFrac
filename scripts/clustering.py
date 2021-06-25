@@ -16,7 +16,7 @@ if __name__ == "__main__":
 	if len(args) > 3:
 		raise Exception("Invalid number of parameters.")
 	elif len(args) == 1:
-		file = 'L1-UniFrac-Out.csv'
+		file = 'L2-UniFrac-Out.csv'
 		num_clusters = 5
 	elif len(args) == 2:
 		file = args[1]
@@ -78,34 +78,15 @@ if __name__ == "__main__":
 		translation_dict[most_probable_set] = most_probable_match
 		print(most_probable_set, most_probable_match, disallowed_match) # 46.3%, 84.9%, 41.4%, 76.7%, 81.5%
 
+	num_correct = 0
+	num_incorrect = 0
 	for i in range(len(cluster)):
 		cluster[i] = translation_dict[cluster[i]]
+		if cluster[i] == PCoA_Samples[i]:
+			num_correct += 1
+		else:
+			num_incorrect += 1
 
 	print(cluster)
-
-	#for iteration in range(num_clusters):
-	#	print(count_dict)
-	#	most_probable_set = None
-	#	most_probable_match = None
-	#	for i in range(num_clusters-iteration):
-	#		for j in range(num_clusters-iteration):
-	#			if most_probable_set == None and j not in disallowed_match and i not in disallowed_set:
-	#				most_probable_set = i
-	#				most_probable_match = j
-	#			elif j not in disallowed_match and i not in disallowed_set:
-	#				if count_dict[i][j]/sum(count_dict[i]) > count_dict[most_probable_set][most_probable_match]/sum(count_dict[most_probable_set]) and j not in disallowed_match and i not in disallowed_set:
-	#					most_probable_set = i
-	#					most_probable_match = j
-	#	print(count_dict[most_probable_set][most_probable_match]/sum(count_dict[most_probable_set]))
-	#	disallowed_set.append(most_probable_set)
-	#	disallowed_match.append(most_probable_match)
-	#	print(most_probable_set, most_probable_match, disallowed_set, disallowed_match) # 46.3%, 84.9%, 41.4%, 76.7%, 81.5%
-
-	#for i in range(len(cluster_arr)):
-		#for j in range(len(cluster_arr[i])):
-
-
-	#np.set_printoptions(threshold=sys.maxsize)
-
-	#kmedoids = KMedoids(n_clusters=5, metric='precomputed', method='pam', init='heuristic').fit(distance_matrix)
-	#labels = kmedoids.labels_
+	print(num_correct, num_incorrect)
+	print(num_correct/len(cluster)) #0.47008406131531233 - L1, 0.4720619746167793 - L2
