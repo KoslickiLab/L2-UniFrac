@@ -12,6 +12,7 @@ from sklearn.metrics.cluster import fowlkes_mallows_score
 from sklearn.metrics import rand_score
 from sklearn_extra.cluster import KMedoids
 import BiomWrapper as BW
+import CSVWrapper as CSV
 import MetadataWrapper as meta
 
 if __name__ == "__main__":
@@ -33,11 +34,7 @@ if __name__ == "__main__":
 		if not path.exists(L1_file) or not path.exists(L2_file):
 			raise Exception("Error: Missing default CSV file(s).")
 
-	f = open(L1_file, 'r')
-	read = csv.reader(f, delimiter=';')
-	L1_distance_matrix = []
-	for i in read:
-		L1_distance_matrix.append(list(map(float, i[0].split(","))))
+	L1_distance_matrix = CSV.read(L1_file)
 
 	f = open(L2_file, 'r')
 	read = csv.reader(f, delimiter=';')

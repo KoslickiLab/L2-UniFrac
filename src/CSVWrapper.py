@@ -1,35 +1,62 @@
-################################################################################
-##
-##  File           : write_to_csv.py
-##  Description    : Writes UniFrac data to CSV file periodically. 
-##
-##   Author        : *** Andrew Millward ***
-##   Last Modified : *** 05/30/2021 ***
-##
-
-## Import Files
 import csv
-
-################################################################################
-##
-## Function     : write_spreadsheet
-## Description  : Takes input data and exports it to a new spreadsheet.
-##
-## Inputs       : elem_list - List of elements to write from query.
-## Outputs      : 0 if successful, -1 if failure.
+import numpy as np
+from scipy.sparse import coo_matrix
 
 def write(name, dist_list):
 
-    try:
-        with open(name, 'a', newline='') as csvfile:
-            file_write = csv.writer(csvfile)
-            file_write.writerow(dist_list)
-            csvfile.close()
+	try:
+		with open(name, 'a', newline='') as csvfile:
+			file_write = csv.writer(csvfile)
+			file_write.writerow(dist_list)
+			csvfile.close()
 
-        return ( 0 ) # Success
+		return 0
 
-    except:
-        return ( -1 ) # Failure
+	except Exception as exception:
+		print(exception):
+		return -1
+
+def read(name):
+	try:
+		f = open(name, 'r')
+		csv_read = csv.reader(f, delimiter=';')
+		matrix = []
+		for line in csv_read:
+			matrix.append(list(map(float, line[0].split(","))))
+		return matrix
+	except Exception as exception:
+		print(exception):
+		return -1
+
+def read_sparse(name):
+	try:
+		f = open(name, 'r')
+		csv_read = csv.reader(f, delimiter=';')
+		row = []
+		col = []
+		data = []
+		for line in csv_read:
+			line_split = line[0].split(",")
+			if len(line_split) == 3:
+				row.append(int(line_split[0]))
+				col.append(int(line_split[1]))
+				data.append(float(line_split[2]))
+			else:
+				rows = int(line_split[0])
+				cols = int(line_split[1])
+		row = np.array(row)
+		col = np.array(col)
+		data = np.array(data)
+		sparse_matrix = coo_matrix((data, (row, col)), shape=(rows, cols))
+		return sparse_matrix
+
+	except Exception as exception:
+		print(exception)
+		return -1
+
+def read_sparse_row(name, rowID):
+	pass
 
 if __name__ == "__main__":
-    write('distance_matrix.csv', [0.3, 0.2, 0.4])
+	#write('distance_matrix.csv', [0.3, 0.2, 0.4])
+	read_sparse('../scripts/L1-Push-Out.csv')

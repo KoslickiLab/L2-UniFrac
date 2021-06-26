@@ -5,6 +5,7 @@ sys.path.append('../src')
 from skbio.stats.ordination import pcoa
 import csv
 import BiomWrapper as BW
+import CSVWrapper as CSV
 import MetadataWrapper as meta
 import pandas as pd
 from skbio import DistanceMatrix
@@ -22,11 +23,7 @@ if __name__ == "__main__":
 
 	assert(isinstance(file, str))
 
-	f = open(file, 'r')
-	read = csv.reader(f, delimiter=';')
-	distance_matrix = []
-	for i in read:
-		distance_matrix.append(list(map(float, i[0].split(","))))
+	distance_matrix = CSV.read(file)
 
 	sk_distance_matrix = DistanceMatrix(distance_matrix, BW.extract_samples('../data/47422_otu_table.biom'))
 

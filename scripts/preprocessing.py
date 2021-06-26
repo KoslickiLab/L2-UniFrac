@@ -6,10 +6,7 @@ import L1Unifrac as L1U
 import L2Unifrac as L2U
 import BiomWrapper as BW
 import CSVWrapper as CSV
-import MetadataWrapper as meta
 import multiprocessing as mp
-import CSVWrapper as CSV
-import numpy
 
 cores = mp.cpu_count()
 
@@ -30,6 +27,11 @@ def L2_pushup_worker(sample_num):
 
 # Multi Core Method
 values = range(len(PCoA_Samples))
+
+dim1 = len(PCoA_Samples)
+dim2 = len(L1_pushup_worker(0))
+CSV.write('L1-Push-Out.csv', [dim1, dim2])
+CSV.write('L2-Push-Out.csv', [dim1, dim2])
 
 with mp.Pool(processes=int(cores/2-2)) as pool:
 	L1_result = pool.map(L1_pushup_worker, values)
