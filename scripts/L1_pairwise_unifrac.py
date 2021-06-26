@@ -4,7 +4,7 @@ sys.path.append('../L2Unifrac/src')
 sys.path.append('../src')
 import L1Unifrac as L1U
 import BiomWrapper as BW
-import write_to_csv as CSV
+import CSVWrapper as CSV
 import MetadataWrapper as meta
 import multiprocessing as mp
 
