@@ -1,5 +1,8 @@
-numpy
-scipy
-h5py
-biom-format
 dendropy
+numpy
+matplotlib
+scipy
+scikit-bio
+pandas
+biom-format
+h5py
