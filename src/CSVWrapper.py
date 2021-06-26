@@ -3,7 +3,6 @@ import numpy as np
 from scipy.sparse import coo_matrix
 
 def write(name, dist_list):
-
 	try:
 		with open(name, 'a', newline='') as csvfile:
 			file_write = csv.writer(csvfile)
