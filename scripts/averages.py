@@ -24,6 +24,7 @@ import numpy as np
 # are very large relative to these erroneous ones.
 negatives_filtering_threshold = -10e-14
 
+# Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, output_file):
 
 	# Note: these are the same for L1/L2, so they will be computed only once.
@@ -34,6 +35,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 	PCoA_Samples = BW.extract_samples(biom_file)
 	metadata = meta.extract_metadata(metadata_file)
 
+	# Extract region names and map samples to regions
 	region_names = []
 	region_map = {}
 	for i in range(len(PCoA_Samples)):
@@ -43,14 +45,17 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		region_map[metadata[PCoA_Samples[i]]['body_site']].append(i)
 		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
+	# Read sparse matrices
 	sparse_matrix_L1 = CSV.read_sparse(L1_file)
 	sparse_matrix_L2 = CSV.read_sparse(L2_file)
 
 	group_averages_L1 = {}
 	group_averages_L2 = {}
 
+	# Store region names for later
 	CSV.write(output_file, region_names)
 
+	# Take L1 average of each
 	for i in range(len(region_names)):
 		group_arr = []
 		for j in range(len(region_map[region_names[i]])):
@@ -58,6 +63,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		average = L1U.median_of_vectors(group_arr)
 		group_averages_L1[region_names[i]] = average
 
+	# Store L1 averages
 	print("L1 Group Averages:")
 	CSV.write(output_file, ["L1 Group Averages:"])
 	for name in region_names:
@@ -65,6 +71,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		print(f"{padded_name} {group_averages_L1[name]}")
 		CSV.write(output_file, group_averages_L1[name])
 
+	# Take L2 average of each
 	for i in range(len(region_names)):
 		group_arr = []
 		for j in range(len(region_map[region_names[i]])):
@@ -72,6 +79,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		average = L2U.mean_of_vectors(group_arr)
 		group_averages_L2[region_names[i]] = average
 
+	# Store L2 averages
 	print("\nL2 Group Averages:")
 	CSV.write(output_file, ["L2 Group Averages:"])
 	for name in region_names:
@@ -79,6 +87,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		print(f"{padded_name} {group_averages_L2[name]}")
 		CSV.write(output_file, group_averages_L2[name])
 
+	# Push L1 up and store
 	print("\nL1 Pushed Up:")
 	CSV.write(output_file, ["L1 Pushed Up:"])
 	L1_neg_arr = []
@@ -93,6 +102,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		print(f"{padded_name} {median_inverse}")
 		CSV.write(output_file, median_inverse)
 
+	# Push L2 up and store
 	print("\nL2 Pushed Up:")
 	CSV.write(output_file, ["L2 Pushed Up:"])
 	L2_neg_arr = []
@@ -107,10 +117,12 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 		print(f"{padded_name} {mean_inverse}")
 		CSV.write(output_file, mean_inverse)
 
+	# Write negative counts
 	CSV.write(output_file, ["L1 and L2 Negatives by Group:"])
 	CSV.write(output_file, L1_neg_arr)
 	CSV.write(output_file, L2_neg_arr)
 
+# Argument parsing
 if __name__ == "__main__":
 	args = sys.argv
 	if len(args) != 7:
