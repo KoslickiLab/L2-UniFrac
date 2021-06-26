@@ -64,16 +64,32 @@ for name in region_names:
 
 print("\nL1 Pushed Up:")
 CSV.write('Group-Averages.csv', ["L1 Pushed Up:"])
+L1_neg_arr = []
 for name in region_names:
-	mean_inverse = L1U.inverse_push_up(group_averages_L1[name], T1, l1, nodes_in_order)
+	neg_count = 0
+	median_inverse = L1U.inverse_push_up(group_averages_L1[name], T1, l1, nodes_in_order)
+	for i in range(len(median_inverse)):
+		if median_inverse[i] < 0:
+			neg_count += 1
+	L1_neg_arr.append(neg_count)
+	padded_name = "{:<15}".format(name+":")
+	print(f"{padded_name} {median_inverse}")
+	CSV.write('Group-Averages.csv', median_inverse)
+
+print("\nL2 Pushed Up:")
+CSV.write('Group-Averages.csv', ["L2 Pushed Up:"])
+L2_neg_arr = []
+for name in region_names:
+	neg_count = 0
+	mean_inverse = L2U.inverse_push_up(group_averages_L2[name], T1, l1, nodes_in_order)
+	for i in range(len(mean_inverse)):
+		if mean_inverse[i] < 0:
+			neg_count += 1
+	L2_neg_arr.append(neg_count)
 	padded_name = "{:<15}".format(name+":")
 	print(f"{padded_name} {mean_inverse}")
 	CSV.write('Group-Averages.csv', mean_inverse)
 
-print("\nL2 Pushed Up:")
-CSV.write('Group-Averages.csv', ["L2 Pushed Up:"])
-for name in region_names:
-	mean_inverse = L2U.inverse_push_up(group_averages_L2[name], T1, l1, nodes_in_order)
-	padded_name = "{:<15}".format(name+":")
-	print(f"{padded_name} {mean_inverse}")
-	CSV.write('Group-Averages.csv', mean_inverse)
+CSV.write('Group-Averages.csv', ["L1 and L2 Negatives by Group:"])
+CSV.write('Group-Averages.csv', L1_neg_arr)
+CSV.write('Group-Averages.csv', L2_neg_arr)
