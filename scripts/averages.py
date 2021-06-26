@@ -69,7 +69,7 @@ for name in region_names:
 	neg_count = 0
 	median_inverse = L1U.inverse_push_up(group_averages_L1[name], T1, l1, nodes_in_order)
 	for i in range(len(median_inverse)):
-		if median_inverse[i] < 0:
+		if median_inverse[i] < -10e-12:
 			neg_count += 1
 	L1_neg_arr.append(neg_count)
 	padded_name = "{:<15}".format(name+":")
@@ -83,7 +83,7 @@ for name in region_names:
 	neg_count = 0
 	mean_inverse = L2U.inverse_push_up(group_averages_L2[name], T1, l1, nodes_in_order)
 	for i in range(len(mean_inverse)):
-		if mean_inverse[i] < 0:
+		if mean_inverse[i] < -10e-12:
 			neg_count += 1
 	L2_neg_arr.append(neg_count)
 	padded_name = "{:<15}".format(name+":")
