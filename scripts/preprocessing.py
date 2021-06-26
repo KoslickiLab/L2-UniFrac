@@ -31,7 +31,7 @@ def L2_pushup_worker(sample_num):
 # Multi Core Method
 values = range(len(PCoA_Samples))
 
-with mp.Pool(processes=cores/2-2) as pool:
+with mp.Pool(processes=int(cores/2-2)) as pool:
 	L1_result = pool.map(L1_pushup_worker, values)
 
 for i in range(len(L1_result)):
@@ -39,7 +39,7 @@ for i in range(len(L1_result)):
 		if L1_result[i][j] != 0:
 			CSV.write('L1-Push-Out.csv', [i, j, L1_result[i][j]])
 
-with mp.Pool(processes=cores/2-2) as pool:
+with mp.Pool(processes=int(cores/2-2)) as pool:
 	L2_result = pool.map(L2_pushup_worker, values)
 
 for i in range(len(L2_result)):
