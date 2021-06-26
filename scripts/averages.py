@@ -22,21 +22,31 @@ for i in range(len(PCoA_Samples)):
 	PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
 sparse_matrix_L1 = CSV.read_sparse('L1-Push-Out.csv')
+sparse_matrix_L2 = CSV.read_sparse('L2-Push-Out.csv')
 
-print(PCoA_Samples)
-print(region_map)
+group_averages_L1 = {}
+group_averages_L2 = {}
+
 for i in range(len(region_names)):
 	group_arr = []
 	for j in range(len(region_map[region_names[i]])):
 		group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
-	print(group_arr)
-	print(len(group_arr))
-	#average1 = L1U.median_of_vectors(sparse_matrix_L1.toarray())
-	#print(average1)
-	break
+	average = L1U.median_of_vectors(sparse_matrix_L1.toarray())
+	group_averages_L1[region_names[i]] = average
 
-#sparse_matrix_L1 = CSV.read_sparse('L1-Push-Out.csv')
-#sparse_matrix_L2 = CSV.read_sparse('L2-Push-Out.csv')
+print("L1 Group Averages:")
+for name in region_names:
+	padded_name = "{:<15}".format(name+":")
+	print(f"{padded_name} {group_averages_L1[name]}")
 
-#average1 = L1U.median_of_vectors(sparse_matrix_L1.toarray())
-#print(average1)
+for i in range(len(region_names)):
+	group_arr = []
+	for j in range(len(region_map[region_names[i]])):
+		group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
+	average = L2U.mean_of_vectors(sparse_matrix_L2.toarray())
+	group_averages_L2[region_names[i]] = average
+
+print("L2 Group Averages:")
+for name in region_names:
+	padded_name = "{:<15}".format(name+":")
+	print(f"{padded_name} {group_averages_L2[name]}")
