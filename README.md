@@ -10,8 +10,10 @@ To retrieve more biologiocally meaningful results that preserve fundamental char
 + [dendropy](http://www.dendropy.org/)
 + numpy 
 + matplotlib - for plotting
-+ [skbio](http://scikit-bio.org/) - for PCoA and Distance Matrix
++ scipy 
++ [scikit-bio](http://scikit-bio.org/) - for PCoA and Distance Matrix
 + [pandas](https://pandas.pydata.org/) - for metadata frame
-+ [biom](https://biom-format.org/) - for chosen dataset
++ [biom-format](https://biom-format.org/) - for chosen dataset
++ h5py
 
 ## Setup ##
