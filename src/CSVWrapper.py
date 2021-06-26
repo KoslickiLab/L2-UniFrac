@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 from scipy.sparse import coo_matrix
+from scipy.sparse import csr_matrix
 
 def write(name, dist_list):
 	try:
@@ -12,7 +13,7 @@ def write(name, dist_list):
 		return 0
 
 	except Exception as exception:
-		print(exception):
+		print(exception)
 		return -1
 
 def read(name):
@@ -24,7 +25,7 @@ def read(name):
 			matrix.append(list(map(float, line[0].split(","))))
 		return matrix
 	except Exception as exception:
-		print(exception):
+		print(exception)
 		return -1
 
 def read_sparse(name):
@@ -46,7 +47,7 @@ def read_sparse(name):
 		row = np.array(row)
 		col = np.array(col)
 		data = np.array(data)
-		sparse_matrix = coo_matrix((data, (row, col)), shape=(rows, cols))
+		sparse_matrix = csr_matrix((data, (row, col)), shape=(rows, cols))
 		return sparse_matrix
 
 	except Exception as exception:
@@ -58,4 +59,4 @@ def read_sparse_row(name, rowID):
 
 if __name__ == "__main__":
 	#write('distance_matrix.csv', [0.3, 0.2, 0.4])
-	read_sparse('../scripts/L1-Push-Out.csv')
+	print(read_sparse('../scripts/L1-Push-Out.csv')[0])

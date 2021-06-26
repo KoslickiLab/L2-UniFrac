@@ -471,6 +471,13 @@ def inverse_push_up(P, Tint, lint, nodes_in_order):
     P_pushed[root] += P[root]
     return P_pushed
 
+def median_of_vectors(L):
+    '''
+    :param L: a list of vectors
+    :return: a vector with each entry i being the median of vectors of L at position i
+    '''
+    return np.median(L, axis=0)
+
 def EMDUnifrac_group(ancestors, edge_lengths, nodes_in_order, rel_abund):
 	eps = 1e-8
 	num_nodes = len(nodes_in_order)
