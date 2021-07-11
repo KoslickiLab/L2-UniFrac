@@ -32,8 +32,6 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	# Note: these are the same for L1/L2, so they will be computed only once.
 	nodes_samples = BW.extract_biom(biom_file)
 	T1, l1, nodes_in_order = L2U.parse_tree_file(tree_file)
-	print(nodes_in_order)
-	print(len(nodes_in_order))
 	#(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
 	PCoA_Samples = BW.extract_samples(biom_file)
@@ -57,6 +55,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	group_averages_L2 = {}
 
 	# Store region names for later
+	print(region_names)
 	CSV.write(output_file, region_names)
 
 	# Write taxas for cell
@@ -67,6 +66,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 			tax_arr.append(taxonomies[int(nodes_in_order[i])])
 		else:
 			tax_arr.append(nodes_in_order[i])
+	print(tax_arr)
 	CSV.write(output_file, tax_arr)
 
 	# Take L1 average of each
