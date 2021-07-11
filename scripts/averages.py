@@ -8,14 +8,16 @@ import L2Unifrac as L2U
 import BiomWrapper as BW
 import CSVWrapper as CSV
 import MetadataWrapper as meta
+import TaxWrapper as tax
 import numpy as np
 
-# File cheatsheet (python averages.py L1-Push-Out.csv L2-Push-Out.csv ../data/47422_otu_table.biom ../data/trees/gg_13_5_otus_99_annotated.tree ../data/metadata/P_1928_65684500_raw_meta.txt Group-Averages.csv):
+# File cheatsheet (python averages.py L1-Push-Out.csv L2-Push-Out.csv ../data/47422_otu_table.biom ../data/trees/gg_13_5_otus_99_annotated.tree ../data/metadata/P_1928_65684500_raw_meta.txt ../data/taxonomies/gg_13_8_99.gg.tax Group-Averages.csv):
 # L1_file:       'L1-Push-Out.csv'
 # L2_file:       'L2-Push-Out.csv'
 # biom_file:     '../data/47422_otu_table.biom'
 # tree_file:     '../data/trees/gg_13_5_otus_99_annotated.tree'
 # metadata_file: '../data/metadata/P_1928_65684500_raw_meta.txt'
+# tax_file:      '../data/taxonomies/gg_13_8_99.gg.tax'
 # output_file:   'Group-Averages.csv'
 
 # Negative values can periodically appear on machines when the value should be 0. This filter is
@@ -25,12 +27,14 @@ import numpy as np
 negatives_filtering_threshold = -10e-14
 
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
-def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, output_file):
+def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file):
 
 	# Note: these are the same for L1/L2, so they will be computed only once.
 	nodes_samples = BW.extract_biom(biom_file)
 	T1, l1, nodes_in_order = L2U.parse_tree_file(tree_file)
-	(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
+	print(nodes_in_order)
+	print(len(nodes_in_order))
+	#(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
 	PCoA_Samples = BW.extract_samples(biom_file)
 	metadata = meta.extract_metadata(metadata_file)
@@ -54,6 +58,16 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 
 	# Store region names for later
 	CSV.write(output_file, region_names)
+
+	# Write taxas for cell
+	taxonomies = tax.extract_tax(tax_file)
+	tax_arr = []
+	for i in range(len(nodes_in_order)):
+		if nodes_in_order[i][0] != 't':
+			tax_arr.append(taxonomies[int(nodes_in_order[i])])
+		else:
+			tax_arr.append(nodes_in_order[i])
+	CSV.write(output_file, tax_arr)
 
 	# Take L1 average of each
 	for i in range(len(region_names)):
@@ -125,7 +139,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, outp
 # Argument parsing
 if __name__ == "__main__":
 	args = sys.argv
-	if len(args) != 7:
+	if len(args) != 8:
 		raise Exception("Invalid number of parameters.")
 	else:
 		L1_file = args[1]
@@ -133,8 +147,9 @@ if __name__ == "__main__":
 		biom_file = args[3]
 		tree_file = args[4]
 		metadata_file = args[5]
-		output_file = args[6]
-		print(L1_file, L2_file, biom_file, tree_file, metadata_file, output_file)
-		if not path.exists(L1_file) or not path.exists(L2_file) or not path.exists(biom_file) or not path.exists(tree_file) or not path.exists(metadata_file):
+		tax_file = args[6]
+		output_file = args[7]
+		print(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file)
+		if not path.exists(L1_file) or not path.exists(L2_file) or not path.exists(biom_file) or not path.exists(tree_file) or not path.exists(metadata_file) or not path.exists(tax_file):
 			raise Exception("Error: Invalid file path(s).")
-		compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, output_file)
+		compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file)
