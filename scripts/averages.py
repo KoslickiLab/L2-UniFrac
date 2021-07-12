@@ -154,14 +154,14 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	L1_distance_matrix = compute_pairwise_pushed(L1_pushed_arr)
 	L2_distance_matrix = compute_pairwise_pushed(L2_pushed_arr)
 
-	print("L1 Distance Matrix")
-	CSV.write(output_file, ["L1 Distance Matrix"])
+	print("L1 Distance Matrix:")
+	CSV.write(output_file, ["L1 Distance Matrix:"])
 	for i in range(len(L1_pushed_arr)):
 		print(L1_distance_matrix[i])
 		CSV.write(output_file, L1_distance_matrix[i])
 
-	print("L2 Distance Matrix")
-	CSV.write(output_file, ["L2 Distance Matrix"])
+	print("L2 Distance Matrix:")
+	CSV.write(output_file, ["L2 Distance Matrix:"])
 	for i in range(len(L2_pushed_arr)):
 		print(L2_distance_matrix[i])
 		CSV.write(output_file, L2_distance_matrix[i])		
