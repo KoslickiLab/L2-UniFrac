@@ -26,6 +26,17 @@ import numpy as np
 # are very large relative to these erroneous ones.
 negatives_filtering_threshold = -10e-14
 
+def compute_pairwise_pushed(pushed_arr):
+	dist_matrix = []
+	for i in range(len(pushed_arr)):
+		dist_arr = []
+		for j in range(len(pushed_arr)):
+			unifrac_distance = np.linalg.norm(pushed_arr[i] - pushed_arr[j])
+			dist_arr.append(L1_unifrac_distance)
+		dist_matrix.append(dist_arr)
+	return dist_matrix
+
+
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file):
 
@@ -70,12 +81,14 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	CSV.write(output_file, tax_arr)
 
 	# Take L1 average of each
+	L1_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
 		for j in range(len(region_map[region_names[i]])):
 			group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
 		average = L1U.median_of_vectors(group_arr)
 		group_averages_L1[region_names[i]] = average
+		L1_pushed_arr.append(average)
 
 	# Store L1 averages
 	print("L1 Group Averages:")
@@ -86,12 +99,14 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		CSV.write(output_file, group_averages_L1[name])
 
 	# Take L2 average of each
+	L2_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
 		for j in range(len(region_map[region_names[i]])):
 			group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
 		average = L2U.mean_of_vectors(group_arr)
 		group_averages_L2[region_names[i]] = average
+		L2_pushed_arr.append(average)
 
 	# Store L2 averages
 	print("\nL2 Group Averages:")
@@ -101,8 +116,8 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		print(f"{padded_name} {group_averages_L2[name]}")
 		CSV.write(output_file, group_averages_L2[name])
 
-	# Push L1 up and store
-	print("\nL1 Pushed Up:")
+	# Push L1 down and store
+	print("\nL1 Inverse Push Up:")
 	CSV.write(output_file, ["L1 Pushed Up:"])
 	L1_neg_arr = []
 	for name in region_names:
@@ -116,8 +131,8 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		print(f"{padded_name} {median_inverse}")
 		CSV.write(output_file, median_inverse)
 
-	# Push L2 up and store
-	print("\nL2 Pushed Up:")
+	# Push L2 down and store
+	print("\nL2 Inverse Push Up:")
 	CSV.write(output_file, ["L2 Pushed Up:"])
 	L2_neg_arr = []
 	for name in region_names:
@@ -135,6 +150,16 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	CSV.write(output_file, ["L1 and L2 Negatives by Group:"])
 	CSV.write(output_file, L1_neg_arr)
 	CSV.write(output_file, L2_neg_arr)
+
+	L1_distance_matrix = compute_pairwise_pushed(L1_pushed_arr)
+	L2_distance_matrix = compute_pairwise_pushed(L2_pushed_arr)
+
+	for i in range(len(L1_pushed_arr)):
+		print(L1_distance_matrix[i])
+		CSV.write(output_file, L1_distance_matrix[i])
+	for i in range(len(L2_pushed_arr)):
+		print(L2_distance_matrix[i])
+		CSV.write(output_file, L2_distance_matrix[i])		
 
 # Argument parsing
 if __name__ == "__main__":
