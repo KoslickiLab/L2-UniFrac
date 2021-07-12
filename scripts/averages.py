@@ -32,7 +32,7 @@ def compute_pairwise_pushed(pushed_arr):
 		dist_arr = []
 		for j in range(len(pushed_arr)):
 			unifrac_distance = np.linalg.norm(pushed_arr[i] - pushed_arr[j])
-			dist_arr.append(L1_unifrac_distance)
+			dist_arr.append(unifrac_distance)
 		dist_matrix.append(dist_arr)
 	return dist_matrix
 
