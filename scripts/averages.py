@@ -166,6 +166,64 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		print(L2_distance_matrix[i])
 		CSV.write(output_file, L2_distance_matrix[i])		
 
+	print("L1 Abundances by Node Type:")
+	CSV.write(output_file, ["L1 Abundances by Node Type:"])
+	for name in region_names:
+		region_abundance_vector = group_averages_L1[name]
+		k = p = c = o = f = g = s = temp = 0
+		for i in range(len(region_abundance_vector)):
+			node_tax = tax_arr[i].split(';')
+			if len(node_tax) > 1:
+				if node_tax[-2][0] == 'k':
+					k += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'p':
+					p += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'c':
+					c += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'o':
+					o += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'f':
+					f += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'g':
+					g += region_abundance_vector[i]
+				elif node_tax[-2][0] == 's':
+					s += region_abundance_vector[i]
+				else:
+					print("Error")
+			else:
+				temp += region_abundance_vector[i]
+		print([k, p, c, o, f, g, s, temp])
+		CSV.write(output_file, [k, p, c, o, f, g, s, temp])
+
+	print("L2 Abundances by Node Type:")
+	CSV.write(output_file, ["L2 Abundances by Node Type:"])
+	for name in region_names:
+		region_abundance_vector = group_averages_L2[name]
+		k = p = c = o = f = g = s = temp = 0
+		for i in range(len(region_abundance_vector)):
+			node_tax = tax_arr[i].split(';')
+			if len(node_tax) > 1:
+				if node_tax[-2][0] == 'k':
+					k += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'p':
+					p += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'c':
+					c += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'o':
+					o += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'f':
+					f += region_abundance_vector[i]
+				elif node_tax[-2][0] == 'g':
+					g += region_abundance_vector[i]
+				elif node_tax[-2][0] == 's':
+					s += region_abundance_vector[i]
+				else:
+					print("Error")
+			else:
+				temp += region_abundance_vector[i]
+		print([k, p, c, o, f, g, s, temp])
+		CSV.write(output_file, [k, p, c, o, f, g, s, temp])
+
 # Argument parsing
 if __name__ == "__main__":
 	args = sys.argv
