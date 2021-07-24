@@ -40,10 +40,9 @@ def compute_pairwise_pushed(pushed_arr):
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file):
 
-	# Note: these are the same for L1/L2, so they will be computed only once.
+	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
 	nodes_samples = BW.extract_biom(biom_file)
 	T1, l1, nodes_in_order = L2U.parse_tree_file(tree_file)
-	#(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
 	PCoA_Samples = BW.extract_samples(biom_file)
 	metadata = meta.extract_metadata(metadata_file)
@@ -76,7 +75,22 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		if nodes_in_order[i][0] != 't':
 			tax_arr.append(taxonomies[int(nodes_in_order[i])])
 		else:
-			tax_arr.append(nodes_in_order[i])
+			loop = True
+			if i in T1:
+				temp_node = T1[i]
+			else:
+				tax_arr.append('root')
+				loop = False
+			while loop:
+				if nodes_in_order[temp_node][0] != 't':
+					tax_arr.append(taxonomies[int(nodes_in_order[temp_node])])
+					break
+				else:
+					if temp_node in T1:
+						temp_node = T1[temp_node]
+					else:
+						tax_arr.append('root')
+						break
 	print(tax_arr)
 	CSV.write(output_file, tax_arr)
 
