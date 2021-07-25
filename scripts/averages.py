@@ -41,8 +41,13 @@ def compute_pairwise_pushed(pushed_arr):
 def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file):
 
 	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
-	nodes_samples = BW.extract_biom(biom_file)
+	#nodes_samples = BW.extract_biom(biom_file)
 	T1, l1, nodes_in_order = L2U.parse_tree_file(tree_file)
+	print(list(T1.keys())[:100])
+	print(nodes_in_order[:100])
+	print(len(nodes_in_order))
+	print(nodes_in_order[406902])
+	return
 
 	PCoA_Samples = BW.extract_samples(biom_file)
 	metadata = meta.extract_metadata(metadata_file)

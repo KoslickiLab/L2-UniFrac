@@ -24,12 +24,12 @@ import matplotlib.pyplot as plt
 # biom_file:     '../data/47422_otu_table.biom'
 # metadata_file: '../data/metadata/P_1928_65684500_raw_meta.txt'
 
-def PCoA_total(distance_file, biom_file, metadata_file):
+def PCoA_total(distance_file, biom_file, metadata_file, plot=True):
 	distance_matrix = CSV.read(distance_file)
 
 	sk_distance_matrix = DistanceMatrix(distance_matrix, BW.extract_samples(biom_file))
 
-	metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
+	metadata = meta.extract_metadata(metadata_file)
 
 	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
 
@@ -41,17 +41,18 @@ def PCoA_total(distance_file, biom_file, metadata_file):
 							title='Samples colored by body site',
 							cmap='Set1', s=50)
 
-	plt.show()
+	if plot:
+		plt.show()
+	else:
+		return fig
 
-def PCoA_group(distance_file, biom_file, metadata_file, groups):
+def PCoA_group(distance_file, biom_file, groups, plot=True):
 	distance_matrix = CSV.read(distance_file)
 
 	sk_distance_matrix = DistanceMatrix(distance_matrix, [str(i) for i in range(len(groups))])
 
 	metadata = {str(i): {'body_site': groups[i]} for i in range(len(groups))}
 
-	print(metadata)
-
 	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
 
 	result = pcoa(sk_distance_matrix)
@@ -62,7 +63,10 @@ def PCoA_group(distance_file, biom_file, metadata_file, groups):
 							title='Samples colored by body site',
 							cmap='Set1', s=50)
 
-	plt.show()
+	if plot:
+		plt.show()
+	else:
+		return fig
 
 if __name__ == "__main__":
 	args = sys.argv
@@ -81,4 +85,4 @@ if __name__ == "__main__":
 			PCoA_total(distance_file, biom_file, metadata_file)
 		elif int(option) == 1:
 			body_sites = args[5].split(",")
-			PCoA_group(distance_file, biom_file, metadata_file, body_sites)
+			PCoA_group(distance_file, biom_file, body_sites)
