@@ -88,7 +88,6 @@ def Group_Pairwise(biom_file, tree_file, metadata_file, group_num, output_file=N
 	for i in range(len(groups_temp)):
 		if groups_temp[i]['body_site'] not in groups:
 			groups.append(groups_temp[i]['body_site'])
-	print(groups)
 
 	sample_sites = [[] for i in range(len(groups))]
 

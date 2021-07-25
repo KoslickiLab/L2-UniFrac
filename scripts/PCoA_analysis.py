@@ -88,7 +88,7 @@ def PCoA_total_from_matrix(distance_matrix, biom_file, metadata_file, plot=True)
 	else:
 		return fig
 
-def PCoA_group_from_matrix(distance_file, biom_file, groups, plot=True):
+def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=True):
 	sk_distance_matrix = DistanceMatrix(distance_matrix, [str(i) for i in range(len(groups))])
 
 	metadata = {str(i): {'body_site': groups[i]} for i in range(len(groups))}
