@@ -28,4 +28,4 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file):
 	plt.savefig('images/out_L2.png')
 
 if __name__ == '__main__':
-	generate_pcoa('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt')
+	generate_total_pcoa('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt')
