@@ -8,24 +8,32 @@ import CSVWrapper as CSV
 import MetadataWrapper as meta
 import multiprocessing as mp
 
-cores = mp.cpu_count()
-
-nodes_samples = BW.extract_biom('../data/47422_otu_table.biom')
-T1, l1, nodes_in_order = L1U.parse_tree_file('../data/trees/gg_13_5_otus_99_annotated.tree')
-(nodes_weighted, samples_temp) = L1U.parse_envs(nodes_samples, nodes_in_order)
-
-PCoA_Samples = BW.extract_samples('../data/47422_otu_table.biom')
+T1 = {}
+l1 = {}
+nodes_in_order = []
+nodes_weighted = {}
 
 def unifrac_work_wrapper(args):
 	return unifrac_worker(*args)
 
 def unifrac_worker(samp1num, samp2num):
-	L1UniFrac = L1U.EMDUnifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
+	L1UniFrac = L1U.L1Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
 	formatted_L1 = "{:.16f}".format(L1UniFrac)
 	return L1UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L1-UniFrac: {formatted_L1} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
-def Total_Pairwise(debug):
-	global PCoA_Samples
+def Total_Pairwise(biom_file, tree_file, output_file=None, debug=0):
+	global T1
+	global l1
+	global nodes_in_order
+	global nodes_weighted
+
+	cores = mp.cpu_count()
+
+	nodes_samples = BW.extract_biom(biom_file)
+	T1, l1, nodes_in_order = L1U.parse_tree_file(tree_file)
+	(nodes_weighted, samples_temp) = L1U.parse_envs(nodes_samples, nodes_in_order)
+
+	PCoA_Samples = BW.extract_samples(biom_file)
 
 	if debug == 1:
 		print(f"Running Debugging Multiprocess on {cores-1} Cores...")
@@ -43,20 +51,34 @@ def Total_Pairwise(debug):
 	with mp.Pool(processes=cores-1) as pool:
 		result = pool.map(unifrac_work_wrapper, row)
 
+	result_matrix = []
 	for i in range(len(PCoA_Samples)):
 		dist_list = []
 		for j in range(len(PCoA_Samples)):
 			dist_list.append(result[i*len(PCoA_Samples)+j][0])
 			if debug == 1:
 				print(result[i*len(PCoA_Samples)+j][1])
+		result_matrix.append(dist_list)
+		if output_file is not None:
+			CSV.write(output_file, dist_list)
+	return result_matrix
 
-		CSV.write('L1-UniFrac-Out.csv', dist_list)
+def Group_Pairwise(biom_file, tree_file, metadata_file, group_num, output_file=None, debug=0):
+	global T1
+	global l1
+	global nodes_in_order
+	global nodes_weighted
 
-def Group_Pairwise(debug, group_num):
-	global PCoA_Samples
-	
+	cores = mp.cpu_count()
+
+	nodes_samples = BW.extract_biom(biom_file)
+	T1, l1, nodes_in_order = L1U.parse_tree_file(tree_file)
+	(nodes_weighted, samples_temp) = L1U.parse_envs(nodes_samples, nodes_in_order)
+
+	PCoA_Samples = BW.extract_samples(biom_file)
+
 	group_num -= 1
-	metadata = meta.extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt')
+	metadata = meta.extract_metadata(metadata_file)
 	sample_groups = []
 	groups_temp = list(metadata.values())
 	groups = []
@@ -90,14 +112,17 @@ def Group_Pairwise(debug, group_num):
 	with mp.Pool(processes=cores-1) as pool:
 		result = pool.map(unifrac_work_wrapper, row)
 
+	result_matrix = []
 	for i in range(len(sample_sites[group_num])):
 		dist_list = []
 		for j in range(len(sample_sites[group_num])):
 			dist_list.append(result[i*len(sample_sites[group_num])+j][0])
 			if debug == 1:
 				print(result[i*len(sample_sites[group_num])+j][1])
-
-		CSV.write('L1-UniFrac-Out-' + groups[group_num] + '.csv', dist_list)
+		result_matrix.append(dist_list)
+		if output_file is not None:
+			CSV.write(output_file[:-4] + "-"+ groups[group_num] + '.csv', dist_list)
+	return result_matrix
 
 if __name__ == "__main__":
 
@@ -123,8 +148,8 @@ if __name__ == "__main__":
 		group_num = 0
 
 	if group_num:
-		Group_Pairwise(debug, group_num)
+		Group_Pairwise('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt', group_num, 'L1-UniFrac-Out.csv', debug)
 	else:
-		Total_Pairwise(debug)
+		Total_Pairwise('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', 'L1-UniFrac-Out.csv', debug)
 
 	
