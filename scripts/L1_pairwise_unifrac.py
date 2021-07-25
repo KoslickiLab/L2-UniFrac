@@ -12,6 +12,7 @@ T1 = {}
 l1 = {}
 nodes_in_order = []
 nodes_weighted = {}
+PCoA_Samples = []
 
 def unifrac_work_wrapper(args):
 	return unifrac_worker(*args)
@@ -26,6 +27,7 @@ def Total_Pairwise(biom_file, tree_file, output_file=None, debug=0):
 	global l1
 	global nodes_in_order
 	global nodes_weighted
+	global PCoA_Samples
 
 	cores = mp.cpu_count()
 
@@ -68,6 +70,7 @@ def Group_Pairwise(biom_file, tree_file, metadata_file, group_num, output_file=N
 	global l1
 	global nodes_in_order
 	global nodes_weighted
+	global PCoA_Samples
 
 	cores = mp.cpu_count()
 
