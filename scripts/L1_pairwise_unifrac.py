@@ -17,7 +17,7 @@ def unifrac_work_wrapper(args):
 	return unifrac_worker(*args)
 
 def unifrac_worker(samp1num, samp2num):
-	L1UniFrac = L1U.L1Unifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
+	L1UniFrac = L1U.EMDUnifrac_weighted_plain(T1, l1, nodes_in_order, nodes_weighted[PCoA_Samples[samp1num]], nodes_weighted[PCoA_Samples[samp2num]])
 	formatted_L1 = "{:.16f}".format(L1UniFrac)
 	return L1UniFrac, f"\tInner loop: {str(samp2num).zfill(4)} | L1-UniFrac: {formatted_L1} | Sample 1: {PCoA_Samples[samp1num]} | Sample 2: {PCoA_Samples[samp2num]}"
 
