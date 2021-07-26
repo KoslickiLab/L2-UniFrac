@@ -68,7 +68,7 @@ def PCoA_group(distance_file, biom_file, groups, plot=True):
 	else:
 		return fig
 
-def PCoA_total_from_matrix(distance_matrix, biom_file, metadata_file, plot=True):
+def PCoA_total_from_matrix(distance_matrix, biom_file, metadata_file, plot=False):
 	sk_distance_matrix = DistanceMatrix(distance_matrix, BW.extract_samples(biom_file))
 
 	metadata = meta.extract_metadata(metadata_file)
@@ -88,7 +88,7 @@ def PCoA_total_from_matrix(distance_matrix, biom_file, metadata_file, plot=True)
 	else:
 		return fig
 
-def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=True):
+def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=False):
 	sk_distance_matrix = DistanceMatrix(distance_matrix, [str(i) for i in range(len(groups))])
 
 	metadata = {str(i): {'body_site': groups[i]} for i in range(len(groups))}
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 			raise Exception("Error: Invalid file path(s).")
 
 		if int(option) == 0:
-			PCoA_total(distance_file, biom_file, metadata_file)
+			PCoA_total(distance_file, biom_file, metadata_file, True)
 		elif int(option) == 1:
 			body_sites = args[5].split(",")
-			PCoA_group(distance_file, biom_file, body_sites)
+			PCoA_group(distance_file, biom_file, body_sites, True)

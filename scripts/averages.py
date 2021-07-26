@@ -63,8 +63,14 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
 	# Read sparse matrices
-	sparse_matrix_L1 = CSV.read_sparse(L1_file)
-	sparse_matrix_L2 = CSV.read_sparse(L2_file)
+	if not isinstance(L1_file, list):
+		sparse_matrix_L1 = CSV.read_sparse(L1_file)
+	else:
+		sparse_matrix_L1 = L1_file
+	if not isinstance(L2_file, list):
+		sparse_matrix_L2 = CSV.read_sparse(L2_file)
+	else:
+		sparse_matrix_L2 = L2_file
 
 	group_averages_L1 = {}
 	group_averages_L2 = {}
