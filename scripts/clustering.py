@@ -25,7 +25,8 @@ def report_clustering(L1_file, L2_file, biom_file, metadata_file, output_file=No
 	else:
 		L2_distance_matrix = L2_file
 
-	f = open(output_file, 'w')
+	if output_file is not None:
+		f = open(output_file, 'w')
 
 	L1AgglomerativeCluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='precomputed', linkage='complete').fit_predict(L1_distance_matrix)  
 	L1KMedoidsCluster = KMedoids(n_clusters=num_clusters, metric='precomputed', method='pam', init='heuristic').fit_predict(L1_distance_matrix)
@@ -42,54 +43,64 @@ def report_clustering(L1_file, L2_file, biom_file, metadata_file, output_file=No
 		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
 	print('Printing results for L1-UniFrac:')
-	f.write('Printing results for L1-UniFrac:\n')
 	print('Metric\t\t\t\t\t\t\tAgglomerativeClustering\t\tKMedoids')
-	f.write('Metric\t\t\t\t\t\t\tAgglomerativeClustering\t\tKMedoids\n')
+
+	if output_file is not None:
+		f.write('Printing results for L1-UniFrac:\n')
+		f.write('Metric\t\t\t\tAgglomerativeClustering\t\t\tKMedoids\n')
+
 	RI1 = rand_score(PCoA_Samples, L1AgglomerativeCluster)
 	RI2 = rand_score(PCoA_Samples, L1KMedoidsCluster)
 	print(f'Rand Index Score:               {RI1}\t\t\t{RI2}')
-	f.write(f'Rand Index Score:               {RI1}\t\t\t{RI2}\n')
 	ARI1 = adjusted_rand_score(PCoA_Samples, L1AgglomerativeCluster)
 	ARI2 = adjusted_rand_score(PCoA_Samples, L1KMedoidsCluster)
 	print(f'Adjusted Rand Index Score:      {ARI1}\t\t\t{ARI2}')
-	f.write(f'Adjusted Rand Index Score:      {ARI1}\t\t\t{ARI2}\n')
 	NMI1 = normalized_mutual_info_score(PCoA_Samples, L1AgglomerativeCluster)
 	NMI2 = normalized_mutual_info_score(PCoA_Samples, L1KMedoidsCluster)
-	print(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}')
-	f.write(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}\n')
+	print(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}')	
 	AMI1 = adjusted_mutual_info_score(PCoA_Samples, L1AgglomerativeCluster)
 	AMI2 = adjusted_mutual_info_score(PCoA_Samples, L1KMedoidsCluster)
 	print(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}')
-	f.write(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}\n')
 	FM1 = fowlkes_mallows_score(PCoA_Samples, L1AgglomerativeCluster)
 	FM2 = fowlkes_mallows_score(PCoA_Samples, L1KMedoidsCluster)
 	print(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}')
-	f.write(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}\n')
+
+	if output_file is not None:
+		f.write(f'Rand Index Score:               {RI1}\t\t\t{RI2}\n')
+		f.write(f'Adjusted Rand Index Score:      {ARI1}\t\t\t{ARI2}\n')
+		f.write(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}\n')
+		f.write(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}\n')
+		f.write(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}\n')
 
 	print('\nPrinting results for L2-UniFrac:')
-	f.write('\nPrinting results for L2-UniFrac:\n')
 	print('Metric\t\t\t\t\t\t\tAgglomerativeClustering\t\tKMedoids')
-	f.write('Metric\t\t\t\t\t\t\tAgglomerativeClustering\t\tKMedoids\n')
+
+	if output_file is not None:
+		f.write('\nPrinting results for L2-UniFrac:\n')
+		f.write('Metric\t\t\t\tAgglomerativeClustering\t\t\tKMedoids\n')
+
 	RI1 = rand_score(PCoA_Samples, L2AgglomerativeCluster)
 	RI2 = rand_score(PCoA_Samples, L2KMedoidsCluster)
 	print(f'Rand Index Score:               {RI1}\t\t\t{RI2}')
-	f.write(f'Rand Index Score:               {RI1}\t\t\t{RI2}\n')
 	ARI1 = adjusted_rand_score(PCoA_Samples, L2AgglomerativeCluster)
 	ARI2 = adjusted_rand_score(PCoA_Samples, L2KMedoidsCluster)
 	print(f'Adjusted Rand Index Score:      {ARI1}\t\t\t{ARI2}')
-	f.write(f'Adjusted Rand Index Score:      {ARI1}\t\t\t{ARI2}\n')
 	NMI1 = normalized_mutual_info_score(PCoA_Samples, L2AgglomerativeCluster)
 	NMI2 = normalized_mutual_info_score(PCoA_Samples, L2KMedoidsCluster)
 	print(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}')
-	f.write(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}\n')
 	AMI1 = adjusted_mutual_info_score(PCoA_Samples, L2AgglomerativeCluster)
 	AMI2 = adjusted_mutual_info_score(PCoA_Samples, L2KMedoidsCluster)
 	print(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}')
-	f.write(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}\n')
 	FM1 = fowlkes_mallows_score(PCoA_Samples, L2AgglomerativeCluster)
 	FM2 = fowlkes_mallows_score(PCoA_Samples, L2KMedoidsCluster)
 	print(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}')
-	f.write(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}\n')
+	
+	if output_file is not None:
+		f.write(f'Rand Index Score:               {RI1}\t\t\t{RI2}\n')
+		f.write(f'Adjusted Rand Index Score:      {ARI1}\t\t\t{ARI2}\n')
+		f.write(f'Normalized Mutual Index Score:  {NMI1}\t\t\t{NMI2}\n')
+		f.write(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}\n')
+		f.write(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}\n')
 
 if __name__ == '__main__':
 
