@@ -38,7 +38,7 @@ def compute_pairwise_pushed(pushed_arr):
 
 
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
-def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file):
+def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file=None):
 
 	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
 	#nodes_samples = BW.extract_biom(biom_file)
@@ -71,7 +71,8 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 
 	# Store region names for later
 	print(region_names)
-	CSV.write(output_file, region_names)
+	if output_file is not None:
+		CSV.write(output_file, region_names)
 
 	# Write taxas for cell
 	taxonomies = tax.extract_tax(tax_file)
@@ -97,7 +98,8 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 						tax_arr.append('root')
 						break
 	print(tax_arr)
-	CSV.write(output_file, tax_arr)
+	if output_file is not None:
+		CSV.write(output_file, tax_arr)
 
 	# Take L1 average of each
 	L1_pushed_arr = []
@@ -111,11 +113,13 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 
 	# Store L1 averages
 	print("L1 Group Averages:")
-	CSV.write(output_file, ["L1 Group Averages:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L1 Group Averages:"])
 	for name in region_names:
 		padded_name = "{:<15}".format(name+":")
 		print(f"{padded_name} {group_averages_L1[name]}")
-		CSV.write(output_file, group_averages_L1[name])
+		if output_file is not None:
+			CSV.write(output_file, group_averages_L1[name])
 
 	# Take L2 average of each
 	L2_pushed_arr = []
@@ -129,15 +133,18 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 
 	# Store L2 averages
 	print("\nL2 Group Averages:")
-	CSV.write(output_file, ["L2 Group Averages:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L2 Group Averages:"])
 	for name in region_names:
 		padded_name = "{:<15}".format(name+":")
 		print(f"{padded_name} {group_averages_L2[name]}")
-		CSV.write(output_file, group_averages_L2[name])
+		if output_file is not None:
+			CSV.write(output_file, group_averages_L2[name])
 
 	# Push L1 down and store
 	print("\nL1 Inverse Push Up:")
-	CSV.write(output_file, ["L1 Pushed Up:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L1 Pushed Up:"])
 	L1_neg_arr = []
 	L1_inverse_pushed = {}
 	for name in region_names:
@@ -150,11 +157,13 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		L1_neg_arr.append(neg_count)
 		padded_name = "{:<15}".format(name+":")
 		print(f"{padded_name} {median_inverse}")
-		CSV.write(output_file, median_inverse)
+		if output_file is not None:
+			CSV.write(output_file, median_inverse)
 
 	# Push L2 down and store
 	print("\nL2 Inverse Push Up:")
-	CSV.write(output_file, ["L2 Pushed Up:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L2 Pushed Up:"])
 	L2_neg_arr = []
 	L2_inverse_pushed = {}
 	for name in region_names:
@@ -167,30 +176,37 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 		L2_neg_arr.append(neg_count)
 		padded_name = "{:<15}".format(name+":")
 		print(f"{padded_name} {mean_inverse}")
-		CSV.write(output_file, mean_inverse)
+		if output_file is not None:
+			CSV.write(output_file, mean_inverse)
 
 	# Write negative counts
-	CSV.write(output_file, ["L1 and L2 Negatives by Group:"])
-	CSV.write(output_file, L1_neg_arr)
-	CSV.write(output_file, L2_neg_arr)
+	if output_file is not None:
+		CSV.write(output_file, ["L1 and L2 Negatives by Group:"])
+		CSV.write(output_file, L1_neg_arr)
+		CSV.write(output_file, L2_neg_arr)
 
 	L1_distance_matrix = compute_pairwise_pushed(L1_pushed_arr)
 	L2_distance_matrix = compute_pairwise_pushed(L2_pushed_arr)
 
 	print("L1 Distance Matrix:")
-	CSV.write(output_file, ["L1 Distance Matrix:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L1 Distance Matrix:"])
 	for i in range(len(L1_pushed_arr)):
 		print(L1_distance_matrix[i])
-		CSV.write(output_file, L1_distance_matrix[i])
+		if output_file is not None:
+			CSV.write(output_file, L1_distance_matrix[i])
 
 	print("L2 Distance Matrix:")
-	CSV.write(output_file, ["L2 Distance Matrix:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L2 Distance Matrix:"])
 	for i in range(len(L2_pushed_arr)):
 		print(L2_distance_matrix[i])
-		CSV.write(output_file, L2_distance_matrix[i])		
+		if output_file is not None:
+			CSV.write(output_file, L2_distance_matrix[i])		
 
 	print("L1 Abundances by Node Type:")
-	CSV.write(output_file, ["L1 Abundances by Node Type:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L1 Abundances by Node Type:"])
 	L1_node_type_group_abundances = []
 	for name in region_names:
 		region_abundance_vector = group_averages_L1[name]
@@ -217,11 +233,13 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 			else:
 				temp += region_abundance_vector[i]
 		print([k, p, c, o, f, g, s, temp])
-		CSV.write(output_file, [k, p, c, o, f, g, s, temp])
+		if output_file is not None:
+			CSV.write(output_file, [k, p, c, o, f, g, s, temp])
 		L1_node_type_group_abundances.append([k, p, c, o, f, g, s, temp])
 
 	print("L2 Abundances by Node Type:")
-	CSV.write(output_file, ["L2 Abundances by Node Type:"])
+	if output_file is not None:
+		CSV.write(output_file, ["L2 Abundances by Node Type:"])
 	L2_node_type_group_abundances = []
 	for name in region_names:
 		region_abundance_vector = group_averages_L2[name]
@@ -248,7 +266,8 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 			else:
 				temp += region_abundance_vector[i]
 		print([k, p, c, o, f, g, s, temp])
-		CSV.write(output_file, [k, p, c, o, f, g, s, temp])
+		if output_file is not None:
+			CSV.write(output_file, [k, p, c, o, f, g, s, temp])
 		L2_node_type_group_abundances.append([k, p, c, o, f, g, s, temp])
 
 	return region_names, tax_arr, group_averages_L1, group_averages_L2, L1_inverse_pushed, L2_inverse_pushed, L1_neg_arr, L2_neg_arr, L1_distance_matrix, L2_distance_matrix, L1_node_type_group_abundances, L2_node_type_group_abundances
