@@ -39,7 +39,7 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file):
 			groups.append(groups_temp[i]['body_site'])
 	group_str = ','.join(groups)
 	L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file)
-	region_names, tax_arr, group_averages_L1, group_averages_L2, L1_inverse_pushed, L2_inverse_pushed, L1_neg_arr, L2_neg_arr, L1_distance_matrix, L2_distance_matrix, L1_node_type_group_abundances, L2_node_type_group_abundances = avg(L1_preprocessed, L2_preprocessed, biom_file, tree_file, metadata_file, tax_file)
+	_, _, _, _, _, _, _, _, L1_distance_matrix, L2_distance_matrix, _, _ = avg(L1_preprocessed, L2_preprocessed, biom_file, tree_file, metadata_file, tax_file)
 	pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, group_str, plot=False)
 	plt.savefig('images/out_L1_group_average.png')
 	pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, group_str, plot=False)
