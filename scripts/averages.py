@@ -139,9 +139,11 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	print("\nL1 Inverse Push Up:")
 	CSV.write(output_file, ["L1 Pushed Up:"])
 	L1_neg_arr = []
+	L1_inverse_pushed = {}
 	for name in region_names:
 		neg_count = 0
 		median_inverse = L1U.inverse_push_up(group_averages_L1[name], T1, l1, nodes_in_order)
+		L1_inverse_pushed[name] = median_inverse
 		for i in range(len(median_inverse)):
 			if median_inverse[i] < negatives_filtering_threshold:
 				neg_count += 1
@@ -154,9 +156,11 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	print("\nL2 Inverse Push Up:")
 	CSV.write(output_file, ["L2 Pushed Up:"])
 	L2_neg_arr = []
+	L2_inverse_pushed = {}
 	for name in region_names:
 		neg_count = 0
 		mean_inverse = L2U.inverse_push_up(group_averages_L2[name], T1, l1, nodes_in_order)
+		L2_inverse_pushed[name] = mean_inverse
 		for i in range(len(mean_inverse)):
 			if mean_inverse[i] < negatives_filtering_threshold:
 				neg_count += 1
@@ -187,6 +191,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 
 	print("L1 Abundances by Node Type:")
 	CSV.write(output_file, ["L1 Abundances by Node Type:"])
+	L1_node_type_group_abundances = []
 	for name in region_names:
 		region_abundance_vector = group_averages_L1[name]
 		k = p = c = o = f = g = s = temp = 0
@@ -213,9 +218,11 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 				temp += region_abundance_vector[i]
 		print([k, p, c, o, f, g, s, temp])
 		CSV.write(output_file, [k, p, c, o, f, g, s, temp])
+		L1_node_type_group_abundances.append([k, p, c, o, f, g, s, temp])
 
 	print("L2 Abundances by Node Type:")
 	CSV.write(output_file, ["L2 Abundances by Node Type:"])
+	L2_node_type_group_abundances = []
 	for name in region_names:
 		region_abundance_vector = group_averages_L2[name]
 		k = p = c = o = f = g = s = temp = 0
@@ -242,6 +249,9 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 				temp += region_abundance_vector[i]
 		print([k, p, c, o, f, g, s, temp])
 		CSV.write(output_file, [k, p, c, o, f, g, s, temp])
+		L2_node_type_group_abundances.append([k, p, c, o, f, g, s, temp])
+
+	return region_names, tax_arr, group_averages_L1, group_averages_L2, L1_inverse_pushed, L2_inverse_pushed, L1_neg_arr, L2_neg_arr, L1_distance_matrix, L2_distance_matrix, L1_node_type_group_abundances, L2_node_type_group_abundances
 
 # Argument parsing
 if __name__ == "__main__":
