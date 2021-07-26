@@ -42,7 +42,7 @@ def generate_preprocessed(biom_file, tree_file, output_file_L1=None, output_file
 		CSV.write(output_file_L2, [dim1, dim2])
 	L2_preprocessed.append([dim1, dim2])
 
-	with mp.Pool(processes=int(cores/2-2)) as pool:
+	with mp.Pool(processes=int(cores/4-1)) as pool:
 		L1_result = pool.map(L1_pushup_worker, values)
 
 	for i in range(len(L1_result)):
@@ -52,7 +52,7 @@ def generate_preprocessed(biom_file, tree_file, output_file_L1=None, output_file
 					CSV.write(output_file_L1, [i, j, L1_result[i][j]])
 				L1_preprocessed.append([i, j, L1_result[i][j]])
 
-	with mp.Pool(processes=int(cores/2-2)) as pool:
+	with mp.Pool(processes=int(cores/4-1)) as pool:
 		L2_result = pool.map(L2_pushup_worker, values)
 
 	for i in range(len(L2_result)):

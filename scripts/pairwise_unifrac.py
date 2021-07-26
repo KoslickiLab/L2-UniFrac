@@ -38,7 +38,7 @@ def Total_Pairwise(biom_file, tree_file, output_file=None, debug=0):
 	PCoA_Samples = BW.extract_samples(biom_file)
 
 	if debug == 1:
-		print(f"Running Debugging Multiprocess on {cores-1} Cores...")
+		print(f"Running Debugging Multiprocess on {int(cores/4-1)} Cores...")
 
 		# Testing subset of samples...
 		PCoA_Samples = PCoA_Samples[:64]
@@ -50,7 +50,7 @@ def Total_Pairwise(biom_file, tree_file, output_file=None, debug=0):
 	# Multi Core Method
 	row = [(i, j) for j in range(len(PCoA_Samples)) for i in range(len(PCoA_Samples))]
 
-	with mp.Pool(processes=cores-1) as pool:
+	with mp.Pool(processes=int(cores/4-1)) as pool:
 		result = pool.map(unifrac_work_wrapper, row)
 
 	result_matrix = []
@@ -100,7 +100,7 @@ def Group_Pairwise(biom_file, tree_file, metadata_file, group_num, output_file=N
 	print(sample_sites)
 
 	if debug == 1:
-		print(f"Running Debugging Multiprocess on {cores-1} Cores...")
+		print(f"Running Debugging Multiprocess on {int(cores/4-1)} Cores...")
 
 		# Testing subset of samples...
 		sample_sites[group_num] = sample_sites[group_num][:64]
@@ -112,7 +112,7 @@ def Group_Pairwise(biom_file, tree_file, metadata_file, group_num, output_file=N
 	# Multi Core Method
 	row = [(i, j) for j in range(len(sample_sites[group_num])) for i in range(len(sample_sites[group_num]))]
 
-	with mp.Pool(processes=cores-1) as pool:
+	with mp.Pool(processes=int(cores/4-1)) as pool:
 		result = pool.map(unifrac_work_wrapper, row)
 
 	result_matrix = []
