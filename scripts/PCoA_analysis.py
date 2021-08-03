@@ -34,12 +34,13 @@ def PCoA_total(distance_file, biom_file, metadata_file, plot=True):
 	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
 
 	result = pcoa(sk_distance_matrix)
-	print(result)
 
 	fig = result.plot(df=pd_metadata, column='body_site',
-							axis_labels=('PC 1', 'PC 2', 'PC 3'),
+							axis_labels=('PC 1 (' + str(round(result.proportion_explained.iloc[0]*100, 2)) + '%)', 'PC 2 (' + str(round(result.proportion_explained.iloc[1]*100, 2)) + '%)', 'PC 3 (' + str(round(result.proportion_explained.iloc[2]*100, 2)) + '%)'),
 							title='Samples colored by body site',
 							cmap='Set1', s=50)
+
+	fig.set_size_inches(18.5, 10.5)
 
 	if plot:
 		plt.show()
@@ -56,12 +57,13 @@ def PCoA_group(distance_file, biom_file, groups, plot=True):
 	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
 
 	result = pcoa(sk_distance_matrix)
-	print(result)
 
 	fig = result.plot(df=pd_metadata, column='body_site',
-							axis_labels=('PC 1', 'PC 2', 'PC 3'),
+							axis_labels=('PC 1 (' + str(round(result.proportion_explained.iloc[0]*100, 2)) + '%)', 'PC 2 (' + str(round(result.proportion_explained.iloc[1]*100, 2)) + '%)', 'PC 3 (' + str(round(result.proportion_explained.iloc[2]*100, 2)) + '%)'),
 							title='Samples colored by body site',
 							cmap='Set1', s=50)
+
+	fig.set_size_inches(18.5, 10.5)
 
 	if plot:
 		plt.show()
@@ -76,12 +78,13 @@ def PCoA_total_from_matrix(distance_matrix, biom_file, metadata_file, plot=False
 	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
 
 	result = pcoa(sk_distance_matrix)
-	print(result)
 
 	fig = result.plot(df=pd_metadata, column='body_site',
-							axis_labels=('PC 1', 'PC 2', 'PC 3'),
+							axis_labels=('PC 1 (' + str(round(result.proportion_explained.iloc[0]*100, 2)) + '%)', 'PC 2 (' + str(round(result.proportion_explained.iloc[1]*100, 2)) + '%)', 'PC 3 (' + str(round(result.proportion_explained.iloc[2]*100, 2)) + '%)'),
 							title='Samples colored by body site',
 							cmap='Set1', s=50)
+
+	fig.set_size_inches(18.5, 10.5)
 
 	if plot:
 		plt.show()
@@ -96,12 +99,13 @@ def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=False):
 	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
 
 	result = pcoa(sk_distance_matrix)
-	print(result)
 
 	fig = result.plot(df=pd_metadata, column='body_site',
-							axis_labels=('PC 1', 'PC 2', 'PC 3'),
+							axis_labels=('PC 1 (' + str(round(result.proportion_explained.iloc[0]*100, 2)) + '%)', 'PC 2 (' + str(round(result.proportion_explained.iloc[1]*100, 2)) + '%)', 'PC 3 (' + str(round(result.proportion_explained.iloc[2]*100, 2)) + '%)'),
 							title='Samples colored by body site',
 							cmap='Set1', s=50)
+
+	fig.set_size_inches(18.5, 10.5)
 
 	if plot:
 		plt.show()
@@ -109,6 +113,9 @@ def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=False):
 		return fig
 
 if __name__ == "__main__":
+	argument = 'skin,saliva,oral cavity,vagina,feces'
+	body_sites = argument.split(",")
+	PCoA_group('L1-Group-UniFrac-Out.csv', '../data/47422_otu_table.biom', body_sites)
 	args = sys.argv
 	if len(args) != 5 and len(args) != 6:
 		raise Exception("Invalid number of parameters.")
