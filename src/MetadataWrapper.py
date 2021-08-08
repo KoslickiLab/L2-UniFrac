@@ -39,7 +39,7 @@ def test_metadata_completeness(metadata_path, biom_extension):
 if __name__ == "__main__":
 
 	# Ensures that the metadata corresponds with the sample data selection
-	test_metadata_completeness('../data/metadata/P_1928_65684500_raw_meta.txt', '../data/47422_otu_table.biom')
+	#test_metadata_completeness('../data/metadata/P_1928_65684500_raw_meta.txt', '../data/47422_otu_table.biom')
 
-	# 4 items from the dictionary as an example
-	print(list(islice(extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt').items(), 4)))
+	# 10 items from the dictionary as an example
+	print(list(islice(extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt').items(), 10)))

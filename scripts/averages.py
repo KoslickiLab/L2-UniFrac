@@ -36,7 +36,6 @@ def compute_pairwise_pushed(pushed_arr):
 		dist_matrix.append(dist_arr)
 	return dist_matrix
 
-
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file=None):
 
@@ -44,6 +43,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	#nodes_samples = BW.extract_biom(biom_file)
 	T1, l1, nodes_in_order = L2U.parse_tree_file(tree_file)
 	import more_itertools
+	print(len(T1.keys()))
 	print(list(T1.keys())[-100:])
 	print(more_itertools.take(100, T1.items()))
 	print(nodes_in_order[:100])
@@ -51,6 +51,7 @@ def compute_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_
 	print(nodes_in_order[406902])
 	return
 
+	# Subsample Biom file (2 samples). Then trace the mass to find where it no longer sums to 1.
 	PCoA_Samples = BW.extract_samples(biom_file)
 	metadata = meta.extract_metadata(metadata_file)
 

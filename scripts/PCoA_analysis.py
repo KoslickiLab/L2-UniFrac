@@ -113,9 +113,6 @@ def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=False):
 		return fig
 
 if __name__ == "__main__":
-	argument = 'skin,saliva,oral cavity,vagina,feces'
-	body_sites = argument.split(",")
-	PCoA_group('L1-Group-UniFrac-Out.csv', '../data/47422_otu_table.biom', body_sites)
 	args = sys.argv
 	if len(args) != 5 and len(args) != 6:
 		raise Exception("Invalid number of parameters.")
