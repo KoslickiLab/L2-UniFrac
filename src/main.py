@@ -21,10 +21,11 @@ import clustering as cluster
 import argparse
 from argparse import ArgumentTypeError
 import multiprocessing as mp
+import time
 
 import numpy as np
 
-def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose=False, intermediate_store=False, preprocessed_use=False):
+def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, intermediate_store, preprocessed_use):
 	total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
 	total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
 	pcoa_out_L1 = pcoa.PCoA_total_from_matrix(total_matrix_L1, biom_file, metadata_file)
@@ -32,7 +33,7 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose=False, inte
 	pcoa_out_L1 = pcoa.PCoA_total_from_matrix(total_matrix_L2, biom_file, metadata_file)
 	plt.savefig('images/out_L2.png')
 
-def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose=False, intermediate_store=False, preprocessed_use=False):
+def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, intermediate_store, preprocessed_use):
 	metadata = meta.extract_metadata(metadata_file)
 	sample_groups = []
 	groups_temp = list(metadata.values())
@@ -49,7 +50,7 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose=F
 	pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, group_str, plot=False)
 	plt.savefig('images/out_L2_group_average.png')
 
-def generate_clustering_report(biom_file, tree_file, metadata_file, verbose=False, intermediate_store=False, preprocessed_use=False):
+def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, intermediate_store, preprocessed_use):
 	if not preprocessed_use:
 		total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
 		total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
@@ -62,7 +63,7 @@ if __name__ == '__main__':
 	parser.add_argument('-v', '--verbose', action="store_true", help="Print out progress report/timing information")
 	
 	parser.add_argument('-th', '--threads', type=int, metavar='', help="Number of threads to use",
-						default=mp.cpu_count())
+						default=int(mp.cpu_count()/4))
 	
 	parser.add_argument('-i', '--intermediate_store', action="store_true", help="Stores intermediate report generation")
 	parser.add_argument('-p', '--preprocessed_use', action="store_true", help="Uses intermediate report data to accelerate output")
@@ -85,5 +86,25 @@ if __name__ == '__main__':
 	#generate_group_pcoa('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt', '../data/taxonomies/gg_13_8_99.gg.tax')
 	#generate_total_pcoa('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt')
 
+	start=time.time()
 	args = parser.parse_args()
-	print(args.verbose)
+	print(args)
+
+	if ((isinstance(args.biom_file, str) and not path.exists(args.biom_file)) or args.biom_file is None) and (args.total_pcoa or args.group_pcoa or args.clustering_report):
+		raise Exception('Error: Invalid Biom File Path')
+	elif ((isinstance(args.tree_file, str) and not path.exists(args.tree_file)) or args.tree_file is None) and (args.total_pcoa or args.group_pcoa or args.clustering_report):
+		raise Exception('Error: Invalid Tree File Path')
+	elif ((isinstance(args.metadata_file, str) and not path.exists(args.metadata_file)) or args.metadata_file is None) and (args.total_pcoa or args.group_pcoa or args.clustering_report):
+		raise Exception('Error: Invalid Metadata File Path')
+	elif ((isinstance(args.taxonomy_file, str) and not path.exists(args.taxonomy_file)) or args.taxonomy_file is None) and (args.group_pcoa):
+		raise Exception('Error: Invalid Taxonomy File Path')
+
+	if path.exists(args.out_file) and args.verbose:
+		print('Output file already exists... It will be overwritten.')
+
+	if args.total_pcoa:
+		generate_total_pcoa(args.biom_file, args.tree_file, args.metadata_file, verbose, intermediate_store, preprocessed_use)
+	if args.group_pcoa:
+		generate_group_pcoa(args.biom_file, args.tree_file, args.metadata_file, args.taxonomy_file, verbose, intermediate_store, preprocessed_use)
+	if args.clustering_report:
+		generate_clustering_report(args.biom_file, args.tree_file, args.metadata_file, verbose, intermediate_store, preprocessed_use)
