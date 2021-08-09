@@ -13,7 +13,7 @@ import TaxWrapper as tax
 
 import PCoA_analysis as pcoa
 import L1_pairwise_unifrac as pairwise1
-import pairwise_unifrac as pairwise2
+import L2_pairwise_unifrac as pairwise2
 import matplotlib.pyplot as plt
 import MetadataWrapper as meta
 import averages as avg
@@ -72,7 +72,7 @@ if __name__ == '__main__':
 	parser.add_argument('-md', '--metadata_file', metavar='', help="Metadata file: Sample names will be the first column and body habitats are the third column, following 'OBERON:'")
 	parser.add_argument('-tx', '--taxonomy_file', metavar='', help="Taxonomy file: Conversion between Tree Node and Taxonomy")
 	
-	parser.add_argument('-o', '--out_file', metavar='', help='Output csv file with the containment indices')
+	parser.add_argument('-o', '--out_file', metavar='', help='Generic output file name. Specific requested operations will append tags and filetypes to the end')
 
 	parser.add_argument('-t', '--total_pcoa', action="store_true", help='Compute total PCoA and generate plot')
 	parser.add_argument('-g', '--group_pcoa', action="store_true", help='Compute group PCoA averages and generate plot')
