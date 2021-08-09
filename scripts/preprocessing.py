@@ -8,8 +8,11 @@ import BiomWrapper as BW
 import CSVWrapper as CSV
 import multiprocessing as mp
 
-def generate_preprocessed(biom_file, tree_file, output_file_L1=None, output_file_L2=None):
-	cores = mp.cpu_count()
+def generate_preprocessed(biom_file, tree_file, output_file_L1=None, output_file_L2=None, max_cores=int(mp.cpu_count()/4)):
+	if max_cores > mp.cpu_count() or max_cores <= 1:
+		cores = mp.cpu_count()-1
+	else:
+		cores = max_cores
 
 	# Note: these are the same for L1/L2, so they will be computed only once.
 	nodes_samples = BW.extract_biom(biom_file)
@@ -42,7 +45,7 @@ def generate_preprocessed(biom_file, tree_file, output_file_L1=None, output_file
 		CSV.write(output_file_L2, [dim1, dim2])
 	L2_preprocessed.append([dim1, dim2])
 
-	with mp.Pool(processes=int(cores/4-1)) as pool:
+	with mp.Pool(processes=cores) as pool:
 		L1_result = pool.map(L1_pushup_worker, values)
 
 	for i in range(len(L1_result)):
