@@ -29,8 +29,8 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
 	return
 	if unifrac_code == 1 or unifrac_code == 2:
-		if preprocessed_use and path.exists('intermediate/generate_total_pcoa_L1_intermediate.txt'):
-			total_matrix_L1 = CSV.read('intermediate/generate_total_pcoa_L1_intermediate.txt')
+		if preprocessed_use and path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
+			total_matrix_L1 = CSV.read('intermediate/L1_distance_matrix_intermediate.txt')
 			if verbose:
 				print('\tSuccessfully retrieved intermediate file for L1 Generate Total PCoA')
 		else:
@@ -42,10 +42,10 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 			if intermediate_store:
 				if verbose:
 					print('\tStoring pairwise alignments...')
-				if path.exists('intermediate/generate_total_pcoa_L1_intermediate.txt'):
-					os.remove('intermediate/generate_total_pcoa_L1_intermediate.txt')
+				if path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
+					os.remove('intermediate/L1_distance_matrix_intermediate.txt')
 				for i in range(len(total_matrix_L1)):
-					CSV.write('intermediate/generate_total_pcoa_L1_intermediate.txt', total_matrix_L1[i])
+					CSV.write('intermediate/L1_distance_matrix_intermediate.txt', total_matrix_L1[i])
 				if verbose:
 					print('\tL1 pairwise distance matrix stored successfully')
 		if verbose:
@@ -57,8 +57,8 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 		if verbose:
 			print('\tL1 PCoA successfully saved')
 	if unifrac_code == 0 or unifrac_code == 1:
-		if preprocessed_use and path.exists('intermediate/generate_total_pcoa_L2_intermediate.txt'):
-			total_matrix_L2 = CSV.read('intermediate/generate_total_pcoa_L2_intermediate.txt')
+		if preprocessed_use and path.exists('intermediate/L2_distance_matrix_intermediate.txt'):
+			total_matrix_L2 = CSV.read('intermediate/L2_distance_matrix_intermediate.txt')
 			if verbose:
 				print('\tSuccessfully retrieved intermediate file for L2 Generate Total PCoA')
 		else:
@@ -70,10 +70,10 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 			if intermediate_store:
 				if verbose:
 					print('\tStoring pairwise alignments...')
-				if path.exists('intermediate/generate_total_pcoa_L2_intermediate.txt'):
-					os.remove('intermediate/generate_total_pcoa_L2_intermediate.txt')
+				if path.exists('intermediate/L2_distance_matrix_intermediate.txt'):
+					os.remove('intermediate/L2_distance_matrix_intermediate.txt')
 				for i in range(len(total_matrix_L2)):
-					CSV.write('intermediate/generate_total_pcoa_L2_intermediate.txt', total_matrix_L2[i])
+					CSV.write('intermediate/L2_distance_matrix_intermediate.txt', total_matrix_L2[i])
 				if verbose:
 					print('\tL2 pairwise distance matrix stored successfully')
 		if verbose:
