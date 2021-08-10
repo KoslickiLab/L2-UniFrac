@@ -106,8 +106,10 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code):
 	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
 	return
-	total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
-	total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
+	if unifrac_code == 1 or unifrac_code == 2:
+		total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
+	if unifrac_code == 0 or unifrac_code == 1:
+		total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
 	cluster.report_clustering(total_matrix_L1, total_matrix_L2, biom_file, metadata_file, 'reports/clustering_report.txt')
 
 if __name__ == '__main__':
@@ -184,3 +186,4 @@ if __name__ == '__main__':
 		generate_clustering_report(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code)
 		if args.verbose:
 			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
+			

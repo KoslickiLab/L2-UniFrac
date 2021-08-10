@@ -597,3 +597,4 @@ def run_tests():
 	test_EMDUnifrac_weighted()
 	test_EMDUnifrac_unweighted()
 	test_EMDUnifrac_unweighted_flow()
+	

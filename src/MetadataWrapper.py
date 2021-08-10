@@ -43,3 +43,4 @@ if __name__ == "__main__":
 
 	# 10 items from the dictionary as an example
 	print(list(islice(extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt').items(), 10)))
+	

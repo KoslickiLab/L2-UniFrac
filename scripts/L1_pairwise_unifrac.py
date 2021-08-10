@@ -159,5 +159,3 @@ if __name__ == "__main__":
 		Group_Pairwise('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt', group_num, 'L1-UniFrac-Out.csv', debug)
 	else:
 		Total_Pairwise('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', 'L1-UniFrac-Out.csv', debug)
-
-	

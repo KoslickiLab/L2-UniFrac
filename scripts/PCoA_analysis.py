@@ -130,3 +130,4 @@ if __name__ == "__main__":
 		elif int(option) == 1:
 			body_sites = args[5].split(",")
 			PCoA_group(distance_file, biom_file, body_sites, True)
+			
