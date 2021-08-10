@@ -34,8 +34,10 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 			if verbose:
 				print('\tSuccessfully retrieved intermediate file for L1 Generate Total PCoA')
 		else:
-			if verbose:
+			if verbose and preprocessed_use:
 				print('\tWarning: Intermediate selected but not available. Computing pairwise alignments... This may take a while...')
+			elif verbose:
+				print('\tWarning: Intermediate pairwise alignment computation starting... This may take a while...')
 			total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
 			if verbose:
 				print('\tCompleted pairwise distance matrix computation')
@@ -62,8 +64,10 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 			if verbose:
 				print('\tSuccessfully retrieved intermediate file for L2 Generate Total PCoA')
 		else:
-			if verbose:
-				print('\tWarning: Intermediate selected but not available. Computing pairwise distance matrix... This may take a while...')
+			if verbose and preprocessed_use:
+				print('\tWarning: Intermediate selected but not available. Computing pairwise alignments... This may take a while...')
+			elif verbose:
+				print('\tWarning: Intermediate pairwise alignment computation starting... This may take a while...')
 			total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
 			if verbose:
 				print('\tCompleted pairwise distance matrix computation')
@@ -112,8 +116,10 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 			if verbose:
 				print('\tSuccessfully retrieved intermediate file for L1 Generate Total PCoA')
 		else:
-			if verbose:
+			if verbose and preprocessed_use:
 				print('\tWarning: Intermediate selected but not available. Computing pairwise alignments... This may take a while...')
+			elif verbose:
+				print('\tWarning: Intermediate pairwise alignment computation starting... This may take a while...')
 			total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
 			if verbose:
 				print('\tCompleted pairwise distance matrix computation')
@@ -141,8 +147,10 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 			if verbose:
 				print('\tSuccessfully retrieved intermediate file for L2 Generate Total PCoA')
 		else:
-			if verbose:
+			if verbose and preprocessed_use:
 				print('\tWarning: Intermediate selected but not available. Computing pairwise alignments... This may take a while...')
+			elif verbose:
+				print('\tWarning: Intermediate pairwise alignment computation starting... This may take a while...')
 			total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
 			if verbose:
 				print('\tCompleted pairwise distance matrix computation')
