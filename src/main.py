@@ -1,29 +1,21 @@
-# The purpose of main.py is to perform all necessary operations using a base set of data.
-
 import sys
 sys.path.append('../')
 sys.path.append('../src')
 sys.path.append('../scripts')
 from os import path
-import L1Unifrac as L1U
-import L2Unifrac as L2U
-import BiomWrapper as BW
-import TaxWrapper as tax
-
+import numpy as np
+import matplotlib.pyplot as plt
+import argparse
+from argparse import ArgumentTypeError
+import time
+import multiprocessing as mp
 import PCoA_analysis as pcoa
 import L1_pairwise_unifrac as pairwise1
 import L2_pairwise_unifrac as pairwise2
-import matplotlib.pyplot as plt
 import MetadataWrapper as meta
 import averages as avg
 import clustering as cluster
-import argparse
-from argparse import ArgumentTypeError
-import multiprocessing as mp
-import time
 import CSVWrapper as CSV
-
-import numpy as np
 
 def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
