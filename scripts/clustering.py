@@ -24,6 +24,8 @@ def report_clustering(distance_file, biom_file, metadata_file, verbose, L=2, out
 	if output_file is not None:
 		f = open(output_file, 'w')
 
+	output_matrix = []
+
 	AgglomerativeCluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='precomputed', linkage='complete').fit_predict(distance_matrix)  
 	KMedoidsCluster = KMedoids(n_clusters=num_clusters, metric='precomputed', method='pam', init='heuristic').fit_predict(distance_matrix)
 
@@ -45,9 +47,15 @@ def report_clustering(distance_file, biom_file, metadata_file, verbose, L=2, out
 	if output_file is not None:
 		if L == 1:
 			f.write('Printing results for L1-UniFrac:\n')
-		if L == 2:
+		elif L == 2:
 			f.write('Printing results for L2-UniFrac:\n')
 		f.write('Metric\t\t\t\tAgglomerativeClustering\t\t\tKMedoids\n')
+
+	if L == 1:
+		output_matrix.append(['Printing results for L1-UniFrac:'])
+	if L == 2:
+		output_matrix.append(['Printing results for L2-UniFrac:'])
+	output_matrix.append(['Metric', 'AgglomerativeClustering', 'KMedoids'])
 
 	RI1 = rand_score(PCoA_Samples, AgglomerativeCluster)
 	RI2 = rand_score(PCoA_Samples, KMedoidsCluster)
@@ -77,6 +85,14 @@ def report_clustering(distance_file, biom_file, metadata_file, verbose, L=2, out
 		f.write(f'Adjusted Mutual Info Score:     {AMI1}\t\t\t{AMI2}\n')
 		f.write(f'Fowlkes Mallows Score:          {FM1}\t\t\t{FM2}\n')
 
+	output_matrix.append(['Rand Index Score:', RI1, RI2])
+	output_matrix.append(['Adjusted Rand Index Score:', ARI1, ARI2])
+	output_matrix.append(['Normalized Mutual Index Score:', NMI1, NMI2])
+	output_matrix.append(['Adjusted Mutual Info Score:', AMI1, AMI2])
+	output_matrix.append(['Fowlkes Mallows Score:', FM1, FM2])
+
+	return output_matrix
+
 if __name__ == '__main__':
 
 	args = sys.argv
@@ -96,5 +112,5 @@ if __name__ == '__main__':
 		if not path.exists(L1_file) or not path.exists(L2_file):
 			raise Exception('Error: Missing default CSV file(s).')
 
-	report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', True, 1)
-	report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', True, 2)
+	print(report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 1))
+	print(report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 2))
