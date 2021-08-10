@@ -112,5 +112,5 @@ if __name__ == '__main__':
 		if not path.exists(L1_file) or not path.exists(L2_file):
 			raise Exception('Error: Missing default CSV file(s).')
 
-	print(report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 1))
-	print(report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 2))
+	report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 1)
+	report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 2)

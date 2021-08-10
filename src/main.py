@@ -25,7 +25,7 @@ import CSVWrapper as CSV
 
 import numpy as np
 
-def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code):
+def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
 	return
 	if unifrac_code == 1 or unifrac_code == 2:
@@ -53,7 +53,7 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 		pcoa_out_L1 = pcoa.PCoA_total_from_matrix(total_matrix_L1, biom_file, metadata_file)
 		if verbose:
 			print('\tGeneration complete. Saving...')
-		plt.savefig('images/out_L1.png')
+		plt.savefig('images/L1_' + str(output_file) + '.png')
 		if verbose:
 			print('\tL1 PCoA successfully saved')
 	if unifrac_code == 0 or unifrac_code == 1:
@@ -81,11 +81,11 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 		pcoa_out_L2 = pcoa.PCoA_total_from_matrix(total_matrix_L2, biom_file, metadata_file)
 		if verbose:
 			print('\tGeneration complete. Saving...')
-		plt.savefig('images/out_L2.png')
+		plt.savefig('images/L2_' + str(output_file) + '.png')
 		if verbose:
 			print('\tL2 PCoA successfully saved')
 
-def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code):
+def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	print(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
 	return
 	metadata = meta.extract_metadata(metadata_file)
@@ -103,14 +103,67 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 	pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, group_str, plot=False)
 	plt.savefig('images/out_L2_group_average.png')
 
-def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code):
+def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
 	return
 	if unifrac_code == 1 or unifrac_code == 2:
-		total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
+		if preprocessed_use and path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
+			total_matrix_L1 = CSV.read('intermediate/L1_distance_matrix_intermediate.txt')
+			if verbose:
+				print('\tSuccessfully retrieved intermediate file for L1 Generate Total PCoA')
+		else:
+			if verbose:
+				print('\tWarning: Intermediate selected but not available. Computing pairwise alignments... This may take a while...')
+			total_matrix_L1 = pairwise1.Total_Pairwise(biom_file, tree_file)
+			if verbose:
+				print('\tCompleted pairwise distance matrix computation')
+			if intermediate_store:
+				if verbose:
+					print('\tStoring pairwise alignments...')
+				if path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
+					os.remove('intermediate/L1_distance_matrix_intermediate.txt')
+				for i in range(len(total_matrix_L1)):
+					CSV.write('intermediate/L1_distance_matrix_intermediate.txt', total_matrix_L1[i])
+				if verbose:
+					print('\tL1 pairwise distance matrix stored successfully')
+		if verbose:
+			print('\tGenerating Clustering Report...')
+		report = cluster.report_clustering(total_matrix_L1, biom_file, metadata_file, 'reports/clustering_report.txt', False, 1)
+		if verbose:
+			print('\tGeneration complete. Saving...')
+		for i in range(len(report)):
+			CSV.write('reports/L1_' + str(output_file) + '.csv')
+		if verbose:
+			print('\tL1 clustering successfully saved')
 	if unifrac_code == 0 or unifrac_code == 1:
-		total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
-	cluster.report_clustering(total_matrix_L1, total_matrix_L2, biom_file, metadata_file, 'reports/clustering_report.txt')
+		if preprocessed_use and path.exists('intermediate/L2_distance_matrix_intermediate.txt'):
+			total_matrix_L2 = CSV.read('intermediate/L2_distance_matrix_intermediate.txt')
+			if verbose:
+				print('\tSuccessfully retrieved intermediate file for L2 Generate Total PCoA')
+		else:
+			if verbose:
+				print('\tWarning: Intermediate selected but not available. Computing pairwise alignments... This may take a while...')
+			total_matrix_L2 = pairwise2.Total_Pairwise(biom_file, tree_file)
+			if verbose:
+				print('\tCompleted pairwise distance matrix computation')
+			if intermediate_store:
+				if verbose:
+					print('\tStoring pairwise alignments...')
+				if path.exists('intermediate/L2_distance_matrix_intermediate.txt'):
+					os.remove('intermediate/L2_distance_matrix_intermediate.txt')
+				for i in range(len(total_matrix_L2)):
+					CSV.write('intermediate/L2_distance_matrix_intermediate.txt', total_matrix_L2[i])
+				if verbose:
+					print('\tL2 pairwise distance matrix stored successfully')
+		if verbose:
+			print('\tGenerating Clustering Report...')
+		cluster.report_clustering(total_matrix_L2, biom_file, metadata_file, 'reports/clustering_report.txt', False, 2)
+		if verbose:
+			print('\tGeneration complete. Saving...')
+		for i in range(len(report)):
+			CSV.write('reports/L2_' + str(output_file) + '.csv')
+		if verbose:
+			print('\tL2 clustering successfully saved')
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
@@ -186,4 +239,3 @@ if __name__ == '__main__':
 		generate_clustering_report(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code)
 		if args.verbose:
 			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
-			
