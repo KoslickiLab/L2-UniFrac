@@ -44,9 +44,9 @@ if __name__ == '__main__':
 	# Test biom
 	nodes_test = extract_biom('../data/47422_otu_table.biom')
 	print(nodes_test)
-	print(len(extract_samples('../data/47422_otu_table.biom')))
+	#print(len(extract_samples('../data/47422_otu_table.biom')))
 
 	# Real-world biom
-	nodes_sample = extract_biom('../data/47422_otu_table.biom')
-	print(nodes_sample[:8])
-	print(len(nodes_sample))
+	#nodes_sample = extract_biom('../data/47422_otu_table.biom')
+	#print(nodes_sample[:8])
+	#print(len(nodes_sample))
