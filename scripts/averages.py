@@ -26,8 +26,16 @@ import numpy as np
 # are very large relative to these erroneous ones.
 negatives_filtering_threshold = -10e-14
 
-# ******************This code is certainly part of the problem. Bring up in meeting******************
-def compute_pairwise_pushed(pushed_arr):
+def compute_pairwise_pushed_L1(pushed_arr):
+	dist_matrix = []
+	for i in range(len(pushed_arr)):
+		dist_arr = []
+		for j in range(len(pushed_arr)):
+			unifrac_distance = np.sum(np.abs(pushed_arr[i] - pushed_arr[j]))
+			dist_arr.append(unifrac_distance)
+		dist_matrix.append(dist_arr)
+	return dist_matrix
+def compute_pairwise_pushed_L2(pushed_arr):
 	dist_matrix = []
 	for i in range(len(pushed_arr)):
 		dist_arr = []
@@ -103,14 +111,22 @@ def compute_averages(distance_file, biom_file, tree_file, metadata_file, tax_fil
 		group_arr = []
 		for j in range(len(region_map[region_names[i]])):
 			group_arr.append(np.array(sparse_matrix[region_map[region_names[i]][j]].todense())[0])
-		average = L1U.median_of_vectors(group_arr)
+		if unifrac_code == 1 or unifrac_code == 2:
+			average = L1U.median_of_vectors(group_arr)
+		if unifrac_code == 0 or unifrac_code == 1:
+			average = L2U.mean_of_vectors(group_arr)
 		group_averages[region_names[i]] = average
 		pushed_arr.append(average)
 
 	# Store L1 averages
-	print("L1 Group Averages:")
-	if output_file is not None:
-		CSV.write(output_file, ["L1 Group Averages:"])
+	if unifrac_code == 1 or unifrac_code == 2:
+		print("L1 Group Averages:")
+		if output_file is not None:
+			CSV.write(output_file, ["L1 Group Averages:"])
+	if unifrac_code == 0 or unifrac_code == 1:
+		print("L2 Group Averages:")
+		if output_file is not None:
+			CSV.write(output_file, ["L2 Group Averages:"])
 	for name in region_names:
 		padded_name = "{:<15}".format(name+":")
 		print(f"{padded_name} {group_averages[name]}")
@@ -118,14 +134,22 @@ def compute_averages(distance_file, biom_file, tree_file, metadata_file, tax_fil
 			CSV.write(output_file, group_averages[name])
 
 	# Push L1 down and store
-	print("\nL1 Inverse Push Up:")
-	if output_file is not None:
-		CSV.write(output_file, ["L1 Pushed Up:"])
+	if unifrac_code == 1 or unifrac_code == 2:
+		print("\nL1 Inverse Push Up:")
+		if output_file is not None:
+			CSV.write(output_file, ["L1 Pushed Up:"])
+	if unifrac_code == 0 or unifrac_code == 1:
+		print("\nL2 Inverse Push Up:")
+		if output_file is not None:
+			CSV.write(output_file, ["L2 Pushed Up:"])
 	neg_arr = []
 	inverse_pushed = {}
 	for name in region_names:
 		neg_count = 0
-		median_inverse = L1U.inverse_push_up(group_averages[name], T1, l1, nodes_in_order)
+		if unifrac_code == 1 or unifrac_code == 2:
+			median_inverse = L1U.inverse_push_up(group_averages[name], T1, l1, nodes_in_order)
+		if unifrac_code == 0 or unifrac_code == 1:
+			median_inverse = L2U.inverse_push_up(group_averages[name], T1, l1, nodes_in_order)
 		inverse_pushed[name] = median_inverse
 		for i in range(len(median_inverse)):
 			if median_inverse[i] < negatives_filtering_threshold:
@@ -138,21 +162,35 @@ def compute_averages(distance_file, biom_file, tree_file, metadata_file, tax_fil
 
 	# Write negative counts
 	if output_file is not None:
-		CSV.write(output_file, ["L1 and L2 Negatives by Group:"] + neg_arr)
+		CSV.write(output_file, ["Negatives by Group:"])
+		CSV.write(output_file, neg_arr)
 
-	distance_matrix = compute_pairwise_pushed(pushed_arr)
+	if unifrac_code == 1 or unifrac_code == 2:
+		distance_matrix = compute_pairwise_pushed_L1(pushed_arr)
+	if unifrac_code == 0 or unifrac_code == 1:
+		distance_matrix = compute_pairwise_pushed_L2(pushed_arr)
 
-	print("L1 Distance Matrix:")
-	if output_file is not None:
-		CSV.write(output_file, ["L1 Distance Matrix:"])
+	if unifrac_code == 1 or unifrac_code == 2:
+		print("L1 Distance Matrix:")
+		if output_file is not None:
+			CSV.write(output_file, ["L1 Distance Matrix:"])
+	if unifrac_code == 0 or unifrac_code == 1:
+		print("L2 Distance Matrix:")
+		if output_file is not None:
+			CSV.write(output_file, ["L2 Distance Matrix:"])
 	for i in range(len(pushed_arr)):
 		print(distance_matrix[i])
 		if output_file is not None:
 			CSV.write(output_file, distance_matrix[i])
 
-	print("L1 Abundances by Node Type:")
-	if output_file is not None:
-		CSV.write(output_file, ["L1 Abundances by Node Type:"])
+	if unifrac_code == 1 or unifrac_code == 2:
+		print("L1 Abundances by Node Type:")
+		if output_file is not None:
+			CSV.write(output_file, ["L1 Abundances by Node Type:"])
+	if unifrac_code == 0 or unifrac_code == 1:
+		print("L2 Abundances by Node Type:")
+		if output_file is not None:
+			CSV.write(output_file, ["L2 Abundances by Node Type:"])
 	node_type_group_abundances = []
 	for name in region_names:
 		region_abundance_vector = group_averages[name]
