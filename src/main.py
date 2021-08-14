@@ -84,6 +84,8 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	print(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
 	return
+	if verbose:
+		print('\tExtracting metadata...')
 	metadata = meta.extract_metadata(metadata_file)
 	sample_groups = []
 	groups_temp = list(metadata.values())
@@ -92,7 +94,9 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		if groups_temp[i]['body_site'] not in groups:
 			groups.append(groups_temp[i]['body_site'])
 	group_str = ','.join(groups)
-	L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file)
+	if verbose:
+		print('\tSuccessfully extracted metadata')
+	L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file, unifrac_code)
 	_, _, _, _, _, _, _, _, L1_distance_matrix, L2_distance_matrix, _, _ = avg.compute_averages(L1_preprocessed, L2_preprocessed, biom_file, tree_file, metadata_file, tax_file)
 	pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, group_str, plot=False)
 	plt.savefig('images/out_L1_group_average.png')

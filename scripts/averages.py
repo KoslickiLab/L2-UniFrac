@@ -485,4 +485,4 @@ if __name__ == "__main__":
 		print(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file)
 		if not path.exists(L1_file) or not path.exists(L2_file) or not path.exists(biom_file) or not path.exists(tree_file) or not path.exists(metadata_file) or not path.exists(tax_file):
 			raise Exception("Error: Invalid file path(s).")
-		#compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file)
+		compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file)
