@@ -14,9 +14,12 @@ def extract_biom(address):
 
 	# Formulate the dictionary required for L2 Unifrac by associating each sample weight to its node ID.
 	nodes_samples = {}
+	nodes_samples_temp = {}
 	for i in range(len(phylogenetic_tree_nodes)):
 		row_vector = Biom._get_row(i).todense().tolist()[0] # Convert Table row to a standard python list.
-		nodes_samples[phylogenetic_tree_nodes[i]] = {sample_ids[j]:row_vector[j] for j in range(len(sample_ids))}
+		nodes_samples_temp[phylogenetic_tree_nodes[i]] = {sample_ids[j]:row_vector[j] for j in range(len(sample_ids))}
+		sample_count = sum(nodes_samples_temp[phylogenetic_tree_nodes[i]].values())
+		nodes_samples[phylogenetic_tree_nodes[i]] = {k:v/sample_count for k,v in nodes_samples_temp[phylogenetic_tree_nodes[i]].items()}
 	return nodes_samples
 
 def extract_samples(address):
@@ -43,7 +46,8 @@ if __name__ == '__main__':
 	
 	# Test biom
 	nodes_test = extract_biom('../data/47422_otu_table.biom')
-	print(nodes_test)
+	print(nodes_test['1050608'])
+	print(sum(nodes_test['1050608'].values()))
 	#print(len(extract_samples('../data/47422_otu_table.biom')))
 
 	# Real-world biom
