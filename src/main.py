@@ -242,20 +242,20 @@ if __name__ == '__main__':
 		segment_start = time.time()
 		if args.verbose:
 			print('Starting Total PCoA Generation...')
-		generate_total_pcoa(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, output_file)
+		generate_total_pcoa(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
 		if args.verbose:
 			print('Total PCoA Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
 	if args.group_pcoa:
 		segment_start = time.time()
 		if args.verbose:
 			print('Starting Group PCoA Generation...')
-		generate_group_pcoa(args.biom_file, args.tree_file, args.metadata_file, args.taxonomy_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, output_file)
+		generate_group_pcoa(args.biom_file, args.tree_file, args.metadata_file, args.taxonomy_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
 		if args.verbose:
 			print('Group PCoA Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
 	if args.clustering_report:
 		segment_start = time.time()
 		if args.verbose:
 			print('Starting Clustering Report Generation...')
-		generate_clustering_report(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, output_file)
+		generate_clustering_report(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
 		if args.verbose:
 			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
