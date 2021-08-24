@@ -65,8 +65,8 @@ def generate_preprocessed(biom_file, tree_file, unifrac_code, output_file_L1=Non
 		for i in range(len(result)):
 			for j in range(len(result[i])):
 				if result[i][j] != 0:
-					if output_file_L1 is not None:
-						CSV.write(output_file_L1, [i, j, result[i][j]])
+					if output_file_L2 is not None:
+						CSV.write(output_file_L2, [i, j, result[i][j]])
 					L2_preprocessed.append([i, j, result[i][j]])
 
 	if unifrac_code == 0:

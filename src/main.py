@@ -96,12 +96,34 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 	group_str = ','.join(groups)
 	if verbose:
 		print('\tSuccessfully extracted metadata')
-	L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file, unifrac_code)
-	_, _, _, _, _, _, _, _, L1_distance_matrix, L2_distance_matrix, _, _ = avg.compute_averages(L1_preprocessed, L2_preprocessed, biom_file, tree_file, metadata_file, tax_file)
-	pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, group_str, plot=False)
-	plt.savefig('images/out_L1_group_average.png')
-	pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, group_str, plot=False)
-	plt.savefig('images/out_L2_group_average.png')
+	if preprocessed_use and path.exists('intermediate/L1_preprocessed_intermediate.txt') and path.exists('intermediate/L2_preprocessed_intermediate.txt'):
+		L1_preprocessed = CSV.read('intermediate/L1_preprocessed_intermediate.txt')
+		L2_preprocessed = CSV.read('intermediate/L2_preprocessed_intermediate.txt')
+		if verbose:
+			print('\tSuccessfully retrieved intermediate file for L1 and L2 Preprocessing')
+	else:
+		if verbose and preprocessed_use:
+			print('\tWarning: Intermediate selected but not available. Starting preprocessing... This may take a while...')
+		elif verbose:
+			print('\tWarning: Biom preprocessing starting... This may take a while...')
+		if intermediate_store:
+			if path.exists('intermediate/L1_preprocessed_intermediate.txt'):
+				os.remove('intermediate/L1_preprocessed_intermediate.txt')
+			if path.exists('intermediate/L2_preprocessed_intermediate.txt'):
+				os.remove('intermediate/L2_preprocessed_intermediate.txt')
+			L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file, 1, 'L1_preprocessed_intermediate.txt', 'L2_preprocessed_intermediate.txt')
+		else:
+			L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file, unifrac_code)
+		if verbose:
+			print('\tCompleted biom preprocessing matrix computation')
+	if unifrac_code == 1 or unifrac_code == 2:
+		_, _, _, _, _, L1_distance_matrix, _ = avg.compute_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, None, unifrac_code)
+		pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, group_str, plot=False)
+		plt.savefig('images/out_L1_group_average.png')
+	if unifrac_code == 0 or unifrac_code == 1:
+		_, _, _, _, _, L2_distance_matrix, _ = avg.compute_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, None, unifrac_code)
+		pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, group_str, plot=False)
+		plt.savefig('images/out_L2_group_average.png')
 
 def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
