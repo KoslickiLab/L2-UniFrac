@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
 	parser.add_argument('-bi', '--biom_file', metavar='', help='Biom file: Sample dataset in the BIOM file format')
 	parser.add_argument('-tr', '--tree_file', metavar='', help='Tree file: OTU Tree in TREE file format')
-	parser.add_argument('-md', '--metadata_file', metavar='', help='Metadata file: Sample names will be the first column and body habitats are the third column, following 'OBERON:'')
+	parser.add_argument('-md', '--metadata_file', metavar='', help='Metadata file: Sample names will be the first column and body habitats are the third column, following "OBERON:"')
 	parser.add_argument('-tx', '--taxonomy_file', metavar='', help='Taxonomy file: Conversion between Tree Node and Taxonomy')
 	
 	parser.add_argument('-o', '--out_file', metavar='', help='Generic output file name. Specific requested operations will append tags and filetypes to the end')
