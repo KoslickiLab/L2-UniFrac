@@ -18,8 +18,6 @@ import clustering as cluster
 import CSVWrapper as CSV
 
 def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
-	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
-	return
 	if unifrac_code == 1 or unifrac_code == 2:
 		if preprocessed_use and path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
 			total_matrix_L1 = CSV.read('intermediate/L1_distance_matrix_intermediate.txt')
@@ -82,8 +80,6 @@ def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, i
 			print('\tL2 PCoA successfully saved')
 
 def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
-	print(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
-	return
 	if verbose:
 		print('\tExtracting metadata...')
 	metadata = meta.extract_metadata(metadata_file)
@@ -126,8 +122,6 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		plt.savefig('images/out_L2_group_average.png')
 
 def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
-	print(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code)
-	return
 	if unifrac_code == 1 or unifrac_code == 2:
 		if preprocessed_use and path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
 			total_matrix_L1 = CSV.read('intermediate/L1_distance_matrix_intermediate.txt')
