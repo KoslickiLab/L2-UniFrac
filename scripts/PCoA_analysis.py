@@ -113,6 +113,7 @@ def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=False):
 		return fig
 
 if __name__ == "__main__":
+	#PCoA_total('../src/intermediate/L2_distance_matrix_intermediate.txt', '../data/biom/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', True)
 	args = sys.argv
 	if len(args) != 5 and len(args) != 6:
 		raise Exception("Invalid number of parameters.")
