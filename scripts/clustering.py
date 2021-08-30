@@ -15,7 +15,7 @@ import BiomWrapper as BW
 import CSVWrapper as CSV
 import MetadataWrapper as meta
 
-def report_clustering(distance_file, biom_file, metadata_file, verbose, L=2, output_file=None):
+def report_clustering(distance_file, biom_file, metadata_file, num_clusters, verbose, L=2, output_file=None):
 	if not isinstance(distance_file, list):
 		distance_matrix = CSV.read(distance_file)
 	else:
@@ -112,5 +112,5 @@ if __name__ == '__main__':
 		if not path.exists(L1_file) or not path.exists(L2_file):
 			raise Exception('Error: Missing default CSV file(s).')
 
-	report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 1)
-	report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', False, 2)
+	report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', num_clusters, False, 1)
+	report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', num_clusters, False, 2)

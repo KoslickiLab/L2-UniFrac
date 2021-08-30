@@ -28,6 +28,35 @@ def extract_metadata(extension):
 	except:
 		raise Exception("Unknown exception occurred. Try again.")
 
+def extract_num_clusters(extension):
+	try:
+		f = open(str(extension), 'r')
+		metadata = f.readlines()
+
+		for i in range(len(metadata)):
+			metadata[i] = metadata[i].split("\t")
+
+		del[metadata[0]]
+
+		meta_dict = {}
+		for i in range(len(metadata)):
+			meta_dict[metadata[i][0]] = {'body_site': metadata[i][3][7:]}
+
+		values = list(meta_dict.values())
+		
+		unique_list = []
+		for i in range(len(values)):
+			if values[i]['body_site'] not in unique_list:
+				unique_list.append(values[i]['body_site'])
+		
+		return len(unique_list)
+
+	except FileNotFoundError:
+		raise FileNotFoundError("Unknown file. Make sure you have the correct address and try again!")
+
+	except:
+		raise Exception("Unknown exception occurred. Try again.")
+
 # Ensures that extracted metadata is suffient for the selected biom file
 def test_metadata_completeness(metadata_path, biom_extension):
 	meta_dict = extract_metadata(metadata_path)
@@ -43,4 +72,4 @@ if __name__ == "__main__":
 
 	# 10 items from the dictionary as an example
 	print(list(islice(extract_metadata('../data/metadata/P_1928_65684500_raw_meta.txt').items(), 10)))
-	
+	print(extract_num_clusters('../data/metadata/P_1928_65684500_raw_meta.txt'))

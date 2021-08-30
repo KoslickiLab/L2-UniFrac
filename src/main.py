@@ -122,6 +122,7 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		plt.savefig('images/out_L2_group_average.png')
 
 def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
+	num_clusters = extract_num_clusters(metadata_file)
 	if unifrac_code == 1 or unifrac_code == 2:
 		if preprocessed_use and path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
 			total_matrix_L1 = CSV.read('intermediate/L1_distance_matrix_intermediate.txt')
@@ -146,7 +147,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 					print('\tL1 pairwise distance matrix stored successfully')
 		if verbose:
 			print('\tGenerating Clustering Report...')
-		report = cluster.report_clustering(total_matrix_L1, biom_file, metadata_file, 'reports/clustering_report.txt', False, 1)
+		report = cluster.report_clustering(total_matrix_L1, biom_file, metadata_file, num_clusters, False, 1, 'reports/L1_' + str(output_file) + '_clustering.txt')
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
@@ -177,7 +178,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 					print('\tL2 pairwise distance matrix stored successfully')
 		if verbose:
 			print('\tGenerating Clustering Report...')
-		cluster.report_clustering(total_matrix_L2, biom_file, metadata_file, 'reports/clustering_report.txt', False, 2)
+		cluster.report_clustering(total_matrix_L2, biom_file, metadata_file, num_clusters, False, 2, 'reports/L2_' + str(output_file) + '_clustering.txt')
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
