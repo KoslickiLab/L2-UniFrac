@@ -151,7 +151,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
-			CSV.write('reports/L1_' + str(output_file) + '.csv')
+			CSV.write('reports/L1_' + str(output_file) + '.csv', report[i])
 		if verbose:
 			print('\tL1 clustering successfully saved')
 	if unifrac_code == 0 or unifrac_code == 1:
@@ -182,7 +182,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
-			CSV.write('reports/L2_' + str(output_file) + '.csv')
+			CSV.write('reports/L2_' + str(output_file) + '.csv', report[i])
 		if verbose:
 			print('\tL2 clustering successfully saved')
 
