@@ -178,7 +178,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 					print('\tL2 pairwise distance matrix stored successfully')
 		if verbose:
 			print('\tGenerating Clustering Report...')
-		cluster.report_clustering(total_matrix_L2, biom_file, metadata_file, num_clusters, False, 2, 'reports/L2_' + str(output_file) + '_clustering.txt')
+		report = cluster.report_clustering(total_matrix_L2, biom_file, metadata_file, num_clusters, False, 2, 'reports/L2_' + str(output_file) + '_clustering.txt')
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
