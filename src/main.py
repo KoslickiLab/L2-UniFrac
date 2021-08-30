@@ -122,7 +122,7 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		plt.savefig('images/out_L2_group_average.png')
 
 def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
-	num_clusters = extract_num_clusters(metadata_file)
+	num_clusters = meta.extract_num_clusters(metadata_file)
 	if unifrac_code == 1 or unifrac_code == 2:
 		if preprocessed_use and path.exists('intermediate/L1_distance_matrix_intermediate.txt'):
 			total_matrix_L1 = CSV.read('intermediate/L1_distance_matrix_intermediate.txt')
