@@ -58,9 +58,9 @@ def test_push_up():
     (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
     unifrac2 = np.linalg.norm(L2U.push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
                   L2U.push_up(nodes_weighted['sample2'], T1, l1, nodes1))
-    EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-    print(unifrac2, EMDUnifrac)
-    assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
+    L2_UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+    print(unifrac2, L2_UniFrac)
+    assert np.abs(unifrac2 - L2_UniFrac) < 10**-8
 
     tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
     (T1, l1, nodes1) = L2U.parse_tree(tree_str)
@@ -72,18 +72,18 @@ def test_push_up():
     (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
     unifrac2 = np.linalg.norm(L2U.push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
                   L2U.push_up(nodes_weighted['sample2'], T1, l1, nodes1))
-    EMDUnifrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-    print(unifrac2, EMDUnifrac)
-    assert np.abs(unifrac2 - EMDUnifrac) < 10**-8
+    L2_UniFrac = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+    print(unifrac2, L2_UniFrac)
+    assert np.abs(unifrac2 - L2_UniFrac) < 10**-8
     #test with real data
     P = env_prob_dict['232.M9Okey217']
     Q = env_prob_dict['232.M3Indl217']
     unifrac2 = np.linalg.norm(L2U.push_up(P, Tint, lint, nodes_in_order) -
                              L2U.push_up(Q, Tint, lint, nodes_in_order))
-    EMDUnifrac2 = L2U.L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
-    print(unifrac2, EMDUnifrac2)
-    assert np.abs(unifrac2 - EMDUnifrac2) < 10**-8
-    #assert np.sum(np.abs(unifrac2 - EMDUnifrac)) < 10**-10
+    L2_UniFrac2 = L2U.L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
+    print(unifrac2, L2_UniFrac2)
+    assert np.abs(unifrac2 - L2_UniFrac2) < 10**-8
+    #assert np.sum(np.abs(unifrac2 - L2_UniFrac)) < 10**-10
 
 def run_tests():
     test_parse_tree()
