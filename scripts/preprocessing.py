@@ -8,6 +8,14 @@ import BiomWrapper as BW
 import CSVWrapper as CSV
 import multiprocessing as mp
 
+def L1_pushup_worker(sample_num):
+	L1_Pushed = L1U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
+	return L1_Pushed
+
+def L2_pushup_worker(sample_num):
+	L2_Pushed = L2U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
+	return L2_Pushed
+
 def generate_preprocessed(biom_file, tree_file, unifrac_code, output_file_L1=None, output_file_L2=None, max_cores=int(mp.cpu_count()/4)):
 	if max_cores > mp.cpu_count() or max_cores <= 1:
 		cores = mp.cpu_count()-1
@@ -20,14 +28,6 @@ def generate_preprocessed(biom_file, tree_file, unifrac_code, output_file_L1=Non
 	(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
 	PCoA_Samples = BW.extract_samples(biom_file)
-
-	def L1_pushup_worker(sample_num):
-		L1_Pushed = L1U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
-		return L1_Pushed
-
-	def L2_pushup_worker(sample_num):
-		L2_Pushed = L2U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
-		return L2_Pushed
 
 	# Multi Core Method
 	L1_preprocessed = []
@@ -89,14 +89,6 @@ def generate_preprocessed_combined(biom_file, tree_file, output_file_L1=None, ou
 	(nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes_in_order)
 
 	PCoA_Samples = BW.extract_samples(biom_file)
-
-	def L1_pushup_worker(sample_num):
-		L1_Pushed = L1U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
-		return L1_Pushed
-
-	def L2_pushup_worker(sample_num):
-		L2_Pushed = L2U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
-		return L2_Pushed
 
 	# Multi Core Method
 	L1_preprocessed = []
