@@ -16,6 +16,7 @@ import MetadataWrapper as meta
 import averages as avg
 import clustering as cluster
 import CSVWrapper as CSV
+import preprocessing as prep
 
 def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	if unifrac_code == 1 or unifrac_code == 2:
@@ -107,9 +108,9 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 				os.remove('intermediate/L1_preprocessed_intermediate.txt')
 			if path.exists('intermediate/L2_preprocessed_intermediate.txt'):
 				os.remove('intermediate/L2_preprocessed_intermediate.txt')
-			L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file, 1, 'L1_preprocessed_intermediate.txt', 'L2_preprocessed_intermediate.txt')
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, 1, 'L1_preprocessed_intermediate.txt', 'L2_preprocessed_intermediate.txt')
 		else:
-			L1_preprocessed, L2_preprocessed = generate_preprocessed(biom_file, tree_file, unifrac_code)
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, unifrac_code)
 		if verbose:
 			print('\tCompleted biom preprocessing matrix computation')
 	if unifrac_code == 1 or unifrac_code == 2:
@@ -151,7 +152,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
-			CSV.write('reports/L1_' + str(output_file) + '.csv', report[i])
+			CSV.write('reports/L1_' + str(output_file) + '_clustering.csv', report[i])
 		if verbose:
 			print('\tL1 clustering successfully saved')
 	if unifrac_code == 0 or unifrac_code == 1:
@@ -182,7 +183,7 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 		if verbose:
 			print('\tGeneration complete. Saving...')
 		for i in range(len(report)):
-			CSV.write('reports/L2_' + str(output_file) + '.csv', report[i])
+			CSV.write('reports/L2_' + str(output_file) + '_clustering.csv', report[i])
 		if verbose:
 			print('\tL2 clustering successfully saved')
 
