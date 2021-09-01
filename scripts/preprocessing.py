@@ -8,6 +8,12 @@ import BiomWrapper as BW
 import CSVWrapper as CSV
 import multiprocessing as mp
 
+T1 = {}
+l1 = {}
+nodes_in_order = []
+nodes_weighted = {}
+PCoA_Samples = []
+
 def L1_pushup_worker(sample_num):
 	L1_Pushed = L1U.push_up(nodes_weighted[PCoA_Samples[sample_num]], T1, l1, nodes_in_order)
 	return L1_Pushed
@@ -17,6 +23,12 @@ def L2_pushup_worker(sample_num):
 	return L2_Pushed
 
 def generate_preprocessed(biom_file, tree_file, unifrac_code, output_file_L1=None, output_file_L2=None, max_cores=int(mp.cpu_count()/4)):
+	global T1
+	global l1
+	global nodes_in_order
+	global nodes_weighted
+	global PCoA_Samples
+
 	if max_cores > mp.cpu_count() or max_cores <= 1:
 		cores = mp.cpu_count()-1
 	else:
@@ -78,6 +90,12 @@ def generate_preprocessed(biom_file, tree_file, unifrac_code, output_file_L1=Non
 
 
 def generate_preprocessed_combined(biom_file, tree_file, output_file_L1=None, output_file_L2=None, max_cores=int(mp.cpu_count()/4)):
+	global T1
+	global l1
+	global nodes_in_order
+	global nodes_weighted
+	global PCoA_Samples
+
 	if max_cores > mp.cpu_count() or max_cores <= 1:
 		cores = mp.cpu_count()-1
 	else:
