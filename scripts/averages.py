@@ -10,6 +10,7 @@ import CSVWrapper as CSV
 import MetadataWrapper as meta
 import TaxWrapper as tax
 import numpy as np
+from scipy.sparse import csr_matrix
 
 # File cheatsheet (python averages.py L1-Push-Out.csv L2-Push-Out.csv ../data/47422_otu_table.biom ../data/trees/gg_13_5_otus_99_annotated.tree ../data/metadata/P_1928_65684500_raw_meta.txt ../data/taxonomies/gg_13_8_99.gg.tax Group-Averages.csv):
 # L1_file:       'L1-Push-Out.csv'
@@ -70,7 +71,7 @@ def compute_averages(distance_file, biom_file, tree_file, metadata_file, tax_fil
 	if not isinstance(distance_file, list):
 		sparse_matrix = CSV.read_sparse(distance_file)
 	else:
-		sparse_matrix = distance_file
+		sparse_matrix = csr_matrix(distance_file)
 
 	group_averages = {}
 
