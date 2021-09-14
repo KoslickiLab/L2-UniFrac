@@ -114,11 +114,11 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		if verbose:
 			print('\tCompleted biom preprocessing matrix computation')
 	if unifrac_code == 1 or unifrac_code == 2:
-		_, _, _, _, _, L1_distance_matrix, _ = avg.compute_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, None, unifrac_code)
+		_, _, _, _, _, L1_distance_matrix, _ = avg.compute_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', unifrac_code)
 		pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, group_str, plot=False)
 		plt.savefig('images/out_L1_group_average.png')
 	if unifrac_code == 0 or unifrac_code == 1:
-		_, _, _, _, _, L2_distance_matrix, _ = avg.compute_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, None, unifrac_code)
+		_, _, _, _, _, L2_distance_matrix, _ = avg.compute_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', unifrac_code)
 		pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, group_str, plot=False)
 		plt.savefig('images/out_L2_group_average.png')
 

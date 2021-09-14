@@ -10,7 +10,7 @@ import CSVWrapper as CSV
 import MetadataWrapper as meta
 import TaxWrapper as tax
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, lil_matrix
 
 # File cheatsheet (python averages.py L1-Push-Out.csv L2-Push-Out.csv ../data/47422_otu_table.biom ../data/trees/gg_13_5_otus_99_annotated.tree ../data/metadata/P_1928_65684500_raw_meta.txt ../data/taxonomies/gg_13_8_99.gg.tax Group-Averages.csv):
 # L1_file:       'L1-Push-Out.csv'
@@ -71,11 +71,11 @@ def compute_averages(distance_obj, biom_file, tree_file, metadata_file, tax_file
 	if not isinstance(distance_obj, list):
 		sparse_matrix = CSV.read_sparse(distance_obj)
 	else:
-		print("TEST12345: ", distance_obj[0][0], distance_obj[0][1])
-		sparse_matrix = csr_matrix((int(distance_obj[0][0]), int(distance_obj[0][1])))
+		sparse_matrix = lil_matrix((int(distance_obj[0][0]), int(distance_obj[0][1])))
 		for i in range(len(distance_obj)):
 			if len(distance_obj[i]) > 2:
 				sparse_matrix[(distance_obj[i][0], distance_obj[i][1])] = distance_obj[i][2]
+		sparse_matrix = csr_matrix(sparse_matrix)
 
 	group_averages = {}
 
