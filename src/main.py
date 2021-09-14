@@ -108,7 +108,7 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 				os.remove('intermediate/L1_preprocessed_intermediate.txt')
 			if path.exists('intermediate/L2_preprocessed_intermediate.txt'):
 				os.remove('intermediate/L2_preprocessed_intermediate.txt')
-			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, 1, 'L1_preprocessed_intermediate.txt', 'L2_preprocessed_intermediate.txt')
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, 1, 'intermediate/L1_preprocessed_intermediate.txt', 'intermediate/L2_preprocessed_intermediate.txt')
 		else:
 			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, unifrac_code)
 		if verbose:

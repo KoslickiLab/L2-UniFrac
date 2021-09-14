@@ -47,7 +47,7 @@ def compute_pairwise_pushed_L2(pushed_arr):
 	return dist_matrix
 
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
-def compute_averages(distance_file, biom_file, tree_file, metadata_file, tax_file, output_file=None, unifrac_code=0):
+def compute_averages(distance_obj, biom_file, tree_file, metadata_file, tax_file, output_file=None, unifrac_code=0):
 	
 	if unifrac_code == 1 or unifrac_code == 2:
 		T1, l1, nodes_in_order = L1U.parse_tree_file(tree_file)
@@ -68,10 +68,13 @@ def compute_averages(distance_file, biom_file, tree_file, metadata_file, tax_fil
 		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
 	# Read sparse matrices
-	if not isinstance(distance_file, list):
-		sparse_matrix = CSV.read_sparse(distance_file)
+	if not isinstance(distance_obj, list):
+		sparse_matrix = CSV.read_sparse(distance_obj)
 	else:
-		sparse_matrix = csr_matrix(distance_file)
+		sparse_matrix = csr_matrix(distance_obj[0][0], distance_obj[0][1])
+		for i in range(len(distance_obj)):
+			if len(distance_obj[i]) > 2:
+				sparse_matrix[(distance_obj[i][0], distance_obj[i][1])] = distance_obj[i][2]
 
 	group_averages = {}
 
