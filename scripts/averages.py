@@ -72,7 +72,7 @@ def compute_averages(distance_obj, biom_file, tree_file, metadata_file, tax_file
 		sparse_matrix = CSV.read_sparse(distance_obj)
 	else:
 		print("TEST12345: ", distance_obj[0][0], distance_obj[0][1])
-		sparse_matrix = csr_matrix((distance_obj[0][0], distance_obj[0][1]))
+		sparse_matrix = csr_matrix((int(distance_obj[0][0]), int(distance_obj[0][1])))
 		for i in range(len(distance_obj)):
 			if len(distance_obj[i]) > 2:
 				sparse_matrix[(distance_obj[i][0], distance_obj[i][1])] = distance_obj[i][2]
