@@ -86,7 +86,6 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 	Z = 0
 	eps = 1e-8
 	partial_sums = P - Q # Vector of partial sums obtained by computing the difference between probabilities of two samples. 
-	total_mass = 1 
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
 		if abs(val) > eps:
