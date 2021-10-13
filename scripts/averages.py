@@ -3,6 +3,7 @@ sys.path.append('../L2Unifrac')
 sys.path.append('../L2Unifrac/src')
 sys.path.append('../src')
 from os import path
+import os
 import L1Unifrac as L1U
 import L2Unifrac as L2U
 import BiomWrapper as BW
@@ -49,6 +50,9 @@ def compute_pairwise_pushed_L2(pushed_arr):
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_averages(distance_obj, biom_file, tree_file, metadata_file, tax_file, output_file=None, unifrac_code=0):
 	
+	if path.exists(output_file):
+		os.remove(output_file)
+
 	if unifrac_code == 1 or unifrac_code == 2:
 		T1, l1, nodes_in_order = L1U.parse_tree_file(tree_file)
 	elif unifrac_code == 0 or unifrac_code == 1:
@@ -198,7 +202,7 @@ def compute_averages(distance_obj, biom_file, tree_file, metadata_file, tax_file
 			CSV.write(output_file, ["L2 Abundances by Node Type:"])
 	node_type_group_abundances = []
 	for name in region_names:
-		region_abundance_vector = group_averages[name]
+		region_abundance_vector = inverse_pushed[name]
 		k = p = c = o = f = g = s = temp = 0
 		for i in range(len(region_abundance_vector)):
 			node_tax = tax_arr[i].split(';')
@@ -231,17 +235,12 @@ def compute_averages(distance_obj, biom_file, tree_file, metadata_file, tax_file
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file=None):
 
+	if path.exists(output_file):
+		os.remove(output_file)
+
 	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
 	#nodes_samples = BW.extract_biom(biom_file)
 	T1, l1, nodes_in_order = L2U.parse_tree_file(tree_file)
-	import more_itertools
-	print(len(T1.keys()))
-	print(list(T1.keys())[-100:])
-	print(more_itertools.take(100, T1.items()))
-	print(nodes_in_order[:100])
-	print(len(nodes_in_order))
-	print(nodes_in_order[406902])
-	return
 
 	# Subsample Biom file (2 samples). Then trace the mass to find where it no longer sums to 1.
 	PCoA_Samples = BW.extract_samples(biom_file)
@@ -271,7 +270,6 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 	group_averages_L2 = {}
 
 	# Store region names for later
-	print(region_names)
 	if output_file is not None:
 		CSV.write(output_file, region_names)
 
@@ -298,7 +296,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 					else:
 						tax_arr.append('root')
 						break
-	print(tax_arr)
+	
 	if output_file is not None:
 		CSV.write(output_file, tax_arr)
 
@@ -386,8 +384,8 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 		CSV.write(output_file, L1_neg_arr)
 		CSV.write(output_file, L2_neg_arr)
 
-	L1_distance_matrix = compute_pairwise_pushed(L1_pushed_arr)
-	L2_distance_matrix = compute_pairwise_pushed(L2_pushed_arr)
+	L1_distance_matrix = compute_pairwise_pushed_L1(L1_pushed_arr)
+	L2_distance_matrix = compute_pairwise_pushed_L2(L2_pushed_arr)
 
 	print("L1 Distance Matrix:")
 	if output_file is not None:
@@ -410,7 +408,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 		CSV.write(output_file, ["L1 Abundances by Node Type:"])
 	L1_node_type_group_abundances = []
 	for name in region_names:
-		region_abundance_vector = group_averages_L1[name]
+		region_abundance_vector = L1_inverse_pushed[name]
 		k = p = c = o = f = g = s = temp = 0
 		for i in range(len(region_abundance_vector)):
 			node_tax = tax_arr[i].split(';')
@@ -443,7 +441,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 		CSV.write(output_file, ["L2 Abundances by Node Type:"])
 	L2_node_type_group_abundances = []
 	for name in region_names:
-		region_abundance_vector = group_averages_L2[name]
+		region_abundance_vector = L2_inverse_pushed[name]
 		k = p = c = o = f = g = s = temp = 0
 		for i in range(len(region_abundance_vector)):
 			node_tax = tax_arr[i].split(';')
@@ -475,7 +473,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 
 # Argument parsing
 if __name__ == "__main__":
-	compute_averages('L1-Push-Out.csv', '../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt', '../data/taxonomies/gg_13_8_99.gg.tax', 'Group-Averages.csv')
+	compute_L1_L2_averages('L1-Push-Out.csv', 'L2-Push-Out.csv', '../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt', '../data/taxonomies/gg_13_8_99.gg.tax', 'Group-Averages.csv')
 	args = sys.argv
 	if len(args) != 8:
 		raise Exception("Invalid number of parameters.")
