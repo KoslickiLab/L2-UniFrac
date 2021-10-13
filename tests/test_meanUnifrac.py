@@ -85,9 +85,61 @@ def test_push_up():
     assert np.abs(unifrac2 - L2_UniFrac2) < 10**-8
     #assert np.sum(np.abs(unifrac2 - L2_UniFrac)) < 10**-10
 
+def test_summation():
+    tree_str1 = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+    (T1_1, l1_1, nodes1) = L2U.parse_tree(tree_str1)
+    nodes_samples1 = {
+        'C': {'sample1': 1, 'sample2': 0},
+        'B': {'sample1': 1, 'sample2': 1},
+        'A': {'sample1': 0, 'sample2': 0},
+        'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+    (nodes_weighted1, samples_temp1) = L2U.parse_envs(nodes_samples1, nodes1)
+    push_up_1 = L2U.push_up(nodes_weighted1['sample1'], T1_1, l1_1, nodes1)
+    push_up_2 = L2U.push_up(nodes_weighted1['sample2'], T1_1, l1_1, nodes1)
+    push_up_avg = L2U.mean_of_vectors([push_up_1, push_up_2])
+    push_down_avg = L2U.inverse_push_up(push_up_avg, T1_1, l1_1, nodes1)
+    assert(1-sum(push_down_avg) < 10**-8)
+
+    tree_str2 = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+    (T1_2, l1_2, nodes2) = L2U.parse_tree(tree_str2)
+    nodes_samples2 = {
+        'C': {'sample1': 1, 'sample2': 0},
+        'B': {'sample1': 1, 'sample2': 1},
+        'A': {'sample1': 1, 'sample2': 0},
+        'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+    (nodes_weighted2, samples_temp2) = L2U.parse_envs(nodes_samples2, nodes2)
+    push_up_1 = L2U.push_up(nodes_weighted2['sample1'], T1_2, l1_2, nodes2)
+    push_up_2 = L2U.push_up(nodes_weighted2['sample2'], T1_2, l1_2, nodes2)
+    push_up_avg = L2U.mean_of_vectors([push_up_1, push_up_2])
+    push_down_avg = L2U.inverse_push_up(push_up_avg, T1_2, l1_2, nodes2)
+    assert(1-sum(push_down_avg) < 10**-8)
+
+    #test with real data
+    P1 = env_prob_dict['232.M9Okey217']
+    P2 = env_prob_dict['232.M3Indl217']
+    P3 = env_prob_dict['232.L3Space217']
+    P4 = env_prob_dict['232.M9Vkey217']
+    P5 = env_prob_dict['232.M2Jkey217']
+    P6 = env_prob_dict['232.M2Mkey217']
+    P7 = env_prob_dict['232.M3Rinl217']
+    P8 = env_prob_dict['232.M3Midl217']
+
+    push_up_1 = L2U.push_up(P1, Tint, lint, nodes_in_order)
+    push_up_2 = L2U.push_up(P2, Tint, lint, nodes_in_order)
+    push_up_3 = L2U.push_up(P3, Tint, lint, nodes_in_order)
+    push_up_4 = L2U.push_up(P4, Tint, lint, nodes_in_order)
+    push_up_5 = L2U.push_up(P5, Tint, lint, nodes_in_order)
+    push_up_6 = L2U.push_up(P6, Tint, lint, nodes_in_order)
+    push_up_7 = L2U.push_up(P7, Tint, lint, nodes_in_order)
+    push_up_8 = L2U.push_up(P8, Tint, lint, nodes_in_order)
+    push_up_avg = L2U.mean_of_vectors([push_up_1, push_up_2, push_up_3, push_up_4, push_up_5, push_up_6, push_up_7, push_up_8])
+    push_down_avg = L2U.inverse_push_up(push_up_avg, Tint, lint, nodes_in_order)
+    assert(1-sum(push_down_avg) < 10**-8)
+
 def run_tests():
     test_parse_tree()
     test_inverse()
     test_push_up()
+    test_summation()
 
 run_tests()
