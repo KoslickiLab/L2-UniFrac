@@ -145,11 +145,30 @@ def test_flow():
         'A': {'sample1': 0, 'sample2': 0},
         'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
     (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
-    unifrac2 = np.linalg.norm(L2U.push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
-                  L2U.push_up(nodes_weighted['sample2'], T1, l1, nodes1))
+    unifrac2 = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2'])
     L2_UniFrac, Flow, DifferentialAbundance = L2U.L2Unifrac_weighted_flow(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
     print(unifrac2, L2_UniFrac)
     assert np.abs(unifrac2 - L2_UniFrac) < 10**-8
+
+    tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+    (T1, l1, nodes1) = L2U.parse_tree(tree_str)
+    nodes_samples = {
+        'C': {'sample1': 1, 'sample2': 0},
+        'B': {'sample1': 1, 'sample2': 1},
+        'A': {'sample1': 1, 'sample2': 0},
+        'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+    (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
+    unifrac2 = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2'])
+    L2_UniFrac, Flow, DifferentialAbundance = L2U.L2Unifrac_weighted_flow(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+    print(unifrac2, L2_UniFrac)
+    #assert np.abs(unifrac2 - L2_UniFrac) < 10**-8
+
+    P = env_prob_dict['232.M9Okey217']
+    Q = env_prob_dict['232.M3Indl217']
+    unifrac2 = L2U.L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q)
+    L2_UniFrac2, Flow, DifferentialAbundance = L2U.L2Unifrac_weighted_flow(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
+    print(unifrac2, L2_UniFrac2)
+    assert np.abs(unifrac2 - L2_UniFrac2) < 10**-8
 
 def run_tests():
     #test_parse_tree()
@@ -158,4 +177,5 @@ def run_tests():
     #test_summation()
     test_flow()
 
-run_tests()
+if __name__ == "__main__":
+    run_tests()

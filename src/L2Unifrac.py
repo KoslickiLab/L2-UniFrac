@@ -2,6 +2,7 @@ import numpy as np
 import dendropy
 import sys
 import warnings
+sys.path.append('../tests')
 
 epsilon = sys.float_info.epsilon
 
@@ -112,9 +113,9 @@ def L2Unifrac_weighted_flow(Tint, lint, nodes_in_order, P, Q):
 					val = np.minimum(G[(i, j)], -G[(i, k)])
 					if val > 0:
 						F[(j, k)] = np.minimum(G[(i, j)], -G[(i, k)])
-						G[(i, j)] = G[(i, j)] - val
-						G[(i, k)] = G[(i, k)] + val
-						Z = Z + (w[j] + w[k])*(val**2)
+						G[(i, j)] = G[(i, j)] - (val**2)
+						G[(i, k)] = G[(i, k)] + (val**2)
+						Z = Z + (w[j] + w[k]) * (val**2)
 					if G[(i, j)] == 0:
 						posremove.add(j)
 					if G[(i, k)] == 0:
@@ -243,35 +244,13 @@ def parse_envs(envs, nodes_in_order):
 		envs_prob_dict[sample] = envs_prob_dict[sample]/envs_prob_dict[sample].sum()
 	return (envs_prob_dict, samples)
 
-
-def test_push_up():
-	P1 = np.array([0.1, 0.2, 0,  0.3, 0, 0.3, 0.1])
-	T1 = {0: 4, 1: 4, 2: 5, 3: 5, 4: 6, 5: 6}
-	l1 = {(0, 4): 0.1, (1, 4): 0.1, (2, 5): 0.2, (3, 5): 0, (4, 6): 0.2, (5, 6): 0.2} # 0 edge_length not involving the root
-	nodes1 = ['A', 'B', 'C', 'D', 'temp0', 'temp1', 'temp2']
-	P_pushed1 = push_up(P1, T1, l1, nodes1)
-	P_inversed1 = inverse_push_up(P_pushed1, T1, l1, nodes1)
-	assert np.sum(abs(P1 - P_inversed1)) < 10**-10 #test inverse_push_up
-
-def test_weighted_plain():
-	tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
-	(T1, l1, nodes1) = parse_tree(tree_str)
-	nodes_samples = {
-	    'C': {'sample1': 1, 'sample2': 0},
-	    'B': {'sample1': 1, 'sample2': 1},
-	    'A': {'sample1': 0, 'sample2': 0},
-	    'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
-	(nodes_weighted, samples_temp) = parse_envs(nodes_samples, nodes1)
-	push_unifrac = np.linalg.norm(push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
-	              push_up(nodes_weighted['sample2'], T1, l1, nodes1))
-	plain_unifrac = L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-	print(f"push_unifrac: {push_unifrac}")
-	print(f"plain_unifrac: {plain_unifrac}")
-	assert np.sum(np.abs(push_unifrac-plain_unifrac)) < 10**-10
-
 def run_tests():
-	test_push_up()
-	test_weighted_plain()
+	import test_meanUnifrac as test
+	#test_parse_tree()
+    #test_inverse()
+    #test_push_up()
+    #test_summation()
+	test.test_flow()
 
 
 if __name__ == '__main__':
