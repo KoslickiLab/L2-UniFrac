@@ -60,7 +60,7 @@ def generate_preprocessed(biom_file, tree_file, unifrac_code, output_file_L1=Non
 	if unifrac_code == 1 or unifrac_code == 2:
 
 		with mp.Pool(processes=cores) as pool:
-			result = pool.map(L1_pushup_worker, values)
+			result = pool.map(L1_pushup_worker, values) #chunksize?
 
 		for i in range(len(result)):
 			for j in range(len(result[i])):

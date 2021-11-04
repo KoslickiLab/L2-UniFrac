@@ -11,9 +11,13 @@ from sklearn.metrics.cluster import adjusted_mutual_info_score
 from sklearn.metrics.cluster import fowlkes_mallows_score
 from sklearn.metrics import rand_score
 from sklearn_extra.cluster import KMedoids
+from sklearn.cluster import KMeans
 import BiomWrapper as BW
 import CSVWrapper as CSV
 import MetadataWrapper as meta
+from scipy.cluster.hierarchy import ClusterWarning
+from warnings import simplefilter
+simplefilter("ignore", ClusterWarning)
 
 def report_clustering(distance_file, biom_file, metadata_file, num_clusters, verbose, L=2, output_file=None):
 	if not isinstance(distance_file, list):
@@ -112,5 +116,5 @@ if __name__ == '__main__':
 		if not path.exists(L1_file) or not path.exists(L2_file):
 			raise Exception('Error: Missing default CSV file(s).')
 
-	report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', num_clusters, False, 1)
-	report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', num_clusters, False, 2)
+	report_clustering(L1_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', num_clusters, True, 1)
+	report_clustering(L2_file, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', num_clusters, True, 2)

@@ -136,10 +136,26 @@ def test_summation():
     push_down_avg = L2U.inverse_push_up(push_up_avg, Tint, lint, nodes_in_order)
     assert(1-sum(push_down_avg) < 10**-8)
 
+def test_flow():
+    tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
+    (T1, l1, nodes1) = L2U.parse_tree(tree_str)
+    nodes_samples = {
+        'C': {'sample1': 1, 'sample2': 0},
+        'B': {'sample1': 1, 'sample2': 1},
+        'A': {'sample1': 0, 'sample2': 0},
+        'temp0': {'sample1': 0, 'sample2': 1}}  # temp0 is the root node
+    (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
+    unifrac2 = np.linalg.norm(L2U.push_up(nodes_weighted['sample1'], T1, l1, nodes1) -
+                  L2U.push_up(nodes_weighted['sample2'], T1, l1, nodes1))
+    L2_UniFrac, Flow, DifferentialAbundance = L2U.L2Unifrac_weighted_flow(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
+    print(unifrac2, L2_UniFrac)
+    assert np.abs(unifrac2 - L2_UniFrac) < 10**-8
+
 def run_tests():
-    test_parse_tree()
-    test_inverse()
-    test_push_up()
-    test_summation()
+    #test_parse_tree()
+    #test_inverse()
+    #test_push_up()
+    #test_summation()
+    test_flow()
 
 run_tests()
