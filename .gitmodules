@@ -1,0 +1,3 @@
+[submodule "OTUsamples2krona"]
+	path = OTUsamples2krona
+	url = https://github.com/GenomicaMicrob/OTUsamples2krona.git
