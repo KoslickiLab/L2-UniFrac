@@ -110,12 +110,12 @@ def L2Unifrac_weighted_flow(Tint, lint, nodes_in_order, P, Q):
 		for j in pos[i]:
 			for k in neg[i]:
 				if (j not in posremove) and (k not in negremove):
-					val = np.minimum(G[(i, j)], -G[(i, k)])
+					val = np.minimum(G[(i, j)], -G[(i, k)])**2
 					if val > 0:
 						F[(j, k)] = np.minimum(G[(i, j)], -G[(i, k)])
-						G[(i, j)] = G[(i, j)] - (val**2)
-						G[(i, k)] = G[(i, k)] + (val**2)
-						Z = Z + (w[j] + w[k]) * (val**2)
+						G[(i, j)] = G[(i, j)] - val
+						G[(i, k)] = G[(i, k)] + val
+						Z = Z + (w[j] + w[k]) * val
 					if G[(i, j)] == 0:
 						posremove.add(j)
 					if G[(i, k)] == 0:
@@ -136,7 +136,8 @@ def L2Unifrac_weighted_flow(Tint, lint, nodes_in_order, P, Q):
 				diffab[(i, Tint[i])] = lint[i, Tint[i]]*diffab[(i, Tint[i])]  # Captures DiffAbund, scales by length of edge JLMC
 			pos[Tint[i]] |= pos[i]
 			neg[Tint[i]] |= neg[i]
-	return (np.sqrt(Z), F, diffab)  # The returned flow and diffab are on the basis nodes_in_order and is given in sparse matrix dictionary format. eg {(0,0):.5,(1,2):.5}
+	Z = np.sqrt(Z)
+	return (Z, F, diffab)  # The returned flow and diffab are on the basis nodes_in_order and is given in sparse matrix dictionary format. eg {(0,0):.5,(1,2):.5}
 
 def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 	'''
