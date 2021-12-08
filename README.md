@@ -51,11 +51,14 @@ sudo ./updateAccessions.sh #NOT REQUIRED. If fails, mkdir accession2taxid/ in ta
 L2-UniFrac Install
 ```
 git clone https://github.com/KoslickiLab/L2-UniFrac.git
-cd L2-UniFrac/
 ```
 
 Python Dependencies
 ```
+sudo aptitude install python3.7
 sudo aptitude install python3-pip
-pip3 install -r requirements.txt
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3.7 get-pip.py
+cd L2-UniFrac/
+python3.7 -m pip install -r requirements.txt
 ```
