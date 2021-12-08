@@ -35,6 +35,7 @@ sudo apt update && sudo apt upgrade
 sudo apt-get install aptitude
 sudo aptitude install git
 sudo aptitude install curl
+sudo aptitude install build essential
 ```
 
 Krona Setup:
@@ -43,6 +44,6 @@ git clone https://github.com/marbl/Krona.git
 cd Krona/KronaTools/
 sudo ./install.pl
 mkdir taxonomy/
-sudo ./updateTaxonomy.sh
-sudo ./updateAccessions.sh
+sudo ./updateTaxonomy.sh #If fails to download taxdump.tar.gz, download directly from https://ftp.ncbi.nih.gov/pub/taxonomy/ and move to taxonomy/ folder.
+sudo ./updateAccessions.sh #If fails, mkdir accession2taxid/ in taxonomy, and download dead_nucl.accession2taxid.gz, dead_prot.accession2taxid.gz, dead_wgs.accession2taxid.gz, nucl_gb.accession2taxid.gz, nucl_wgs.accession2taxid.gz, and prot.accession2taxid.gz from https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid
 ```
