@@ -45,5 +45,17 @@ cd Krona/KronaTools/
 sudo ./install.pl
 mkdir taxonomy/
 sudo ./updateTaxonomy.sh #If fails to download taxdump.tar.gz, download directly from https://ftp.ncbi.nih.gov/pub/taxonomy/ and move to taxonomy/ folder.
-sudo ./updateAccessions.sh #If fails, mkdir accession2taxid/ in taxonomy, and download dead_nucl.accession2taxid.gz, dead_prot.accession2taxid.gz, dead_wgs.accession2taxid.gz, nucl_gb.accession2taxid.gz, nucl_wgs.accession2taxid.gz, and prot.accession2taxid.gz from https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid
+sudo ./updateAccessions.sh #NOT REQUIRED. If fails, mkdir accession2taxid/ in taxonomy, and download dead_nucl.accession2taxid.gz, dead_prot.accession2taxid.gz, dead_wgs.accession2taxid.gz, nucl_gb.accession2taxid.gz, nucl_wgs.accession2taxid.gz, and prot.accession2taxid.gz from https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid
+```
+
+L2-UniFrac Install
+```
+git clone https://github.com/KoslickiLab/L2-UniFrac.git
+cd L2-UniFrac/
+```
+
+Python Dependencies
+```
+sudo aptitude install python3-pip
+pip3 install -r requirements.txt
 ```
