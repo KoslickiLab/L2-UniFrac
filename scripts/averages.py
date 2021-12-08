@@ -136,7 +136,7 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 	# Push L1 down and store
 	print("\nL1 Inverse Push Up:")
 	if output_file is not None:
-		CSV.write(output_file, ["L1 Pushed Up:"])
+		CSV.write(output_file, ["L1 Inverse Pushed Up:"])
 	L1_neg_arr = []
 	L1_inverse_pushed = {}
 	for name in region_names:
@@ -288,7 +288,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 	# Push L2 down and store
 	print("\nL2 Inverse Push Up:")
 	if output_file is not None:
-		CSV.write(output_file, ["L2 Pushed Up:"])
+		CSV.write(output_file, ["L2 Inverse Pushed Up:"])
 	L2_neg_arr = []
 	L2_inverse_pushed = {}
 	for name in region_names:
@@ -465,7 +465,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 	# Push L1 down and store
 	print("\nL1 Inverse Push Up:")
 	if output_file is not None:
-		CSV.write(output_file, ["L1 Pushed Up:"])
+		CSV.write(output_file, ["L1 Inverse Pushed Up:"])
 	L1_neg_arr = []
 	L1_inverse_pushed = {}
 	for name in region_names:
@@ -484,7 +484,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 	# Push L2 down and store
 	print("\nL2 Inverse Push Up:")
 	if output_file is not None:
-		CSV.write(output_file, ["L2 Pushed Up:"])
+		CSV.write(output_file, ["L2 Inverse Pushed Up:"])
 	L2_neg_arr = []
 	L2_inverse_pushed = {}
 	for name in region_names:

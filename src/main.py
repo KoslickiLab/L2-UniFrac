@@ -114,11 +114,11 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		if verbose:
 			print('\tCompleted biom preprocessing matrix computation')
 	if unifrac_code == 1 or unifrac_code == 2:
-		L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 2)
+		L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances, L1_pushed_arr = avg.compute_L1_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 2)
 		pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
 		plt.savefig('images/out_L1_group_average.png')
 	if unifrac_code == 0 or unifrac_code == 1:
-		L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages(L2_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 0)
+		L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances, L2_pushed_arr = avg.compute_L2_averages(L2_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 0)
 		pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
 		plt.savefig('images/out_L2_group_average.png')
 
@@ -186,6 +186,56 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 			CSV.write('reports/L2_' + str(output_file) + '_clustering.csv', report[i])
 		if verbose:
 			print('\tL2 clustering successfully saved')
+
+def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
+	if verbose:
+		print('\tExtracting metadata...')
+	metadata = meta.extract_metadata(metadata_file)
+	sample_groups = []
+	groups_temp = list(metadata.values())
+	groups = []
+	for i in range(len(groups_temp)):
+		if groups_temp[i]['body_site'] not in groups:
+			groups.append(groups_temp[i]['body_site'])
+	group_str = ','.join(groups)
+	if verbose:
+		print('\tSuccessfully extracted metadata')
+	if preprocessed_use and path.exists('intermediate/L1_preprocessed_intermediate.txt') and path.exists('intermediate/L2_preprocessed_intermediate.txt'):
+		L1_preprocessed = CSV.read('intermediate/L1_preprocessed_intermediate.txt')
+		L2_preprocessed = CSV.read('intermediate/L2_preprocessed_intermediate.txt')
+		if verbose:
+			print('\tSuccessfully retrieved intermediate file for L1 and L2 Preprocessing')
+	else:
+		if verbose and preprocessed_use:
+			print('\tWarning: Intermediate selected but not available. Starting preprocessing... This may take a while...')
+		elif verbose:
+			print('\tWarning: Biom preprocessing starting... This may take a while...')
+		if intermediate_store:
+			if path.exists('intermediate/L1_preprocessed_intermediate.txt'):
+				os.remove('intermediate/L1_preprocessed_intermediate.txt')
+			if path.exists('intermediate/L2_preprocessed_intermediate.txt'):
+				os.remove('intermediate/L2_preprocessed_intermediate.txt')
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, 1, 'intermediate/L1_preprocessed_intermediate.txt', 'intermediate/L2_preprocessed_intermediate.txt')
+		else:
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, unifrac_code)
+		if verbose:
+			print('\tCompleted biom preprocessing matrix computation')
+	if unifrac_code == 1 or unifrac_code == 2:
+		L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 2)
+		print(L1_inverse_pushed)
+		for name in L1_region_names:
+			print(name)
+			region_abundance_vector = L1_inverse_pushed[name]
+			for i in range(len(region_abundance_vector)):
+				node_tax = tax_arr[i].split(';')
+				print(node_tax)
+		#pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
+		#plt.savefig('images/out_L1_group_average.png')
+	if unifrac_code == 0 or unifrac_code == 1:
+		L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages(L2_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 0)
+		print(L2_inverse_pushed)
+		#pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
+		#plt.savefig('images/out_L2_group_average.png')
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
