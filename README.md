@@ -18,3 +18,47 @@ To retrieve more biologiocally meaningful results that preserve fundamental char
 
 ## Setup ##
 
+Miniconda Setup:
+```
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +777 Miniconda3-latest-Linux-x86_64.sh
+bash
+./Miniconda3-latest-Linux-x86_64.sh
+conda create -n env1
+conda activate env1
+conda install -c conda-forge xorg-makedepend
+```
+
+Git and Curl Setup
+```
+sudo apt update && sudo apt upgrade
+sudo apt-get install aptitude
+sudo aptitude install git
+sudo aptitude install curl
+sudo aptitude install build essential
+```
+
+Krona Setup:
+```
+git clone https://github.com/marbl/Krona.git
+cd Krona/KronaTools/
+sudo ./install.pl
+mkdir taxonomy/
+sudo ./updateTaxonomy.sh #If fails to download taxdump.tar.gz, download directly from https://ftp.ncbi.nih.gov/pub/taxonomy/ and move to taxonomy/ folder.
+sudo ./updateAccessions.sh #NOT REQUIRED. If fails, mkdir accession2taxid/ in taxonomy, and download dead_nucl.accession2taxid.gz, dead_prot.accession2taxid.gz, dead_wgs.accession2taxid.gz, nucl_gb.accession2taxid.gz, nucl_wgs.accession2taxid.gz, and prot.accession2taxid.gz from https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid
+```
+
+L2-UniFrac Install
+```
+git clone https://github.com/KoslickiLab/L2-UniFrac.git
+```
+
+Python Dependencies
+```
+sudo aptitude install python3.7
+sudo aptitude install python3-pip
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3.7 get-pip.py
+cd L2-UniFrac/
+python3.7 -m pip install -r requirements.txt
+```
