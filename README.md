@@ -22,8 +22,20 @@ Miniconda Setup:
 ```
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod +777 Miniconda3-latest-Linux-x86_64.sh
+bash
 ./Miniconda3-latest-Linux-x86_64.sh
 conda create -n env1
 conda activate env1
 conda install -c conda-forge xorg-makedepend
+```
+
+Git Setup
+```
+sudo apt-get install aptitude
+sudo aptitude install git
+```
+
+Krona Setup:
+```
+git clone https://github.com/marbl/Krona.git
 ```
