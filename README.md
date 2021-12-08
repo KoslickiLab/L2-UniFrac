@@ -29,13 +29,20 @@ conda activate env1
 conda install -c conda-forge xorg-makedepend
 ```
 
-Git Setup
+Git and Curl Setup
 ```
+sudo apt update && sudo apt upgrade
 sudo apt-get install aptitude
 sudo aptitude install git
+sudo aptitude install curl
 ```
 
 Krona Setup:
 ```
 git clone https://github.com/marbl/Krona.git
+cd Krona/KronaTools/
+sudo ./install.pl
+mkdir taxonomy/
+sudo ./updateTaxonomy.sh
+sudo ./updateAccessions.sh
 ```
