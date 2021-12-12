@@ -316,6 +316,6 @@ if __name__ == '__main__':
 		segment_start = time.time()
 		if args.verbose:
 			print('Starting Krona Visualization Generation...')
-		generate_krona(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
+		generate_krona(args.biom_file, args.tree_file, args.metadata_file, args.taxonomy_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
 		if args.verbose:
 			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
