@@ -117,8 +117,12 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 	L1_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
-		for j in range(len(region_map[region_names[i]])):
-			group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
+		if not isinstance(L1_file, list):
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
+		else:
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]])[0])
 		average = L1U.median_of_vectors(group_arr)
 		group_averages_L1[region_names[i]] = average
 		L1_pushed_arr.append(average)
@@ -269,8 +273,12 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 	L2_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
-		for j in range(len(region_map[region_names[i]])):
-			group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
+		if not isinstance(L1_file, list):
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
+		else:
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]])[0])
 		average = L2U.mean_of_vectors(group_arr)
 		group_averages_L2[region_names[i]] = average
 		L2_pushed_arr.append(average)
@@ -426,8 +434,12 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 	L1_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
-		for j in range(len(region_map[region_names[i]])):
-			group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
+		if not isinstance(L1_file, list):
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
+		else:
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]])[0])
 		average = L1U.median_of_vectors(group_arr)
 		group_averages_L1[region_names[i]] = average
 		L1_pushed_arr.append(average)
@@ -446,8 +458,12 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 	L2_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
-		for j in range(len(region_map[region_names[i]])):
-			group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
+		if not isinstance(L1_file, list):
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
+		else:
+			for j in range(len(region_map[region_names[i]])):
+				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]])[0])
 		average = L2U.mean_of_vectors(group_arr)
 		group_averages_L2[region_names[i]] = average
 		L2_pushed_arr.append(average)
