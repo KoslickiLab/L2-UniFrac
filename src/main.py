@@ -259,6 +259,7 @@ if __name__ == '__main__':
 	parser.add_argument('-t', '--total_pcoa', action='store_true', help='Compute total PCoA and generate plot')
 	parser.add_argument('-g', '--group_pcoa', action='store_true', help='Compute group PCoA averages and generate plot')
 	parser.add_argument('-c', '--clustering_report', action='store_true', help='Compute clustering report for distance matrix')
+	parser.add_argument('-k', '--krona_averages', action='store_true', help='Compute Krona visualization for each averaged group')
 	
 	parser.add_argument('-L1', '--L1_UniFrac', action='store_true', help='Compute using L1 UniFrac only')
 	parser.add_argument('-U', '--UniFrac', action='store_true', help='Compute using both L1 and L2 UniFrac')
@@ -309,5 +310,12 @@ if __name__ == '__main__':
 		if args.verbose:
 			print('Starting Clustering Report Generation...')
 		generate_clustering_report(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
+		if args.verbose:
+			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
+	if args.krona_averages:
+		segment_start = time.time()
+		if args.verbose:
+			print('Starting Krona Visualization Generation...')
+		generate_krona(args.biom_file, args.tree_file, args.metadata_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
 		if args.verbose:
 			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
