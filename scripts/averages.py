@@ -122,7 +122,7 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
 		else:
 			for j in range(len(region_map[region_names[i]])):
-				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]])[0])
+				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]]))
 		average = L1U.median_of_vectors(group_arr)
 		group_averages_L1[region_names[i]] = average
 		L1_pushed_arr.append(average)
@@ -278,7 +278,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
 		else:
 			for j in range(len(region_map[region_names[i]])):
-				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]])[0])
+				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]]))
 		average = L2U.mean_of_vectors(group_arr)
 		group_averages_L2[region_names[i]] = average
 		L2_pushed_arr.append(average)
@@ -439,7 +439,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]].todense())[0])
 		else:
 			for j in range(len(region_map[region_names[i]])):
-				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]])[0])
+				group_arr.append(np.array(sparse_matrix_L1[region_map[region_names[i]][j]]))
 		average = L1U.median_of_vectors(group_arr)
 		group_averages_L1[region_names[i]] = average
 		L1_pushed_arr.append(average)
@@ -463,7 +463,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
 		else:
 			for j in range(len(region_map[region_names[i]])):
-				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]])[0])
+				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]]))
 		average = L2U.mean_of_vectors(group_arr)
 		group_averages_L2[region_names[i]] = average
 		L2_pushed_arr.append(average)
