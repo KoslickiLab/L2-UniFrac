@@ -230,7 +230,7 @@ def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threa
 			print(name)
 			region_abundance_vector = L1_inverse_pushed[name]
 			for i in range(len(region_abundance_vector)):
-				node_tax = tax_arr[i].split(';')
+				node_tax = L1_tax_arr[i].split(';')
 				print(node_tax)
 		#pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
 		#plt.savefig('images/out_L1_group_average.png')
