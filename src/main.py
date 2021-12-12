@@ -228,16 +228,28 @@ def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threa
 		print(L1_inverse_pushed)
 		for name in L1_region_names:
 			print(name)
-			tax_abundances = {}
+			#tax_abundances = {}
+			tax_strs = []
 			region_abundance_vector = L1_inverse_pushed[name]
 			for i in range(len(region_abundance_vector)):
 				node_tax = L1_tax_arr[i].split(';')
+				new_node_tax = [str(region_abundance_vector[i])]
 				for j in range(len(node_tax)):
-					if node_tax[j][3:] in tax_abundances:
-						tax_abundances[node_tax[j][3:]] += region_abundance_vector[i]
+					if node_tax[j] != 'root':
+						new_node_tax.append(node_tax[j][3:])
 					else:
-						tax_abundances[node_tax[j][3:]] = region_abundance_vector[i]
-			print(tax_abundances)
+						new_node_tax.append(node_tax[j])
+					#if node_tax[j] == 'root' and 'root' in tax_abundances:
+					#	tax_abundances['root'] += region_abundance_vector[i]
+					#elif node_tax[j] == 'root':
+					#	tax_abundances['root'] = region_abundance_vector[i]
+					#elif node_tax[j][3:] in tax_abundances:
+					#	tax_abundances[node_tax[j][3:]] += region_abundance_vector[i]
+					#else:
+					#	tax_abundances[node_tax[j][3:]] = region_abundance_vector[i]
+				node_tax_str = '\t'.join(new_node_tax)
+				tax_strs.append(node_tax_str)
+			print(tax_strs)
 		#pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
 		#plt.savefig('images/out_L1_group_average.png')
 	if unifrac_code == 0 or unifrac_code == 1:

@@ -273,7 +273,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 	L2_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
-		if not isinstance(L1_file, list):
+		if not isinstance(L2_file, list):
 			for j in range(len(region_map[region_names[i]])):
 				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
 		else:
@@ -458,7 +458,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 	L2_pushed_arr = []
 	for i in range(len(region_names)):
 		group_arr = []
-		if not isinstance(L1_file, list):
+		if not isinstance(L2_file, list):
 			for j in range(len(region_map[region_names[i]])):
 				group_arr.append(np.array(sparse_matrix_L2[region_map[region_names[i]][j]].todense())[0])
 		else:
