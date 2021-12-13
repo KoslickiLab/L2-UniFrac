@@ -6,7 +6,7 @@ import argparse, random, math, os, shutil, signal
 from subprocess import STDOUT, TimeoutExpired, Popen, PIPE, run
 from time import sleep
 
-def generate_krona(region_names, tax_arr, inverse_pushed, output):
+def generate_krona_visuals(region_names, tax_arr, inverse_pushed, output):
 	for name in region_names:
 		tax_abundances = {}
 		region_abundance_vector = inverse_pushed[name]
