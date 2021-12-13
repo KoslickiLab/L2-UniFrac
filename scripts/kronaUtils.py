@@ -26,6 +26,6 @@ def generate_krona_visuals(region_names, tax_arr, inverse_pushed, output):
 		print(tax_abundances)
 		for key in tax_abundances.keys():
 			with open("tmp_krona.txt", 'a') as file:
-    			file.write('\t'.join([str(tax_abundances[key]), key]))
+				file.write('\t'.join([str(tax_abundances[key]), key]))
 		subpro = run('ktImportText tmp_krona.txt -o {0}_{1}.krona.html'.format(output, name), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
 		os.remove('tmp_krona.txt')
