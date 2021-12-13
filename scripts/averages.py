@@ -157,6 +157,8 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 			CSV.write(output_file, median_inverse)
 
 	# Write negative counts
+	print("L1 Negatives by Group:")
+	print(L1_neg_arr)
 	if output_file is not None:
 		CSV.write(output_file, ["L1 Negatives by Group:"])
 		CSV.write(output_file, L1_neg_arr)
@@ -313,6 +315,8 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 			CSV.write(output_file, mean_inverse)
 
 	# Write negative counts
+	print("L2 Negatives by Group:")
+	print(L2_neg_arr)
 	if output_file is not None:
 		CSV.write(output_file, ["L2 Negatives by Group:"])
 		CSV.write(output_file, L2_neg_arr)
@@ -517,6 +521,9 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 			CSV.write(output_file, mean_inverse)
 
 	# Write negative counts
+	print("L1 and L2 Negatives by Group:")
+	print(L1_neg_arr)
+	print(L2_neg_arr)
 	if output_file is not None:
 		CSV.write(output_file, ["L1 and L2 Negatives by Group:"])
 		CSV.write(output_file, L1_neg_arr)

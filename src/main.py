@@ -226,33 +226,7 @@ def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threa
 		else:
 			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		print(L1_inverse_pushed)
-		for name in L1_region_names:
-			print(name)
-			tax_abundances = {}
-			region_abundance_vector = L1_inverse_pushed[name]
-			for i in range(len(region_abundance_vector)):
-				node_tax = L1_tax_arr[i].split(';')
-				new_node_tax = []
-				for j in range(len(node_tax)):
-					if node_tax[j] != 'root':
-						new_node_tax.append(node_tax[j][3:])
-					else:
-						new_node_tax.append(node_tax[j])
-					#if node_tax[j] == 'root' and 'root' in tax_abundances:
-					#	tax_abundances['root'] += region_abundance_vector[i]
-					#elif node_tax[j] == 'root':
-					#	tax_abundances['root'] = region_abundance_vector[i]
-					#elif node_tax[j][3:] in tax_abundances:
-					#	tax_abundances[node_tax[j][3:]] += region_abundance_vector[i]
-					#else:
-					#	tax_abundances[node_tax[j][3:]] = region_abundance_vector[i]
-
-				node_tax_str = '\t'.join(new_node_tax)
-				if node_tax_str in tax_abundances:
-					tax_abundances[node_tax_str] += region_abundance_vector[i]
-				else:
-					tax_abundances[node_tax_str] = region_abundance_vector[i]
-			print(tax_abundances)
+		generate_krona(L1_region_names, L1_tax_arr, L1_inverse_pushed, 'L1' + output_file)
 		#pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
 		#plt.savefig('images/out_L1_group_average.png')
 	if unifrac_code == 0 or unifrac_code == 1:
@@ -261,6 +235,7 @@ def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threa
 		else:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		print(L2_inverse_pushed)
+		generate_krona(L1_region_names, L1_tax_arr, L1_inverse_pushed, 'L2' + output_file)
 		#pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
 		#plt.savefig('images/out_L2_group_average.png')
 	if path.exists('tmp_L1_preprocessed_intermediate.txt'):
@@ -349,4 +324,4 @@ if __name__ == '__main__':
 			print('Starting Krona Visualization Generation...')
 		generate_krona(args.biom_file, args.tree_file, args.metadata_file, args.taxonomy_file, args.verbose, args.threads, args.intermediate_store, args.preprocessed_use, unifrac_code, args.out_file)
 		if args.verbose:
-			print('Clustering Report Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
+			print('Krona Visualization Generation Complete. Total Elapsed Time: ' + str(time.time()-segment_start) + ' seconds')
