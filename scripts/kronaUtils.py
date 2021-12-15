@@ -6,7 +6,7 @@ import argparse, random, math, os, shutil, signal
 from subprocess import STDOUT, TimeoutExpired, Popen, PIPE, run
 from time import sleep
 
-def generate_krona_visuals(region_names, tax_arr, inverse_pushed, output):
+def generate_krona_visuals(region_names, tax_arr, inverse_pushed, output, intermediate_store=True):
 	for name in region_names:
 		tax_abundances = {}
 		region_abundance_vector = inverse_pushed[name]
@@ -25,7 +25,8 @@ def generate_krona_visuals(region_names, tax_arr, inverse_pushed, output):
 				tax_abundances[node_tax_str] = region_abundance_vector[i]
 		print(tax_abundances)
 		for key in tax_abundances.keys():
-			with open("tmp_krona.txt", 'a') as file:
+			with open("krona/{0}_{1}_krona.txt".format(output, name), 'a') as file:
 				file.write('\t'.join([str(tax_abundances[key]), key]))
-		subpro = run('ktImportText tmp_krona.txt -o {0}_{1}.krona.html'.format(output, name), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
-		os.remove('tmp_krona.txt')
+		subpro = run('ktImportText krona/{0}_{1}_krona.txt -o krona/{0}_{1}.krona.html'.format(output, name), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+		if not intermediate_store:
+			os.remove('krona/{0}_{1}_krona.txt'.format(output, name))
