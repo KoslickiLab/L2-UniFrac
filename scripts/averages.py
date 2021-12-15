@@ -26,7 +26,7 @@ from scipy.sparse import csr_matrix, lil_matrix
 # to ignore very small negatives between -10e-14 and 0 to account for this. We tested other
 # thresholds such as -10e-12 with the same results, so we know that all remaining negatives
 # are very large relative to these erroneous ones.
-negatives_filtering_threshold = -10e-14
+negatives_filtering_threshold = -10e-12
 
 # Computes the pairwise average
 def compute_pairwise_pushed_L1(pushed_arr):

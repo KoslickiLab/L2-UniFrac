@@ -24,6 +24,8 @@ def generate_krona_visuals(region_names, tax_arr, inverse_pushed, output, interm
 			else:
 				tax_abundances[node_tax_str] = region_abundance_vector[i]
 		print(tax_abundances)
+		with open("krona/{0}_{1}_krona.txt".format(output, name), 'w') as file:
+			pass
 		for key in tax_abundances.keys():
 			with open("krona/{0}_{1}_krona.txt".format(output, name), 'a') as file:
 				file.write('\t'.join([str(tax_abundances[key]), key]))
