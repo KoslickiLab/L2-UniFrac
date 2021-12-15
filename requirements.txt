@@ -4,6 +4,7 @@ numpy
 matplotlib
 scipy
 scikit-bio
+scikit-learn-extra
 pandas
 biom-format
 h5py
