@@ -1,4 +1,4 @@
-import sys
+import sys, os
 sys.path.append('../')
 sys.path.append('../src')
 sys.path.append('../scripts')
@@ -111,15 +111,21 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 				os.remove('intermediate/L2_preprocessed_intermediate.txt')
 			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, 1, 'intermediate/L1_preprocessed_intermediate.txt', 'intermediate/L2_preprocessed_intermediate.txt')
 		else:
-			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, unifrac_code)
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, unifrac_code, 'tmp_L1_preprocessed_intermediate.txt', 'tmp_L2_preprocessed_intermediate.txt')
 		if verbose:
 			print('\tCompleted biom preprocessing matrix computation')
 	if unifrac_code == 1 or unifrac_code == 2:
-		L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances, L1_pushed_arr = avg.compute_L1_averages(L1_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 2)
+		if preprocessed_use or intermediate_store:
+			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('intermediate/L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+		else:
+			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
 		plt.savefig('images/out_L1_group_average.png')
 	if unifrac_code == 0 or unifrac_code == 1:
-		L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances, L2_pushed_arr = avg.compute_L2_averages(L2_preprocessed, biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', 0)
+		if preprocessed_use or intermediate_store:
+			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('intermediate/L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+		else:
+			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
 		plt.savefig('images/out_L2_group_average.png')
 
