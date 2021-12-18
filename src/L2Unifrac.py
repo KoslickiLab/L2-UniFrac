@@ -139,9 +139,10 @@ def L2Unifrac_weighted_flow(Tint, lint, nodes_in_order, P, Q):
 	Z = np.sqrt(Z)
 	return (Z, F, diffab)  # The returned flow and diffab are on the basis nodes_in_order and is given in sparse matrix dictionary format. eg {(0,0):.5,(1,2):.5}
 
-def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
+# This will return the EMDUnifrac distance only
+def L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q):
 	'''
-	Z = EMDUnifrac_weighted(ancestors, edge_lengths, nodes_in_order, P, Q)
+	(Z, diffab) = L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q)
 	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
 	and two probability vectors P and Q (typically P = envs_prob_dict[samples[i]], Q = envs_prob_dict[samples[j]]).
 	Returns the weighted Unifrac distance Z and the flow F. The flow F is a dictionary with keys of the form (i,j) where
@@ -150,13 +151,33 @@ def L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q):
 	'''
 	num_nodes = len(nodes_in_order)
 	Z = 0
+	diffab = dict()
+	partial_sums = P - Q
+	for i in range(num_nodes - 1):
+		val = partial_sums[i]
+		partial_sums[Tint[i]] += val
+		if val != 0:
+			diffab[(i, Tint[i])] = lint[i, Tint[i]]*(val**2)  # Captures diffab
+		Z += lint[i, Tint[i]]*(val**2)
+	Z = np.sqrt(Z)
+	return (Z, diffab)
+
+def L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
+	'''
+	Z = L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q)
+	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
+	and two probability vectors P and Q (typically P = envs_prob_dict[samples[i]], Q = envs_prob_dict[samples[j]]).
+	Returns the weighted Unifrac distance Z.
+	'''
+	num_nodes = len(nodes_in_order)
+	Z = 0
 	eps = 1e-8
 	partial_sums = P - Q # Vector of partial sums obtained by computing the difference between probabilities of two samples. 
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
 		if abs(val) > eps:
-			partial_sums[ancestors[i]] += val
-			Z += edge_lengths[i, ancestors[i]]*(val**2)
+			partial_sums[Tint[i]] += val
+			Z += lint[i, Tint[i]]*(val**2)
 	Z = np.sqrt(Z)
 	return Z
 
@@ -251,7 +272,8 @@ def run_tests():
     #test_inverse()
     #test_push_up()
     #test_summation()
-	test.test_flow()
+	#test.test_weighted_flow()
+	test.test_weighted()
 
 
 if __name__ == '__main__':
