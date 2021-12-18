@@ -203,6 +203,7 @@ def test_weighted():
     L2_UniFrac2, DifferentialAbundance = L2U.L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
     print(unifrac2, L2_UniFrac2)
     assert np.abs(unifrac2 - L2_UniFrac2) < 10**-8
+    L2U.plot_diffab(nodes_in_order, DifferentialAbundance, 'P_label', 'Q_label', plot_zeros=False, thresh=0)
 
 def run_tests():
     #test_parse_tree()
