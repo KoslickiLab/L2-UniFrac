@@ -306,7 +306,7 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 
 	plt.ylabel('DiffAbund', fontsize=16)
 	plt.gcf().subplots_adjust(right=0.93, left=0.15)
-	
+
 	# If you want the zeros plotted, label EVERYTHING, otherwise just label the things that are there...
 	if plot_zeros:
 		plt.xticks(x, nodes_in_order, rotation='vertical', fontsize=14)
@@ -371,11 +371,6 @@ def parse_envs(envs, nodes_in_order):
 
 def run_tests():
 	import test_meanUnifrac as test
-	#test_parse_tree()
-    #test_inverse()
-    #test_push_up()
-    #test_summation()
-	#test.test_weighted_flow()
 	test.test_weighted()
 
 

@@ -136,6 +136,7 @@ def test_summation():
     push_down_avg = L2U.inverse_push_up(push_up_avg, Tint, lint, nodes_in_order)
     assert(1-sum(push_down_avg) < 10**-8)
 
+# NOT COMPLETE
 def test_weighted_flow():
     tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
     (T1, l1, nodes1) = L2U.parse_tree(tree_str)
@@ -181,7 +182,7 @@ def test_weighted():
     (nodes_weighted, samples_temp) = L2U.parse_envs(nodes_samples, nodes1)
     unifrac2 = L2U.L2Unifrac_weighted_plain(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2'])
     L2_UniFrac, DifferentialAbundance = L2U.L2Unifrac_weighted(T1, l1, nodes1, nodes_weighted['sample1'], nodes_weighted['sample2']) #calculated using L2Unifrac
-    print(unifrac2, L2_UniFrac, DifferentialAbundance)
+    print(unifrac2, L2_UniFrac)
     assert np.abs(unifrac2 - L2_UniFrac) < 10**-8
 
     tree_str = '((B:0.1,C:0.2)A:0.3);'  # there is an internal node (temp0) here.
@@ -203,13 +204,14 @@ def test_weighted():
     L2_UniFrac2, DifferentialAbundance = L2U.L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q) #calculated using L2Unifrac
     print(unifrac2, L2_UniFrac2)
     assert np.abs(unifrac2 - L2_UniFrac2) < 10**-8
-    L2U.plot_diffab(nodes_in_order, DifferentialAbundance, 'P_label', 'Q_label', plot_zeros=False, thresh=0)
+    L2U.plot_diffab(nodes_in_order, DifferentialAbundance, 'P_label', 'Q_label', plot_zeros=False, thresh=0.0005)
 
 def run_tests():
-    #test_parse_tree()
-    #test_inverse()
-    #test_push_up()
-    #test_summation()
+    test_parse_tree()
+    test_inverse()
+    test_push_up()
+    test_summation()
+    #test_weighted_flow()
     test_weighted()
 
 if __name__ == "__main__":
