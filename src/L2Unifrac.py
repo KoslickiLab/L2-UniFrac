@@ -214,7 +214,7 @@ def mean_of_vectors(L):
 	'''
 	return np.mean(L, axis=0)
 
-def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0):
+def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True):
 	'''
 	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
 	Plots the differential abundance vector.
@@ -316,7 +316,11 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 	plt.subplots_adjust(bottom=0.3, top=.93)
 	plt.text(plt.xticks()[0][-1]+0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center', verticalalignment='top', multialignment='center', color='b', fontsize=14)
 	plt.text(plt.xticks()[0][-1]+0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center', verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
-	plt.show()
+	
+	if show:
+		plt.show()
+	else:
+		return fig
 
 def create_env(sample_file):
 	'''

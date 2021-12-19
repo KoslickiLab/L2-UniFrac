@@ -18,6 +18,7 @@ import clustering as cluster
 import CSVWrapper as CSV
 import preprocessing as prep
 import kronaUtils as krona
+import diffabUtils as diff
 
 def generate_total_pcoa(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	if unifrac_code == 1 or unifrac_code == 2:
@@ -128,6 +129,10 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
 		plt.savefig('images/out_L2_group_average.png')
+	if path.exists('tmp_L1_preprocessed_intermediate.txt'):
+		os.remove('tmp_L1_preprocessed_intermediate.txt')
+	if path.exists('tmp_L2_preprocessed_intermediate.txt'):
+		os.remove('tmp_L2_preprocessed_intermediate.txt')
 
 def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	num_clusters = meta.extract_num_clusters(metadata_file)
@@ -232,19 +237,64 @@ def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threa
 			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('intermediate/L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		else:
 			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
-		print(L1_inverse_pushed)
 		krona.generate_krona_visuals(L1_region_names, L1_tax_arr, L1_inverse_pushed, 'L1' + output_file, intermediate_store)
-		#pcoa_out_L1 = pcoa.PCoA_group_from_matrix(L1_distance_matrix, biom_file, groups, plot=False)
-		#plt.savefig('images/out_L1_group_average.png')
 	if unifrac_code == 0 or unifrac_code == 1:
 		if preprocessed_use or intermediate_store:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('intermediate/L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		else:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
-		print(L2_inverse_pushed)
 		krona.generate_krona_visuals(L2_region_names, L2_tax_arr, L2_inverse_pushed, 'L2' + output_file, intermediate_store)
-		#pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
-		#plt.savefig('images/out_L2_group_average.png')
+	if path.exists('tmp_L1_preprocessed_intermediate.txt'):
+		os.remove('tmp_L1_preprocessed_intermediate.txt')
+	if path.exists('tmp_L2_preprocessed_intermediate.txt'):
+		os.remove('tmp_L2_preprocessed_intermediate.txt')
+
+def generate_diffab(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
+	if verbose:
+		print('\tExtracting metadata...')
+	(Tint, lint, nodes_in_order) = L2U.parse_tree_file(tree_file)
+	metadata = meta.extract_metadata(metadata_file)
+	sample_groups = []
+	groups_temp = list(metadata.values())
+	groups = []
+	for i in range(len(groups_temp)):
+		if groups_temp[i]['body_site'] not in groups:
+			groups.append(groups_temp[i]['body_site'])
+	group_str = ','.join(groups)
+	if verbose:
+		print('\tSuccessfully extracted metadata')
+	if preprocessed_use and path.exists('intermediate/L1_preprocessed_intermediate.txt') and path.exists('intermediate/L2_preprocessed_intermediate.txt'):
+		L1_preprocessed = CSV.read('intermediate/L1_preprocessed_intermediate.txt')
+		L2_preprocessed = CSV.read('intermediate/L2_preprocessed_intermediate.txt')
+		if verbose:
+			print('\tSuccessfully retrieved intermediate file for L1 and L2 Preprocessing')
+	else:
+		if verbose and preprocessed_use:
+			print('\tWarning: Intermediate selected but not available. Starting preprocessing... This may take a while...')
+		elif verbose:
+			print('\tWarning: Biom preprocessing starting... This may take a while...')
+		if intermediate_store:
+			if path.exists('intermediate/L1_preprocessed_intermediate.txt'):
+				os.remove('intermediate/L1_preprocessed_intermediate.txt')
+			if path.exists('intermediate/L2_preprocessed_intermediate.txt'):
+				os.remove('intermediate/L2_preprocessed_intermediate.txt')
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, 1, 'intermediate/L1_preprocessed_intermediate.txt', 'intermediate/L2_preprocessed_intermediate.txt')
+		else:
+			L1_preprocessed, L2_preprocessed = prep.generate_preprocessed(biom_file, tree_file, unifrac_code, 'tmp_L1_preprocessed_intermediate.txt', 'tmp_L2_preprocessed_intermediate.txt')
+		if verbose:
+			print('\tCompleted biom preprocessing matrix computation')
+	if unifrac_code == 1 or unifrac_code == 2:
+		if preprocessed_use or intermediate_store:
+			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('intermediate/L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+		else:
+			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L1' + output_file, 0.0005)
+	if unifrac_code == 0 or unifrac_code == 1:
+		if preprocessed_use or intermediate_store:
+			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('intermediate/L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+		else:
+			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L2' + output_file, 0.0005)
 	if path.exists('tmp_L1_preprocessed_intermediate.txt'):
 		os.remove('tmp_L1_preprocessed_intermediate.txt')
 	if path.exists('tmp_L2_preprocessed_intermediate.txt'):
