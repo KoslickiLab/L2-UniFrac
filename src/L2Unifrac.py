@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import dendropy
 import sys
 import warnings
+import heapq
 sys.path.append('../tests')
 
 epsilon = sys.float_info.epsilon
@@ -214,7 +215,7 @@ def mean_of_vectors(L):
 	'''
 	return np.mean(L, axis=0)
 
-def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True):
+def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True, maxDisp=0):
 	'''
 	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
 	Plots the differential abundance vector.
@@ -232,17 +233,24 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 	for key in keys:
 		y[key[0]] = diffab[key]
 
-	pos_loc = [x[i] for i in range(len(y)) if y[i] > thresh]
-	neg_loc = [x[i] for i in range(len(y)) if y[i] < -thresh]
-	zero_loc = [x[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
-	if not pos_loc:
-		raise Exception('Threshold too high! Please lower and try again.')
-	if not neg_loc:
-		raise Exception('Threshold too high! Please lower and try again.')
+	while True:
+		pos_loc = [x[i] for i in range(len(y)) if y[i] > thresh]
+		neg_loc = [x[i] for i in range(len(y)) if y[i] < -thresh]
+		zero_loc = [x[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
 
-	pos_val = [y[i] for i in range(len(y)) if y[i] > thresh]
-	neg_val = [y[i] for i in range(len(y)) if y[i] < -thresh]
-	zero_val = [y[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
+		pos_val = [y[i] for i in range(len(y)) if y[i] > thresh]
+		neg_val = [y[i] for i in range(len(y)) if y[i] < -thresh]
+		zero_val = [y[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
+
+		if (len(pos_val) > maxDisp or len(neg_val) > maxDisp) and maxDisp > 0:
+			maxDisp *= 1.01
+		else:
+			break
+
+	if not pos_loc:
+		raise Exception('Threshold too high or max too low! Please change and try again.')
+	if not neg_loc:
+		raise Exception('Threshold too high or max too low! Please change and try again.')
 
 	# The following is to get the indicies in order. Basically, I iterate down both pos_loc and neg_loc simultaneously
 	# and create new lists (pos_loc_adj and neg_loc_adj) that are in the same order as pos_loc and neg_loc, but whose
