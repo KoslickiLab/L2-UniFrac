@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import argparse
 from argparse import ArgumentTypeError
 import time
+import L2Unifrac as L2U
 import multiprocessing as mp
 import PCoA_analysis as pcoa
 import L1_pairwise_unifrac as pairwise1
