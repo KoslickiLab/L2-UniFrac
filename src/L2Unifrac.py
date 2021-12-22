@@ -243,7 +243,7 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 		zero_val = [y[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
 
 		if (len(pos_val) > maxDisp or len(neg_val) > maxDisp) and maxDisp > 0:
-			maxDisp *= 1.01
+			thresh *= 1.01
 		else:
 			break
 
