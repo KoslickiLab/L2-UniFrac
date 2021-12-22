@@ -2,6 +2,7 @@ import sys
 sys.path.append('../L2Unifrac')
 sys.path.append('../L2Unifrac/src')
 sys.path.append('../src')
+import matplotlib.pyplot as plt
 import L2Unifrac as L2U
 
 def generate_diffab(regions, region_averages, Tint, lint, nodes_in_order, output, thresh):
