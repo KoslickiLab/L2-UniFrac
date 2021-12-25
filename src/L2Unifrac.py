@@ -215,7 +215,7 @@ def mean_of_vectors(L):
 	'''
 	return np.mean(L, axis=0)
 
-def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True, maxDisp=0):
+def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True, maxDisp=0, includeTemp=True):
 	'''
 	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
 	Plots the differential abundance vector.
@@ -233,19 +233,31 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 	for key in keys:
 		y[key[0]] = diffab[key]
 
-	while True:
-		pos_loc = [x[i] for i in range(len(y)) if y[i] > thresh]
-		neg_loc = [x[i] for i in range(len(y)) if y[i] < -thresh]
-		zero_loc = [x[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
+	pos_loc = [x[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+	neg_loc = [x[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+	zero_loc = [x[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in nodes_in_order[i]) or (-thresh <= y[i] <= thresh and includeTemp)]
 
-		pos_val = [y[i] for i in range(len(y)) if y[i] > thresh]
-		neg_val = [y[i] for i in range(len(y)) if y[i] < -thresh]
-		zero_val = [y[i] for i in range(len(y)) if -thresh <= y[i] <= thresh]
+	pos_val = [y[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+	neg_val = [y[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in nodes_in_order[i]) or (-thresh <= y[i] <= thresh and includeTemp)]
 
-		if (len(pos_val) > maxDisp or len(neg_val) > maxDisp) and maxDisp > 0:
-			thresh *= 1.01
-		else:
-			break
+	# Cut threshold
+	if len(pos_val) > maxDisp and maxDisp > 0:
+		pos_val_tmp = heapq.nlargest(maxDisp, pos_val)
+		pos_loc_tmp = []
+		for i in range(len(pos_val_tmp)):
+			pos_loc_tmp.append(y.index(pos_val_tmp[i]))
+			y[pos_loc_tmp[-1]] = 0
+		pos_val = pos_val_tmp
+		pos_loc = pos_loc_tmp
+	if len(neg_val) > maxDisp and maxDisp > 0:
+		neg_val_tmp = heapq.nsmallest(maxDisp, neg_val)
+		neg_loc_tmp = []
+		for i in range(len(neg_val_tmp)):
+			neg_loc_tmp.append(y.index(neg_val_tmp[i]))
+			y[neg_loc_tmp[-1]] = 0
+		neg_val = neg_val_tmp
+		pos_loc = neg_loc_tmp
 
 	if not pos_loc:
 		raise Exception('Threshold too high or max too low! Please change and try again.')
