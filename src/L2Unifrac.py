@@ -159,7 +159,7 @@ def L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q):
 		val = partial_sums[i]
 		partial_sums[Tint[i]] += val
 		if val != 0:
-			diffab[(i, Tint[i])] = lint[i, Tint[i]]*val  # Captures diffab
+			diffab[(i, Tint[i])] = lint[i, Tint[i]]*val*abs(val)  # Captures diffab
 		Z += lint[i, Tint[i]]*(val**2)
 	Z = np.sqrt(Z)
 	return (Z, diffab)
@@ -241,7 +241,7 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 	neg_val = [y[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
 	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in nodes_in_order[i]) or (-thresh <= y[i] <= thresh and includeTemp)]
 
-	# Increase threshold until pos and neg are less than the max display
+	# Increase threshold until pos and neg are less than the max display (very inefficient... TODO: optimize using by taking top 10 or so elements directly)
 	while True:
 		if (len(pos_val) > maxDisp or len(neg_val) > maxDisp) and maxDisp > 0:
 			thresh *= 1.05
