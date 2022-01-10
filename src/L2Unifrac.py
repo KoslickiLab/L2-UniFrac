@@ -241,23 +241,22 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 	neg_val = [y[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
 	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in nodes_in_order[i]) or (-thresh <= y[i] <= thresh and includeTemp)]
 
-	# Cut threshold
-	if len(pos_val) > maxDisp and maxDisp > 0:
-		pos_val_tmp = heapq.nlargest(maxDisp, pos_val)
-		pos_loc_tmp = []
-		for i in range(len(pos_val_tmp)):
-			pos_loc_tmp.append(np.where(y == pos_val_tmp[i])[0])
-			y[pos_loc_tmp[-1]] = 0
-		pos_val = pos_val_tmp
-		pos_loc = pos_loc_tmp
-	if len(neg_val) > maxDisp and maxDisp > 0:
-		neg_val_tmp = heapq.nsmallest(maxDisp, neg_val)
-		neg_loc_tmp = []
-		for i in range(len(neg_val_tmp)):
-			neg_loc_tmp.append(np.where(y == neg_val_tmp[i])[0])
-			y[neg_loc_tmp[-1]] = 0
-		neg_val = neg_val_tmp
-		pos_loc = neg_loc_tmp
+	# Increase threshold until pos and neg are less than the max display
+	while True:
+		if (len(pos_val) > maxDisp or len(neg_val) > maxDisp) and maxDisp > 0:
+			thresh *= 1.05
+		else:
+			break
+
+		if len(pos_val) > maxDisp:
+			pos_loc = [x[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+		if len(neg_val) > maxDisp:
+			neg_loc = [x[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+
+		if len(pos_val) > maxDisp:
+			pos_val = [y[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+		if len(neg_val) > maxDisp:
+			neg_val = [y[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
 
 	if not pos_loc:
 		raise Exception('Threshold too high or max too low! Please change and try again.')
