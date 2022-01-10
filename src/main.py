@@ -289,13 +289,13 @@ def generate_diffab(biom_file, tree_file, metadata_file, tax_file, verbose, thre
 			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('intermediate/L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		else:
 			L1_region_names, L1_tax_arr, L1_group_averages, L1_inverse_pushed, L1_neg_arr, L1_distance_matrix, L1_node_type_group_abundances = avg.compute_L1_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
-		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L1' + output_file, 0.0005, 10, True)
+		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L1' + output_file, 0.000005, 10, True, 1)
 	if unifrac_code == 0 or unifrac_code == 1:
 		if preprocessed_use or intermediate_store:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('intermediate/L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		else:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
-		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L2' + output_file, 0.0005, 10, True)
+		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L2' + output_file, 0.000005, 10, True, 2)
 	if path.exists('tmp_L1_preprocessed_intermediate.txt'):
 		os.remove('tmp_L1_preprocessed_intermediate.txt')
 	if path.exists('tmp_L2_preprocessed_intermediate.txt'):
