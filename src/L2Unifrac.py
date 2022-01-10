@@ -246,7 +246,7 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 		pos_val_tmp = heapq.nlargest(maxDisp, pos_val)
 		pos_loc_tmp = []
 		for i in range(len(pos_val_tmp)):
-			pos_loc_tmp.append(y.index(pos_val_tmp[i]))
+			pos_loc_tmp.append(np.where(y == pos_val_tmp[i]))
 			y[pos_loc_tmp[-1]] = 0
 		pos_val = pos_val_tmp
 		pos_loc = pos_loc_tmp
@@ -254,7 +254,7 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 		neg_val_tmp = heapq.nsmallest(maxDisp, neg_val)
 		neg_loc_tmp = []
 		for i in range(len(neg_val_tmp)):
-			neg_loc_tmp.append(y.index(neg_val_tmp[i]))
+			neg_loc_tmp.append(np.where(y == neg_val_tmp[i]))
 			y[neg_loc_tmp[-1]] = 0
 		neg_val = neg_val_tmp
 		pos_loc = neg_loc_tmp
