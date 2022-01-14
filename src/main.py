@@ -127,7 +127,7 @@ def generate_group_pcoa(biom_file, tree_file, metadata_file, tax_file, verbose, 
 		if preprocessed_use or intermediate_store:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('intermediate/L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		else:
-			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L1_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
+			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv')
 		pcoa_out_L2 = pcoa.PCoA_group_from_matrix(L2_distance_matrix, biom_file, groups, plot=False)
 		plt.savefig('images/out_L2_group_average.png')
 	if path.exists('tmp_L1_preprocessed_intermediate.txt'):

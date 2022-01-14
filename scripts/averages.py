@@ -53,7 +53,7 @@ def compute_pairwise_pushed_L2(pushed_arr):
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, output_file=None):
 	
-	if path.exists(output_file):
+	if output_file is not None and path.exists(output_file):
 		os.remove(output_file)
 
 	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
@@ -97,7 +97,7 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 			if i in T1:
 				temp_node = T1[i]
 			else:
-				tax_arr.append('root')
+				tax_arr.append('internal')
 				loop = False
 			while loop:
 				if nodes_in_order[temp_node][0] != 't':
@@ -107,7 +107,7 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 					if temp_node in T1:
 						temp_node = T1[temp_node]
 					else:
-						tax_arr.append('root')
+						tax_arr.append('internal')
 						break
 	
 	if output_file is not None:
@@ -211,7 +211,7 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, output_file=None):
 
-	if path.exists(output_file):
+	if output_file is not None and path.exists(output_file):
 		os.remove(output_file)
 
 	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
@@ -255,7 +255,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 			if i in T1:
 				temp_node = T1[i]
 			else:
-				tax_arr.append('root')
+				tax_arr.append('internal')
 				loop = False
 			while loop:
 				if nodes_in_order[temp_node][0] != 't':
@@ -265,7 +265,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 					if temp_node in T1:
 						temp_node = T1[temp_node]
 					else:
-						tax_arr.append('root')
+						tax_arr.append('internal')
 						break
 	
 	if output_file is not None:
@@ -369,7 +369,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 # Helper function for averages. Outputs a CSV containing info from each step and negative counts at end.
 def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file, tax_file, output_file=None):
 
-	if path.exists(output_file):
+	if output_file is not None and path.exists(output_file):
 		os.remove(output_file)
 
 	# Note: these are the same for L1/L2, so they will be computed only once. (USE T1 FOR ANCESTORS FOR TEMP NODES)
@@ -418,7 +418,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 			if i in T1:
 				temp_node = T1[i]
 			else:
-				tax_arr.append('root')
+				tax_arr.append('internal')
 				loop = False
 			while loop:
 				if nodes_in_order[temp_node][0] != 't':
@@ -428,7 +428,7 @@ def compute_L1_L2_averages(L1_file, L2_file, biom_file, tree_file, metadata_file
 					if temp_node in T1:
 						temp_node = T1[temp_node]
 					else:
-						tax_arr.append('root')
+						tax_arr.append('internal')
 						break
 	
 	if output_file is not None:
