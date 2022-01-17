@@ -232,9 +232,6 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 		region_map[metadata[PCoA_Samples[i]]['body_site']].append(i)
 		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
 
-	for i in region_names:
-		print(i, len(region_map[i]))
-
 	# Read sparse matrix
 	if not isinstance(L2_file, list):
 		sparse_matrix_L2 = CSV.read_sparse(L2_file)
