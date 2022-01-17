@@ -11,6 +11,8 @@ import MetadataWrapper as meta
 import pandas as pd
 from skbio import DistanceMatrix
 import matplotlib.pyplot as plt
+import L2Unifrac as L2U
+import averages as avg
 
 # File cheatsheet total (python PCoA_analysis.py 0 L2-UniFrac-Out.csv ../data/47422_otu_table.biom ../data/metadata/P_1928_65684500_raw_meta.txt):
 # option:		 
@@ -112,8 +114,32 @@ def PCoA_group_from_matrix(distance_matrix, biom_file, groups, plot=False):
 	else:
 		return fig
 
+def PCoA_total_from_matrix_clustering(distance_matrix, biom_file, assignments, plot=False):
+	samples = BW.extract_samples(biom_file)
+	sk_distance_matrix = DistanceMatrix(distance_matrix, BW.extract_samples(biom_file))
+
+	metadata = {samples[i]: {'body_site': 'Group ' + str(assignments[i]+1)} for i in range(len(assignments))}
+
+	pd_metadata = pd.DataFrame.from_dict(metadata, orient='index')
+
+	result = pcoa(sk_distance_matrix)
+
+	fig = result.plot(df=pd_metadata, column='body_site',
+							axis_labels=('PC 1 (' + str(round(result.proportion_explained.iloc[0]*100, 2)) + '%)', 'PC 2 (' + str(round(result.proportion_explained.iloc[1]*100, 2)) + '%)', 'PC 3 (' + str(round(result.proportion_explained.iloc[2]*100, 2)) + '%)'),
+							title='Samples colored by body site',
+							cmap='Set1', s=50)
+
+	fig.set_size_inches(18.5, 10.5)
+
+	if plot:
+		plt.show()
+	else:
+		return fig
+
 if __name__ == "__main__":
 	#PCoA_total('../src/intermediate/L2_distance_matrix_intermediate.txt', '../data/biom/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', True)
+	region_names, tax_arr, group_averages, inverse_pushed, neg_arr, distance_matrix, node_type_group_abundances = avg.compute_L2_averages('../src/intermediate/L2_preprocessed_intermediate.txt', '../data/biom/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', '../data/metadata/P_1928_65684500_raw_meta.txt', '../data/taxonomies/gg_13_8_99.gg.tax', output_file=None)
+	PCoA_group_from_matrix(distance_matrix, '../data/biom/47422_otu_table.biom', region_names, True)
 	args = sys.argv
 	if len(args) != 5 and len(args) != 6:
 		raise Exception("Invalid number of parameters.")

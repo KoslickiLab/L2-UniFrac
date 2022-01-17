@@ -168,6 +168,10 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 			CSV.write('reports/L1_' + str(output_file) + '_clustering.csv', report[i])
 		if verbose:
 			print('\tL1 clustering successfully saved')
+			print('\tGenerating Clustering PCoA...')
+		pcoa = cluster.generate_clustering_pcoa(total_matrix_L1, biom_file, metadata_file, num_clusters, output_file, False, 1)
+		if verbose:
+			print('\tGeneration complete and saved')
 	if unifrac_code == 0 or unifrac_code == 1:
 		if preprocessed_use and path.exists('intermediate/L2_distance_matrix_intermediate.txt'):
 			total_matrix_L2 = CSV.read('intermediate/L2_distance_matrix_intermediate.txt')
@@ -199,6 +203,10 @@ def generate_clustering_report(biom_file, tree_file, metadata_file, verbose, thr
 			CSV.write('reports/L2_' + str(output_file) + '_clustering.csv', report[i])
 		if verbose:
 			print('\tL2 clustering successfully saved')
+			print('\tGenerating Clustering PCoA...')
+		pcoa = cluster.generate_clustering_pcoa(total_matrix_L2, biom_file, metadata_file, num_clusters, output_file, False, 2)
+		if verbose:
+			print('\tGeneration complete and saved')
 
 def generate_krona(biom_file, tree_file, metadata_file, tax_file, verbose, threads, intermediate_store, preprocessed_use, unifrac_code, output_file):
 	if verbose:

@@ -17,7 +17,35 @@ import CSVWrapper as CSV
 import MetadataWrapper as meta
 from scipy.cluster.hierarchy import ClusterWarning
 from warnings import simplefilter
+import PCoA_analysis as pcoa
+import matplotlib.pyplot as plt
 simplefilter("ignore", ClusterWarning)
+
+def generate_clustering_pcoa(distance_file, biom_file, metadata_file, num_clusters, output_file=None, plot=False, L=2):
+	if not isinstance(distance_file, list):
+		distance_matrix = CSV.read(distance_file)
+	else:
+		distance_matrix = distance_file
+
+	output_matrix = []
+
+	AgglomerativeCluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='precomputed', linkage='complete').fit_predict(distance_matrix)  
+	KMedoidsCluster = KMedoids(n_clusters=num_clusters, metric='precomputed', method='pam', init='heuristic').fit_predict(distance_matrix)
+
+	PCoA_Samples = BW.extract_samples(biom_file)
+	metadata = meta.extract_metadata(metadata_file)
+	region_names = []
+	for i in range(len(PCoA_Samples)):
+		if metadata[PCoA_Samples[i]]['body_site'] not in region_names:
+			region_names.append(metadata[PCoA_Samples[i]]['body_site'])
+		PCoA_Samples[i] = region_names.index(metadata[PCoA_Samples[i]]['body_site'])
+
+	figure = pcoa.PCoA_total_from_matrix_clustering(distance_matrix, biom_file, AgglomerativeCluster, plot=plot)
+	if output_file is not None:
+		plt.savefig('../src/images/out_L{0}_agglomerative_pcoa.png'.format(L))
+	figure = pcoa.PCoA_total_from_matrix_clustering(distance_matrix, biom_file, KMedoidsCluster, plot=plot)
+	if output_file is not None:
+		plt.savefig('../src/images/out_L{0}_kmedoids_pcoa.png'.format(L))
 
 def report_clustering(distance_file, biom_file, metadata_file, num_clusters, verbose, L=2, output_file=None):
 	if not isinstance(distance_file, list):
@@ -98,6 +126,11 @@ def report_clustering(distance_file, biom_file, metadata_file, num_clusters, ver
 	return output_matrix
 
 if __name__ == '__main__':
+
+	total_matrix_L1 = CSV.read('../src/intermediate/L1_distance_matrix_intermediate.txt')
+	total_matrix_L2 = CSV.read('../src/intermediate/L2_distance_matrix_intermediate.txt')
+	generate_clustering_pcoa(total_matrix_L1, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', 5, '1', False, 1)
+	generate_clustering_pcoa(total_matrix_L2, '../data/47422_otu_table.biom', '../data/metadata/P_1928_65684500_raw_meta.txt', 5, '1', False, 2)
 
 	args = sys.argv
 	if len(args) > 4:
