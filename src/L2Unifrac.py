@@ -229,7 +229,7 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 	'''
 	new_tax_in_order = []
 	for i in range(len(taxonomy_in_order)):
-		new_tax_in_order.append(taxonomy_in_order[i].split(';')[-2:-1])
+		new_tax_in_order.append(taxonomy_in_order[i].split(';')[-2:-1][0])
 
 	x = range(len(nodes_in_order))
 	y = np.zeros(len(nodes_in_order))
@@ -332,9 +332,9 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 
 	# If you want the zeros plotted, label EVERYTHING, otherwise just label the things that are there...
 	if plot_zeros:
-		plt.xticks(x, nodes_in_order, rotation='vertical', fontsize=14)
+		plt.xticks(x, nodes_in_order, rotation='vertical', fontsize=10)
 	else:
-		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=14)
+		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=10)
 
 	plt.subplots_adjust(bottom=0.3, top=.93)
 	plt.text(plt.xticks()[0][-1]+0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center', verticalalignment='top', multialignment='center', color='b', fontsize=14)
