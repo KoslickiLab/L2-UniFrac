@@ -286,22 +286,22 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 		while pos_ind < len(pos_loc) or neg_ind < len(neg_loc):
 			if pos_ind >= len(pos_loc):
 				neg_loc_adj.append(it)
-				tick_names.append(nodes_in_order[neg_loc[neg_ind]])
+				tick_names.append(new_tax_in_order[neg_loc[neg_ind]])
 				it += 1
 				neg_ind += 1
 			elif neg_ind >= len(neg_loc):
 				pos_loc_adj.append(it)
-				tick_names.append(nodes_in_order[pos_loc[pos_ind]])
+				tick_names.append(new_tax_in_order[pos_loc[pos_ind]])
 				it += 1
 				pos_ind += 1
 			elif pos_loc[pos_ind] < neg_loc[neg_ind]:
 				pos_loc_adj.append(it)
-				tick_names.append(nodes_in_order[pos_loc[pos_ind]])
+				tick_names.append(new_tax_in_order[pos_loc[pos_ind]])
 				it += 1
 				pos_ind += 1
 			elif pos_loc[pos_ind] > neg_loc[neg_ind]:
 				neg_loc_adj.append(it)
-				tick_names.append(nodes_in_order[neg_loc[neg_ind]])
+				tick_names.append(new_tax_in_order[neg_loc[neg_ind]])
 				it += 1
 				neg_ind +=1
 			else:
