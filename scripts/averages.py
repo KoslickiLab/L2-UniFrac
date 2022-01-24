@@ -464,7 +464,6 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 						else:
 							tax_arr.append('internal')
 							break
-	return
 
 	if output_file is not None:
 		CSV.write(output_file, tax_arr)
