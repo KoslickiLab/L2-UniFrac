@@ -191,7 +191,7 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 						break
 				shared_taxonomy = shared_taxonomy+';'
 				if shared_taxonomy == ';':
-					shared_taxonomy = 'Root' # Root node will include taxonomy from Archaea and Bacteria, thus sharing nothing.
+					shared_taxonomy = 'Root;' # Root node will include taxonomy from Archaea and Bacteria, thus sharing nothing.
 				tax_arr.append(shared_taxonomy)
 	else:
 		for i in range(len(nodes_in_order)):
@@ -441,7 +441,7 @@ def compute_L2_averages(L2_file, biom_file, tree_file, metadata_file, tax_file, 
 						break
 				shared_taxonomy = shared_taxonomy+';'
 				if shared_taxonomy == ';':
-					shared_taxonomy = 'Root' # Root node will include taxonomy from Archaea and Bacteria, thus sharing nothing.
+					shared_taxonomy = 'Root;' # Root node will include taxonomy from Archaea and Bacteria, thus sharing nothing.
 				tax_arr.append(shared_taxonomy)
 	else:
 		for i in range(len(nodes_in_order)):
