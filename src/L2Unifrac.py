@@ -215,7 +215,7 @@ def mean_of_vectors(L):
 	'''
 	return np.mean(L, axis=0)
 
-def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True, maxDisp=0, includeTemp=True):
+def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plot_zeros=True, thresh=0, show=True, maxDisp=0, includeTemp=True):
 	'''
 	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
 	Plots the differential abundance vector.
@@ -227,6 +227,10 @@ def plot_diffab(nodes_in_order, diffab, P_label, Q_label, plot_zeros=True, thres
 	:param thresh: only plot those parts of the diffab vector that are above thresh, specify everything else as zero
 	:return: None (makes plot)
 	'''
+	new_tax_in_order = []
+	for i in range(len(taxonomy_in_order)):
+		new_tax_in_order.append(taxonomy_in_order[i].split(';')[-2:-1])
+
 	x = range(len(nodes_in_order))
 	y = np.zeros(len(nodes_in_order))
 	keys = diffab.keys()
