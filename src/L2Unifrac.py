@@ -332,11 +332,11 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 
 	# If you want the zeros plotted, label EVERYTHING, otherwise just label the things that are there...
 	if plot_zeros:
-		plt.xticks(x, nodes_in_order, rotation='vertical', fontsize=10)
+		plt.xticks(x, nodes_in_order, rotation='vertical', fontsize=8)
 	else:
-		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=10)
+		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=8)
 
-	plt.subplots_adjust(bottom=0.3, top=.93)
+	plt.subplots_adjust(bottom=0.35, top=.93)
 	plt.text(plt.xticks()[0][-1]+0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center', verticalalignment='top', multialignment='center', color='b', fontsize=14)
 	plt.text(plt.xticks()[0][-1]+0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center', verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
 	
