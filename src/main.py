@@ -303,7 +303,7 @@ def generate_diffab(biom_file, tree_file, metadata_file, tax_file, verbose, thre
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('intermediate/L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', most_shared=True)
 		else:
 			L2_region_names, L2_tax_arr, L2_group_averages, L2_inverse_pushed, L2_neg_arr, L2_distance_matrix, L2_node_type_group_abundances = avg.compute_L2_averages('tmp_L2_preprocessed_intermediate.txt', biom_file, tree_file, metadata_file, tax_file, 'reports/' + str(output_file) + '_avg_report.csv', most_shared=True)
-		diff.generate_diffab(L1_region_names, L1_inverse_pushed, Tint, lint, nodes_in_order, 'L2' + output_file, 0.000005, 10, True, 2)
+		diff.generate_diffab(L2_region_names, L2_inverse_pushed, Tint, lint, nodes_in_order, 'L2' + output_file, 0.000005, 10, True, 2)
 	if path.exists('tmp_L1_preprocessed_intermediate.txt'):
 		os.remove('tmp_L1_preprocessed_intermediate.txt')
 	if path.exists('tmp_L2_preprocessed_intermediate.txt'):
