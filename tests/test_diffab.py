@@ -84,7 +84,7 @@ for key, value in group_1_diffab.items():
 
 	profile_list_1.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value))
 
-with open('sample_1.profile', 'w') as f:
+with open('sample_0.profile', 'w') as f:
     for line in profile_list_1:
         f.write("{0}\n".format(line))
 
@@ -126,6 +126,6 @@ for key, value in group_2_diffab.items():
 
 	profile_list_2.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value))
 
-with open('sample_2.profile', 'w') as f:
+with open('sample_1.profile', 'w') as f:
     for line in profile_list_2:
         f.write("{0}\n".format(line))
