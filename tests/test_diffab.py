@@ -47,11 +47,11 @@ for key, value in taxonomies.items():
 	tax_id_ref[value] = key
 
 profile_list_1 = []
-#profile_list_1.append('@SampleID:sample_0')
-#profile_list_1.append('@Version:0.9')
-#profile_list_1.append('@Ranks: superkingdom|phylum|class|order|family|genus|species')
+profile_list_1.append('@SampleID:sample_0')
+profile_list_1.append('@Version:0.9')
+profile_list_1.append('@Ranks: superkingdom|phylum|class|order|family|genus|species')
 profile_list_1.append('')
-#profile_list_1.append('@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE')
+profile_list_1.append('@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE')
 for key, value in group_1_diffab.items():
 	split_tax = new_L2_tax_arr[key].split('|')
 	outermost = 'Root'
@@ -84,14 +84,16 @@ for key, value in group_1_diffab.items():
 
 	profile_list_1.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value))
 
-print(profile_list_1)
+with open('sample_1.profile', 'w') as f:
+    for line in profile_list_1:
+        f.write("{0}\n".format(line))
 
 profile_list_2 = []
-#profile_list_2.append('@SampleID:sample_0')
-#profile_list_2.append('@Version:0.9')
-#profile_list_2.append('@Ranks: superkingdom|phylum|class|order|family|genus|species')
+profile_list_2.append('@SampleID:sample_1')
+profile_list_2.append('@Version:0.9')
+profile_list_2.append('@Ranks: superkingdom|phylum|class|order|family|genus|species')
 profile_list_2.append('')
-#profile_list_2.append('@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE')
+profile_list_2.append('@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE')
 for key, value in group_2_diffab.items():
 	split_tax = new_L2_tax_arr[key].split('|')
 	outermost = 'Root'
@@ -124,4 +126,6 @@ for key, value in group_2_diffab.items():
 
 	profile_list_2.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value))
 
-print(profile_list_2)
+with open('sample_2.profile', 'w') as f:
+    for line in profile_list_2:
+        f.write("{0}\n".format(line))
