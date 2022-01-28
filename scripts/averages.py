@@ -247,15 +247,19 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 	if output_file is not None:
 		CSV.write(output_file, ["L1 Inverse Pushed Up:"])
 	L1_neg_arr = []
+	L2_neg_val_arr = []
 	L1_inverse_pushed = {}
 	for name in region_names:
 		neg_count = 0
+		neg_val_arr = []
 		median_inverse = L1U.inverse_push_up(group_averages_L1[name], T1, l1, nodes_in_order)
 		L1_inverse_pushed[name] = median_inverse
 		for i in range(len(median_inverse)):
 			if median_inverse[i] < negatives_filtering_threshold:
 				neg_count += 1
+				neg_val_arr.append(median_inverse[i])
 		L1_neg_arr.append(neg_count)
+		L2_neg_val_arr.append(neg_val_arr)
 		padded_name = "{:<15}".format(name+":")
 		print(f"{padded_name} {median_inverse}")
 		if output_file is not None:
@@ -267,6 +271,15 @@ def compute_L1_averages(L1_file, biom_file, tree_file, metadata_file, tax_file, 
 	if output_file is not None:
 		CSV.write(output_file, ["L1 Negatives by Group:"])
 		CSV.write(output_file, L1_neg_arr)
+
+	# Write negative counts
+	print("L1 Negatives:")
+	for i in range(len(L2_neg_val_arr)):
+		print(L2_neg_val_arr[i])
+	if output_file is not None:
+		CSV.write(output_file, ["L1 Negatives:"])
+		for i in range(len(L2_neg_val_arr)):
+			CSV.write(output_file, L2_neg_val_arr[i])
 
 	L1_distance_matrix = compute_pairwise_pushed_L1(L1_pushed_arr)
 
