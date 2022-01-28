@@ -82,14 +82,14 @@ for key, value in group_1_diffab.items():
 		else:
 			tax_path += last_tax_id
 
-	profile_list_1.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value))
+	profile_list_1.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value*100))
 
 with open('sample_0.profile', 'w') as f:
     for line in profile_list_1:
         f.write("{0}\n".format(line))
 
 profile_list_2 = []
-profile_list_2.append('@SampleID:sample_1')
+profile_list_2.append('@SampleID:sample_0')
 profile_list_2.append('@Version:0.9')
 profile_list_2.append('@Ranks: superkingdom|phylum|class|order|family|genus|species')
 profile_list_2.append('')
@@ -124,7 +124,7 @@ for key, value in group_2_diffab.items():
 		else:
 			tax_path += last_tax_id
 
-	profile_list_2.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value))
+	profile_list_2.append('{0}\t{1}\t{2}\t{3}\t{4}'.format(last_tax_id, outermost, tax_path, new_L2_tax_arr[key], value*100))
 
 with open('sample_1.profile', 'w') as f:
     for line in profile_list_2:
