@@ -194,7 +194,7 @@ def EMDUnifrac_weighted_flow(Tint, lint, nodes_in_order, P, Q):
 
 
 # This will return the EMDUnifrac distance only
-def EMDUnifrac_weighted(Tint, lint, nodes_in_order, P, Q):
+def EMDUnifrac_weighted(Tint, lint, nodes_in_order, P, Q, include_tmp_diffab=True):
 	'''
 	(Z, diffab) = EMDUnifrac_weighted(Tint, lint, nodes_in_order, P, Q)
 	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
@@ -210,7 +210,7 @@ def EMDUnifrac_weighted(Tint, lint, nodes_in_order, P, Q):
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
 		partial_sums[Tint[i]] += val
-		if val != 0:
+		if val != 0 and (include_tmp_diffab or nodes_in_order[i][0] != 't'):
 			diffab[(i, Tint[i])] = lint[i, Tint[i]]*val  # Captures diffab
 		Z += lint[i, Tint[i]]*abs(val)
 	return (Z, diffab)
