@@ -147,9 +147,10 @@ def L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q):
 	(Z, diffab) = L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q)
 	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
 	and two probability vectors P and Q (typically P = envs_prob_dict[samples[i]], Q = envs_prob_dict[samples[j]]).
-	Returns the weighted Unifrac distance Z and the flow F. The flow F is a dictionary with keys of the form (i,j) where
-	F[(i,j)] == num means that in the calculation of the Unifrac distance, a total mass of num was moved from the node
-	nodes_in_order[i] to the node nodes_in_order[j].
+	Returns the weighted Unifrac distance Z and the differential abundance. The differential abundance vector diffab 
+	is a dictionary with tuple keys using elements of Tint and values diffab[(i, j)] equal to the signed difference 
+	of abundance between the two samples restricted to the sub-tree defined by nodes_in_order(i) and weighted by the 
+	edge length lint[(i,j)].
 	'''
 	num_nodes = len(nodes_in_order)
 	Z = 0
@@ -159,7 +160,7 @@ def L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q):
 		val = partial_sums[i]
 		partial_sums[Tint[i]] += val
 		if val != 0:
-			diffab[(i, Tint[i])] = lint[i, Tint[i]]*val*abs(val)  # Captures diffab
+			diffab[(i, Tint[i])] = lint[i, Tint[i]]*val # Captures diffab
 		Z += lint[i, Tint[i]]*(val**2)
 	Z = np.sqrt(Z)
 	return (Z, diffab)
