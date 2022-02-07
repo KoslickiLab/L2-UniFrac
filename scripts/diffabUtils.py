@@ -21,9 +21,9 @@ def generate_diffab(regions, region_averages, Tint, lint, nodes_in_order, taxono
 					newDifferentialAbundance = {}
 					for (child, parent), diff in DifferentialAbundance.items():
 						for tax, diff_sum in tempDiff.items():
-							if taxonomy_in_order[child] == tax:
+							if taxonomy_in_order[child] == tax and diff_sum > 0:
 								newDifferentialAbundance[(child, parent)] = diff_sum
-								del tempDiff[tax]
+								tempDiff[tax] = 0
 					fig = L2U.plot_diffab(nodes_in_order, taxonomy_in_order, newDifferentialAbundance, regions[i], regions[j], plot_zeros=False, thresh=thresh, show=False, maxDisp=maxDisp, includeTemp=includeTemp)
 					plt.savefig('images/{0}_diffab_{1}_{2}.png'.format(output, regions[i], regions[j]))
 	else:
@@ -40,8 +40,8 @@ def generate_diffab(regions, region_averages, Tint, lint, nodes_in_order, taxono
 					newDifferentialAbundance = {}
 					for (child, parent), diff in DifferentialAbundance.items():
 						for tax, diff_sum in tempDiff.items():
-							if taxonomy_in_order[child] == tax:
+							if taxonomy_in_order[child] == tax and diff_sum > 0:
 								newDifferentialAbundance[(child, parent)] = diff_sum
-								del tempDiff[tax]
+								tempDiff[tax] = 0
 					fig = L2U.plot_diffab(nodes_in_order, taxonomy_in_order, newDifferentialAbundance, regions[i], regions[j], plot_zeros=False, thresh=thresh, show=False, maxDisp=maxDisp, includeTemp=includeTemp)
 					plt.savefig('images/{0}_diffab_{1}_{2}.png'.format(output, regions[i], regions[j]))
