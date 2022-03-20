@@ -4,6 +4,9 @@ import dendropy
 import sys
 import warnings
 import heapq
+from scipy.sparse import dok_matrix
+from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import inv
 sys.path.append('../tests')
 
 epsilon = sys.float_info.epsilon
@@ -120,6 +123,12 @@ def L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
 	return Z
 
 def push_up(P, Tint, lint, nodes_in_order):
+	'''
+	P = push_up(P, Tint, lint, nodes_in_order)
+	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
+	and the probability vector P.
+	Returns the pushed-up probability vector of P with respect to the phylogenetic tree.
+	'''
 	P_pushed = P + 0  # don't want to stomp on P
 	for i in range(len(nodes_in_order) - 1):
 		if lint[i, Tint[i]] == 0:
@@ -128,7 +137,33 @@ def push_up(P, Tint, lint, nodes_in_order):
 		P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
 	return P_pushed
 
+def build_W2(Tint, lint, nodes_in_order):
+	'''
+	W2 = build_W2(Tint, lint, nodes_in_order)
+	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order.
+	Returns the transformation matrix corresponding to the push up operation for use on P probability vectors
+	'''
+	n = len(nodes_in_order)
+	W2 = dok_matrix((n, n), dtype=np.float64)
+	for i in range(n):
+		cur_node = i
+		while cur_node != n:
+			if cur_node in Tint:
+				W2[cur_node, i] = np.sqrt(lint[cur_node, Tint[cur_node]])
+				cur_node = Tint[cur_node]
+			else:
+				W2[cur_node, i] = 1
+				cur_node += 1
+	W2 = csr_matrix(W2)
+	return W2
+
 def inverse_push_up(P, Tint, lint, nodes_in_order):
+	'''
+	P = inverse_push_up(P, Tint, lint, nodes_in_order)
+	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
+	and the pushed-up probability vector P.
+	Returns the probability vector of P with respect to the phylogenetic tree.
+	'''
 	P_pushed = np.zeros(P.shape)  # don't want to stomp on P
 	for i in range(len(nodes_in_order) - 1):
 		if lint[i, Tint[i]] == 0:
@@ -143,6 +178,14 @@ def inverse_push_up(P, Tint, lint, nodes_in_order):
 	root = len(nodes_in_order) - 1
 	P_pushed[root] += P[root]
 	return P_pushed
+
+def inverse_W2(W2):
+	'''
+	:param W2: an nxn matrix of edge lengths on a tree, where the diagonal corresponds to weights of each node n and all descendents j 
+	of n are assigned the same weight at position j in row n.
+	:return: the inverse of matrix W2
+	'''
+	return inv(W2)
 
 def mean_of_vectors(L):
 	'''
@@ -334,7 +377,7 @@ def parse_envs(envs, nodes_in_order):
 
 def run_tests():
 	import test_meanUnifrac as test
-	test.test_weighted()
+	test.run_tests()
 
 
 if __name__ == '__main__':
