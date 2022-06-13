@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 import dendropy
@@ -870,6 +872,49 @@ def parse_otu_table(otu_table_file):
     :param otu_table_file: A file with rows being otu/taxids and columns being samples
     :return: A list of vectors
     '''
+    return
+
+def merge_profiles_by_dir(dir, branch_length_fun=lambda x:1/x):
+    '''
+    Take in a directory containin profiles, standardize the length of the distribution vectors represented by the profiles
+    :param dir: a directory containing profiles
+    :return: a dict of samples, i.e. {sample_id: vector}, and taxids in order
+    '''
+    file_lst = [f for f in os.listdir(dir) if f.endswith('.profile')]
+    os.chdir(dir)
+    all_taxids = set()
+    sample_dict = dict()
+    for file in file_lst:
+        profile_list = open_profile_from_tsv(file, False)
+        name, metadata, profile = profile_list[0]
+        profile = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
+        #print(profile.sample_metadata['SAMPLEID'])
+        #if profile.sample_metadata['SAMPLEID'] == 'unnamed sample':
+        #    profile.sample_metadata['SAMPLEID'] = sample_id
+        #count total number of taxids
+        for prediction in profile.profile:
+            #print(prediction.taxid)
+            all_taxids.add(prediction.taxid)
+            #print(prediction.percentage)
+    print("Total number of organisms:", len(all_taxids))
+    all_taxids_list = list(all_taxids)
+    for file in file_lst:
+        sample_id = os.path.splitext(file)[0].split('.')[0]
+        profile_list = open_profile_from_tsv(file, False)
+        name, metadata, profile = profile_list[0]
+        profile = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
+        taxid_list = [prediction.taxid for prediction in profile.profile]
+        abundance_list = [prediction.percentage for prediction in profile.profile]
+        #print(taxid_list)
+        #print(abundance_list)
+        tax_abund_dict = dict(zip(taxid_list, abundance_list))
+        distribution_vector = [0.] * len(all_taxids_list)
+        for i, tax in enumerate(all_taxids_list):
+            if tax in taxid_list: #if this sample contains this taxid
+                distribution_vector[i] = tax_abund_dict[tax]
+        sample_dict[sample_id] = distribution_vector
+    #print(sample_dict)
+    return sample_dict, all_taxids_list
 
 
 #def run_tests():
