@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../L2-Unifrac/src')
-from L2Unifrac import push_up, parse_tree_file, parse_envs
-from data import extract_biom, extract_samples, write
+from L2UniFrac import push_up, parse_tree_file, parse_envs
+from extract_data import extract_biom, extract_samples, write
 import multiprocessing as mp
 
 T1 = {}
@@ -56,6 +56,6 @@ def generate_preprocessed(biom_file, tree_file, output_file=None, max_cores=int(
 
 	return L2_preprocessed
 
-if __name__ == '__main__':
-	generate_preprocessed('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', 'L2-Push-Out.csv')
+#if __name__ == '__main__':
+#	generate_preprocessed('../data/47422_otu_table.biom', '../data/trees/gg_13_5_otus_99_annotated.tree', 'L2-Push-Out.csv')
 	
