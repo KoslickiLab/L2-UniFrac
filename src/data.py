@@ -1,6 +1,7 @@
 import biom, csv
 import numpy as np
 from scipy.sparse import coo_matrix
+from dendropy import Tree, datamodel
 from scipy.sparse import csr_matrix
 
 def extract_biom(address):
@@ -185,13 +186,13 @@ def parse_tree(tree_str):
 	nodes_in_order is a list of the nodes in the input tree_str such that Tint[i]=j means nodes_in_order[j] is an ancestor
 	of nodes_in_order[i]. Nodes are labeled from the leaves up.
 	'''
-	dtree = dendropy.Tree.get(data=tree_str, schema="newick", suppress_internal_node_taxa=False,store_tree_weights=True)
+	dtree = Tree.get(data=tree_str, schema="newick", suppress_internal_node_taxa=False,store_tree_weights=True)
 	#Name all the internal nodes
 	nodes = dtree.nodes()
 	i=0
 	for node in nodes:
 		if node.taxon == None:
-			node.taxon = dendropy.datamodel.taxonmodel.Taxon(label="temp"+str(i))
+			node.taxon = datamodel.taxonmodel.Taxon(label="temp"+str(i))
 			i = i+1
 	full_nodes_in_order = [item for item in dtree.levelorder_node_iter()]  # i in path from root to j only if i>j
 	full_nodes_in_order.reverse()
@@ -216,7 +217,7 @@ def parse_tree_file(tree_str_file, suppress_internal_node_taxa=True, suppress_le
 	nodes_in_order is a list of the nodes in the input tree_str such that T[i]=j means nodes_in_order[j] is an ancestor
 	of nodes_in_order[i]. Nodes are labeled from the leaves up.
 	'''
-	dtree = dendropy.Tree.get(path=tree_str_file, schema="newick",
+	dtree = Tree.get(path=tree_str_file, schema="newick",
 							suppress_internal_node_taxa=suppress_internal_node_taxa,
 							store_tree_weights=True,
 							suppress_leaf_node_taxa = suppress_leaf_node_taxa)
@@ -225,7 +226,7 @@ def parse_tree_file(tree_str_file, suppress_internal_node_taxa=True, suppress_le
 	i=0
 	for node in nodes:
 		if node.taxon == None:
-			node.taxon = dendropy.datamodel.taxonmodel.Taxon(label="temp"+str(i))
+			node.taxon = datamodel.taxonmodel.Taxon(label="temp"+str(i))
 			i = i+1
 	full_nodes_in_order = [item for item in dtree.levelorder_node_iter()]  # i in path from root to j only if i>j
 	full_nodes_in_order.reverse()
