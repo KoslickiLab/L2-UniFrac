@@ -1,4 +1,4 @@
-import biom, csv
+import biom, csv, dendropy
 import numpy as np
 from scipy.sparse import coo_matrix
 from dendropy import Tree, datamodel
