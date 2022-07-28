@@ -33,6 +33,79 @@ def extract_biom(address):
 			nodes_samples[phylogenetic_tree_nodes[i]][key] /= totals[index]
 	return nodes_samples
 
+def extract_biom_samples(address):
+
+	# Load table into the biom Table format.
+	Biom = biom.load_table(address)
+
+	# Grab the sample IDs (i.e. '1928.SRS045191.SRX021470.SRR052699')
+	sample_ids = Biom.ids()
+
+	# Grab the node IDs for the tree (i.e. '858026')
+	phylogenetic_tree_nodes = Biom.ids(axis='observation')
+
+	# Formulate the dictionary required for L2 Unifrac by associating each sample weight to its node ID. 
+	nodes_samples = {}
+	nodes_samples_temp = {}
+	for i in range(len(phylogenetic_tree_nodes)):
+		row_vector = Biom._get_row(i).todense().tolist()[0] # Convert Table row to a standard python list.
+		for j in range(len(sample_ids)):
+			if sample_ids[j] not in nodes_samples:
+				nodes_samples[sample_ids[j]] = []
+			nodes_samples[sample_ids[j]].append(row_vector[j])
+	
+	for sample in nodes_samples.keys():
+		sample_sum = sum(nodes_samples[sample])
+		nodes_samples[sample] = [node/sample_sum for node in nodes_samples[sample]]
+
+	return nodes_samples
+
+def extract_metadata_numbered(extension):
+	try:
+		f = open(str(extension), 'r')
+		metadata = f.readlines()
+
+		for i in range(len(metadata)):
+			metadata[i] = metadata[i].split("\t")
+
+		del[metadata[0]]
+
+		meta_dict = {}
+		classes = []
+		for i in range(len(metadata)):
+			meta_dict[metadata[i][0]] = metadata[i][3][7:]
+			if metadata[i][3][7:] not in classes:
+				classes.append(metadata[i][3][7:])
+
+		class_conv = {}
+		i = 0
+		for c in classes:
+			if c not in class_conv:
+				class_conv[c] = i
+				i += 1
+
+		for sample in meta_dict.keys():
+			meta_dict[sample] = class_conv[meta_dict[sample]]
+
+		return meta_dict
+
+	except FileNotFoundError:
+		raise FileNotFoundError("Unknown file. Make sure you have the correct address and try again!")
+
+	except:
+		raise Exception("Unknown exception occurred. Try again.")
+
+def extract_sample_metadata(biom_file, metadata_file):
+  samples = extract_samples(biom_file)
+  metadata = extract_metadata(metadata_file)
+
+  sample_metadata = {}
+
+  for sample in samples:
+    sample_metadata[sample] = metadata[sample]
+
+  return sample_metadata
+
 def extract_samples(address):
 
 	# Load table into the biom Table format.
