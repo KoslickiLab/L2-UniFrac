@@ -61,7 +61,7 @@ def extract_biom_samples(address):
 
 	return nodes_samples
 
-def extract_metadata_numbered(extension):
+def extract_metadata_direct(extension):
 	try:
 		f = open(str(extension), 'r')
 		metadata = f.readlines()
@@ -98,7 +98,7 @@ def extract_metadata_numbered(extension):
 
 def extract_sample_metadata(biom_file, metadata_file):
   samples = extract_samples(biom_file)
-  metadata = extract_metadata(metadata_file)
+  metadata = extract_metadata_direct(metadata_file)
 
   sample_metadata = {}
 
