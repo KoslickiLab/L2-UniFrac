@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../src/')
-from L2UniFrac import push_up
-from data import extract_biom, extract_samples, write, parse_tree_file, parse_envs
+sys.path.append('../L2-Unifrac/src')
+from L2UniFrac import push_up, parse_tree_file, parse_envs
+from extract_data import extract_biom, extract_samples, write
 import multiprocessing as mp
 
 T1 = {}

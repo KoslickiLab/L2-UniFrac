@@ -16,7 +16,7 @@ import copy
 epsilon = sys.float_info.epsilon
 
 # This will return the L2Unifrac distance only
-def L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q, include_tmp_diffab=True):
+def L2UniFrac_weighted(Tint, lint, nodes_in_order, P, Q, include_tmp_diffab=True):
 	'''
 	(Z, diffab) = L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q)
 	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
@@ -39,7 +39,7 @@ def L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q, include_tmp_diffab=True
 	Z = np.sqrt(Z)
 	return (Z, diffab)
 
-def L2Unifrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
+def L2UniFrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
 	'''
 	Z = L2Unifrac_weighted_plain(ancestors, edge_lengths, nodes_in_order, P, Q)
 	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
