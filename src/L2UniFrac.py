@@ -917,7 +917,7 @@ def merge_profiles_by_dir(list_of_profiles, nodes_to_index, branch_length_fun=la
     '''
     sample_dict = dict()
     for file in list_of_profiles:
-        sample_id = os.path.splitext(file)[0].split('.')[0]
+        sample_id = os.path.splitext(os.path.basename(file))[0].split('.')[0]
         distribution_vector = extend_vector(file, nodes_to_index, branch_length_fun, normalize)
         sample_dict[sample_id] = distribution_vector
     return sample_dict
