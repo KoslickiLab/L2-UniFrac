@@ -69,9 +69,8 @@ def extract_tax(extension):
 # Function to pull metadata from specific metadata file sourced at http://mse.ac.cn/index.php/mse
 def extract_metadata(extension):
 	try:
-		f = open(str(extension), 'r')
+		f = open(extension, 'r')
 		metadata = f.readlines()
-
 		for i in range(len(metadata)):
 			metadata[i] = metadata[i].split("\t")
 
