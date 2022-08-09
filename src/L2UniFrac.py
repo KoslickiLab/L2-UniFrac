@@ -59,19 +59,13 @@ def L2UniFrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
 	return Z
 
 def push_up(P, Tint, lint, nodes_in_order):
-	'''
-	P = push_up(P, Tint, lint, nodes_in_order)
-	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
-	and the probability vector P.
-	Returns the pushed-up probability vector of P with respect to the phylogenetic tree.
-	'''
-	P_pushed = P + 0  # don't want to stomp on P
-	for i in range(len(nodes_in_order) - 1):
-		if lint[i, Tint[i]] == 0:
-			lint[i, Tint[i]] = epsilon
-		P_pushed[Tint[i]] += P_pushed[i]  # push mass up
-		P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
-	return P_pushed
+    P_pushed = copy.deepcopy(P)
+    for i in range(len(nodes_in_order)-1):
+        if lint[i, Tint[i]] == 0:
+            lint[i, Tint[i]] = epsilon
+        P_pushed[Tint[i]] += P_pushed[i] #push mass up
+        P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
+    return P_pushed
 
 def build_W2(Tint, lint, nodes_in_order):
 	'''
@@ -94,26 +88,28 @@ def build_W2(Tint, lint, nodes_in_order):
 	return W2
 
 def inverse_push_up(P, Tint, lint, nodes_in_order):
-	'''
-	P = inverse_push_up(P, Tint, lint, nodes_in_order)
-	This function takes the ancestor dictionary Tint, the lengths dictionary lint, the basis nodes_in_order
-	and the pushed-up probability vector P.
-	Returns the probability vector of P with respect to the phylogenetic tree.
-	'''
-	P_pushed = np.zeros(P.shape)  # don't want to stomp on P
-	for i in range(len(nodes_in_order) - 1):
-		if lint[i, Tint[i]] == 0:
-			edge_length = epsilon
-		else:
-			edge_length = lint[i, Tint[i]]
-		p_val = P[i]
-		P_pushed[i] += 1/np.sqrt(edge_length) * p_val  # re-adjust edge lengths
-		if P_pushed[i] < epsilon:
-			P_pushed[i] = 0
-		P_pushed[Tint[i]] -= 1/np.sqrt(edge_length) * p_val  # propagate mass upward, via subtraction, only using immediate descendants
-	root = len(nodes_in_order) - 1
-	P_pushed[root] += P[root]
-	return P_pushed
+    '''
+
+    :param P:
+    :param Tint:
+    :param lint:
+    :param nodes_in_order:
+    :return:
+    '''
+    P_pushed = np.zeros(P.shape)  # don't want to stomp on P
+    for i in range(len(nodes_in_order) - 1):
+        if lint[i, Tint[i]] == 0:
+            edge_length = epsilon
+        else:
+            edge_length = lint[i, Tint[i]]
+        p_val = P[i]
+        P_pushed[i] += 1 / np.sqrt(edge_length) * p_val  # re-adjust edge lengths
+        if P_pushed[i] < epsilon:
+            P_pushed[i] = 0
+        P_pushed[Tint[i]] -= 1 / np.sqrt(edge_length) * p_val  # propagate mass upward, via subtraction, only using immediate descendants
+    root = len(nodes_in_order) - 1
+    P_pushed[root] += P[root]
+    return P_pushed
 
 def inverse_W2(W2):
 	'''
@@ -789,7 +785,8 @@ def open_profile_from_tsv(file_path, normalize):
 
             reading_data = True
             row_data = line.split('\t')
-
+            #print(row_data) #debug
+            #print(len(row_data))
             taxid = row_data[index_taxid]
             # if there is already a prediction for taxon, only sum abundance
             if taxid in predictions_dict:
@@ -866,55 +863,64 @@ def push_up_from_wgs_profile(profile_file, branch_length_fun=lambda x: 1/x):
     pushed_up_P = push_up(P, Tint, lint, nodes_in_order)
     return pushed_up_P
 
-def parse_otu_table(otu_table_file):
-    '''
-    Takes in a file with multiple samples and returns the samples represented in a list
-    :param otu_table_file: A file with rows being otu/taxids and columns being samples
-    :return: A list of vectors
-    '''
-    return
+def get_wgs_tree(profile_path_list):
+    real_profile_lst = []
+    for profile in profile_path_list:
+        if not profile.endswith('.profile'):
+            continue
+        profile_list = open_profile_from_tsv(profile, False)
+        name, metadata, profile = profile_list[0]
+        profile = Profile(sample_metadata=metadata, profile=profile)
+        real_profile_lst.append(profile)
+        # merge profiles to get Tint, lint, nodes_in_order
+    i = 1
+    while i < len(real_profile_lst):
+        real_profile_lst[0].merge(real_profile_lst[i])
+        i += 1
+    (Tint, lint, nodes_in_order, nodes_to_index, P) = real_profile_lst[0].make_unifrac_input_and_normalize()
+    return Tint, lint, nodes_in_order, nodes_to_index
 
-def merge_profiles_by_dir(dir, branch_length_fun=lambda x:1/x):
+def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order, nodes_to_index):
     '''
-    Take in a directory containin profiles, standardize the length of the distribution vectors represented by the profiles
-    :param dir: a directory containing profiles
-    :return: a dict of samples, i.e. {sample_id: vector}, and taxids in order
+    :param profile_list: list of file names (with path) xxxx.profile
+    :return:
     '''
-    file_lst = [f for f in os.listdir(dir) if f.endswith('.profile')]
-    os.chdir(dir)
-    all_taxids = set()
+    vector_list = []
+    sample_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
+    for sample in sample_dict.keys():
+        pushed_up_vector = push_up(sample_dict[sample], Tint, lint, nodes_in_order)
+        vector_list.append(pushed_up_vector)
+    mean_pushed_up = mean_of_vectors(vector_list)
+    rep_vector = inverse_push_up(mean_pushed_up, Tint, lint, nodes_in_order)
+    return rep_vector
+
+def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
+    profile_list = open_profile_from_tsv(profile_path, False)
+    name, metadata, profile = profile_list[0]
+    profile = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
+    taxid_list = [prediction.taxid for prediction in profile.profile]
+    abundance_list = [prediction.percentage for prediction in profile.profile]
+    # print(taxid_list)
+    # print(abundance_list)
+    tax_abund_dict = dict(zip(taxid_list, abundance_list))
+    distribution_vector = [0.] * (len(nodes_to_index))  # indexed by the node_to_index
+    for tax in taxid_list:
+        distribution_vector[nodes_to_index[tax]] = tax_abund_dict[tax]
+    if normalize:
+        distribution_vector = list(map(lambda x: x / 100., distribution_vector))
+    return distribution_vector
+
+def merge_profiles_by_dir(list_of_profiles, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
+    '''
+    Takes in a list of profile paths
+    :return: a dict of samples, i.e. {sample_id: vector}
+    '''
     sample_dict = dict()
-    for file in file_lst:
-        profile_list = open_profile_from_tsv(file, False)
-        name, metadata, profile = profile_list[0]
-        profile = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
-        #print(profile.sample_metadata['SAMPLEID'])
-        #if profile.sample_metadata['SAMPLEID'] == 'unnamed sample':
-        #    profile.sample_metadata['SAMPLEID'] = sample_id
-        #count total number of taxids
-        for prediction in profile.profile:
-            #print(prediction.taxid)
-            all_taxids.add(prediction.taxid)
-            #print(prediction.percentage)
-    print("Total number of organisms:", len(all_taxids))
-    all_taxids_list = list(all_taxids)
-    for file in file_lst:
+    for file in list_of_profiles:
         sample_id = os.path.splitext(file)[0].split('.')[0]
-        profile_list = open_profile_from_tsv(file, False)
-        name, metadata, profile = profile_list[0]
-        profile = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
-        taxid_list = [prediction.taxid for prediction in profile.profile]
-        abundance_list = [prediction.percentage for prediction in profile.profile]
-        #print(taxid_list)
-        #print(abundance_list)
-        tax_abund_dict = dict(zip(taxid_list, abundance_list))
-        distribution_vector = [0.] * len(all_taxids_list)
-        for i, tax in enumerate(all_taxids_list):
-            if tax in taxid_list: #if this sample contains this taxid
-                distribution_vector[i] = tax_abund_dict[tax]
+        distribution_vector = extend_vector(file, nodes_to_index, branch_length_fun, normalize)
         sample_dict[sample_id] = distribution_vector
-    #print(sample_dict)
-    return sample_dict, all_taxids_list
+    return sample_dict
 
 
 #def run_tests():
@@ -924,3 +930,4 @@ def merge_profiles_by_dir(dir, branch_length_fun=lambda x:1/x):
 
 #if __name__ == '__main__':
 #	run_tests()
+
