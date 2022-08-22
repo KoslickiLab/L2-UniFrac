@@ -922,7 +922,6 @@ def merge_profiles_by_dir(list_of_profiles, nodes_to_index, branch_length_fun=la
         sample_dict[sample_id] = distribution_vector
     return sample_dict
 
-
 #def run_tests():
 #	import test_meanUnifrac as test
 #	test.run_tests()
