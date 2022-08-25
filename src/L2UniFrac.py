@@ -1,5 +1,5 @@
 import os
-
+import itertools as it
 import numpy as np
 import matplotlib.pyplot as plt
 import dendropy
@@ -63,6 +63,7 @@ def push_up(P, Tint, lint, nodes_in_order):
     for i in range(len(nodes_in_order)-1):
         if lint[i, Tint[i]] == 0:
             lint[i, Tint[i]] = epsilon
+        print(i)
         P_pushed[Tint[i]] += P_pushed[i] #push mass up
         P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
     return P_pushed
@@ -921,6 +922,7 @@ def merge_profiles_by_dir(list_of_profiles, nodes_to_index, branch_length_fun=la
         distribution_vector = extend_vector(file, nodes_to_index, branch_length_fun, normalize)
         sample_dict[sample_id] = distribution_vector
     return sample_dict
+
 
 #def run_tests():
 #	import test_meanUnifrac as test
