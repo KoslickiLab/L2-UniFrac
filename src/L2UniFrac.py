@@ -60,10 +60,12 @@ def L2UniFrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
 
 def push_up(P, Tint, lint, nodes_in_order):
     P_pushed = copy.deepcopy(P)
+    print(len(P))
+    print(len(Tint))
+    print(len(nodes_in_order))
     for i in range(len(nodes_in_order)-1):
         if lint[i, Tint[i]] == 0:
             lint[i, Tint[i]] = epsilon
-        print(i)
         P_pushed[Tint[i]] += P_pushed[i] #push mass up
         P_pushed[i] *= np.sqrt(lint[i, Tint[i]])
     return P_pushed
