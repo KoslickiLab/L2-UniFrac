@@ -874,8 +874,8 @@ def get_wgs_tree(profile_path_list):
         real_profile_lst.append(profile)
         # merge profiles to get Tint, lint, nodes_in_order
     i = 1
-    print(len(real_profile_lst))
-    print(real_profile_lst)
+    #print(len(real_profile_lst))
+    #print(real_profile_lst)
     while i < len(real_profile_lst):
         real_profile_lst[0].merge(real_profile_lst[i])
         i += 1
