@@ -1,8 +1,7 @@
 import os
-import itertools as it
+#import itertools as it
 import numpy as np
 import matplotlib.pyplot as plt
-import dendropy
 import sys
 import warnings
 from scipy.sparse import dok_matrix
@@ -255,6 +254,26 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 		plt.show()
 	else:
 		return fig
+
+def get_representative_sample_16s(sample_vector_dict, meta_samples_dict, Tint, lint, nodes_in_order):
+    '''
+    Computes the representative vector for each phenotype in meta_samples_dict and returns a dict
+    :param sample_vector_dict: {sample_id: vector}
+    :param meta_samples_dict: {phenotype: [samples]}
+    :param Tint:
+    :param lint:
+    :param nodes_in_order:
+    :return: {phenotype: rep_sample vector}
+    '''
+    rep_sample_dict = dict()
+    for phenotype in meta_samples_dict.keys():
+        pushed_vectors = []
+        for sample in meta_samples_dict[phenotype]:
+            pushed_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
+            pushed_vectors.append(pushed_vector)
+        mean_vector = mean_of_vectors(pushed_vector)
+        rep_sample_dict[phenotype] = inverse_push_up(mean_vector, Tint, lint, nodes_in_order)
+    return rep_sample_dict
 
 #WGS parts
 #input profile.
@@ -864,6 +883,12 @@ def push_up_from_wgs_profile(profile_file, branch_length_fun=lambda x: 1/x):
     return pushed_up_P
 
 def get_wgs_tree(profile_path_list):
+    '''
+    Given a list of profile paths, get the tree in the form of Tint, lint, nodes_in_order, nodes_to_index
+    representing these profiles by merging the profiles successively.
+    :param profile_path_list: a list of paths to profiles
+    :return: Tint, lint, nodes_in_order, nodes_to_index
+    '''
     real_profile_lst = []
     for profile in profile_path_list:
         if not profile.endswith('.profile'):
@@ -884,42 +909,62 @@ def get_wgs_tree(profile_path_list):
 
 def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order, nodes_to_index):
     '''
-    :param profile_list: list of file names (with path) xxxx.profile
-    :return:
+    Given a list of profiles, merge_profiles_by_dir to produce sample_vector_dict, push up, take mean, inverse to get the
+    representative sample
+    :param profile_path_list: a list of paths to profiles
+	:param Tint: A dict showing nodes and their respective ancestor
+	:param lint: A dict showing edge length
+	:param nodes_in_order: Nodes of a tree in order, labeled as integers
+	:param nodes_to_index: A dict that maps node name to the labeling in nodes_in_order
+    :return: the vector of the sample
     '''
     vector_list = []
-    sample_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
-    for sample in sample_dict.keys():
-        pushed_up_vector = push_up(sample_dict[sample], Tint, lint, nodes_in_order)
+    sample_vector_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
+    for sample in sample_vector_dict.keys():
+        pushed_up_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
         vector_list.append(pushed_up_vector)
     mean_pushed_up = mean_of_vectors(vector_list)
     rep_vector = inverse_push_up(mean_pushed_up, Tint, lint, nodes_in_order)
     return rep_vector
 
 def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
+    '''
+    Given a profile path, opens it, creates the Profile object, creates an abundance vector indexed in the same way as
+    nodes_in_order and returns the vector
+    :param profile_path: path to the profile
+    :param nodes_to_index: {taxid: integer id as in nodes_in_order}
+    :param branch_length_fun: Function to assign branch length. By default 1/x, where x is depth of the node
+    :param normalize: If true, normalize the vector. Otherwise not.
+    :return: an abundance vector corresponding to this path, indexed in the order of nodes_in_order and having the length
+    of nodes_in_order
+    '''
     profile_list = open_profile_from_tsv(profile_path, False)
     name, metadata, profile = profile_list[0]
-    profile = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
-    taxid_list = [prediction.taxid for prediction in profile.profile]
-    abundance_list = [prediction.percentage for prediction in profile.profile]
-    # print(taxid_list)
-    # print(abundance_list)
+    profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
+    taxid_list = [prediction.taxid for prediction in profile_obj.profile]
+    abundance_list = [prediction.percentage for prediction in profile_obj.profile]
     tax_abund_dict = dict(zip(taxid_list, abundance_list))
-    distribution_vector = [0.] * (len(nodes_to_index))  # indexed by the node_to_index
+    distribution_vector = [0.] * (len(nodes_to_index))  # indexed by node_to_index
     for tax in taxid_list:
         distribution_vector[nodes_to_index[tax]] = tax_abund_dict[tax]
     if normalize:
         distribution_vector = list(map(lambda x: x / 100., distribution_vector))
     return distribution_vector
 
-def merge_profiles_by_dir(list_of_profiles, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
+def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
     '''
-    Takes in a list of profile paths
-    :return: a dict of samples, i.e. {sample_id: vector}
+    Name is a little misleading. No directory as input. Instead, it is included in list_of_profile_paths.
+    Produces a dict of {sample_id : vector}, where the vectors all have the same length as the length of nodes_to_index
+    (or probably one more artificial root) and indexed in the order of nodes_in_order
+    :param list_of_profile_paths: A list of profile paths to be merged
+    :param nodes_to_index:
+    :param branch_length_fun: Function to assign branch length. By default 1/x, where x is depth of the node
+    :param normalize: If true, normalize the vector. Otherwise not.
+    :return: {sample_id: distribution vector]}
     '''
     sample_dict = dict()
-    for file in list_of_profiles:
-        sample_id = os.path.splitext(os.path.basename(file))[0].split('.')[0]
+    for file in list_of_profile_paths:
+        sample_id = os.path.splitext(os.path.basename(file))[0].split('.')[0] #get base name
         distribution_vector = extend_vector(file, nodes_to_index, branch_length_fun, normalize)
         sample_dict[sample_id] = distribution_vector
     return sample_dict
