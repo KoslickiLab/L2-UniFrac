@@ -269,9 +269,10 @@ def get_representative_sample_16s(sample_vector_dict, meta_samples_dict, Tint, l
     for phenotype in meta_samples_dict.keys():
         pushed_vectors = []
         for sample in meta_samples_dict[phenotype]:
-            pushed_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
-            pushed_vectors.append(pushed_vector)
-        mean_vector = mean_of_vectors(pushed_vector)
+            if sample in sample_vector_dict:
+                pushed_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
+                pushed_vectors.append(pushed_vector)
+            mean_vector = mean_of_vectors(pushed_vector)
         rep_sample_dict[phenotype] = inverse_push_up(mean_vector, Tint, lint, nodes_in_order)
     return rep_sample_dict
 
