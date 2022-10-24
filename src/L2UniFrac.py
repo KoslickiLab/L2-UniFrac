@@ -28,7 +28,7 @@ def L2UniFrac_weighted(Tint, lint, nodes_in_order, P, Q, include_tmp_diffab=True
 	num_nodes = len(nodes_in_order)
 	Z = 0
 	diffab = dict()
-	partial_sums = [e1 - e2 for (e1, e2) in zip(P, Q)]
+	partial_sums = [float(e1) - float(e2) for (e1, e2) in zip(P, Q)]
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
 		partial_sums[Tint[i]] += val
