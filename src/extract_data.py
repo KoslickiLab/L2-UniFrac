@@ -1,10 +1,15 @@
-import biom, csv, dendropy
+import biom, csv
 import numpy as np
-from scipy.sparse import coo_matrix
 from dendropy import Tree, datamodel
 from scipy.sparse import csr_matrix
+import warnings
 
 def extract_biom(address):
+	'''
+
+	:param address: path to a .biom file
+	:return:
+	'''
 
 	# Load table into the biom Table format.
 	Biom = biom.load_table(address)
@@ -17,12 +22,9 @@ def extract_biom(address):
 
 	# Formulate the dictionary required for L2 Unifrac by associating each sample weight to its node ID. 
 	nodes_samples = {}
-	nodes_samples_temp = {}
 	for i in range(len(phylogenetic_tree_nodes)):
 		row_vector = Biom._get_row(i).todense().tolist()[0] # Convert Table row to a standard python list.
 		nodes_samples[phylogenetic_tree_nodes[i]] = {sample_ids[j]:row_vector[j] for j in range(len(sample_ids))}
-		#sample_count = sum(nodes_samples_temp[phylogenetic_tree_nodes[i]].values())
-		#nodes_samples[phylogenetic_tree_nodes[i]] = {k:v/sample_count for k,v in nodes_samples_temp[phylogenetic_tree_nodes[i]].items()} # NORMALIZE COLUMN, NOT ROW
 	totals = [0 for i in range(len(nodes_samples[phylogenetic_tree_nodes[0]].keys()))]
 	for i in range(len(phylogenetic_tree_nodes)):
 		row = nodes_samples[phylogenetic_tree_nodes[i]]
@@ -367,3 +369,68 @@ def parse_envs(envs, nodes_in_order):
 			warnings.warn("Warning: the sample %s has non-zero counts, do not use for Unifrac calculations" % sample)
 		envs_prob_dict[sample] = envs_prob_dict[sample]/envs_prob_dict[sample].sum()
 	return (envs_prob_dict, samples)
+
+def extract_samples_by_group(biom_file, metadata_file, metadata_key):
+	'''
+
+	:param biom_file: A .biom file
+	:param metadata_file: Metadata file
+	:param metadata_key: The phenotype of interest. For example, 'body sites'
+	:return:
+	'''
+	Biom = biom.load_table(biom_file)
+	sample_ids = Biom.ids()
+	tree_nodes = Biom.ids(axis='observation')
+	metadata = extract_metadata(metadata_file)
+	nodes_test = extract_biom(biom_file)
+	group_samples = {}
+	for sample in sample_ids:
+		col = []
+		for node in tree_nodes:
+			col.append(nodes_test[node][sample])
+		if metadata[sample][metadata_key] not in group_samples:
+			group_samples[metadata[sample][metadata_key]] = []
+		group_samples[metadata[sample][metadata_key]].append(col)
+
+	return group_samples
+
+def extract_sample_names_by_group(biom_file, metadata_file, metadata_key):
+	Biom = biom.load_table(biom_file)
+	sample_ids = Biom.ids()
+	metadata = extract_metadata(metadata_file)
+	group_name_samples = {}
+	for sample in sample_ids:
+		if metadata[sample][metadata_key] not in group_name_samples:
+			group_name_samples[metadata[sample][metadata_key]] = []
+		group_name_samples[metadata[sample][metadata_key]].append(sample)
+
+	return group_name_samples
+
+def extract_samples_direct(biom_file, tree_file):
+	'''
+
+	:param biom_file:
+	:param tree_file:
+	:return:
+	'''
+	nodes_samples = extract_biom(biom_file)
+	_, _, nodes_in_order = parse_tree_file(tree_file)
+	(nodes_weighted, samples_temp) = parse_envs(nodes_samples, nodes_in_order)
+	sample_ids = extract_samples(biom_file)
+
+	return nodes_weighted, sample_ids
+
+def extract_samples_direct_by_group(biom_file, tree_file, metadata_file, metadata_key):
+	nodes_samples = extract_biom(biom_file)
+	_, _, nodes_in_order = parse_tree_file(tree_file)
+	(nodes_weighted, samples_temp) = parse_envs(nodes_samples, nodes_in_order)
+	sample_ids = extract_samples(biom_file)
+
+	metadata = extract_metadata(metadata_file)
+	group_name_samples = {}
+	for sample in sample_ids:
+		if metadata[sample][metadata_key] not in group_name_samples:
+			group_name_samples[metadata[sample][metadata_key]] = {}
+		group_name_samples[metadata[sample][metadata_key]][sample] = nodes_weighted[sample]
+
+	return group_name_samples, sample_ids, list(group_name_samples.keys())
