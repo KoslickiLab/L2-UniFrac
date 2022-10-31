@@ -48,8 +48,6 @@ def L2UniFrac_weighted_plain(Tint, lint, nodes_in_order, P, Q):
 	num_nodes = len(nodes_in_order)
 	Z = 0
 	eps = 1e-8
-	print(Q)
-	print(P)
 	partial_sums = [float(e1) - float(e2) for (e1, e2) in zip(P, Q)] # Vector of partial sums obtained by computing the difference between probabilities of two samples.
 	for i in range(num_nodes - 1):
 		val = partial_sums[i]
