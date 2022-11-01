@@ -950,6 +950,7 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 		distribution_vector[nodes_to_index[tax]] = tax_abund_dict[tax]
 	if normalize:
 		distribution_vector = list(map(lambda x: x / 100., distribution_vector))
+	print('sum of vector after extension', np.sum(distribution_vector))
 	return distribution_vector
 
 def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
