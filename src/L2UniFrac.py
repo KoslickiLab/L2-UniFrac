@@ -944,7 +944,6 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
 	taxid_list = [prediction.taxid for prediction in profile_obj.profile]
 	abundance_list = [prediction.percentage for prediction in profile_obj.profile]
-	print(np.sum(abundance_list))
 	tax_abund_dict = dict(zip(taxid_list, abundance_list))
 	distribution_vector = [0.] * (len(nodes_to_index))  # indexed by node_to_index
 	for tax in taxid_list:
