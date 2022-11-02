@@ -948,7 +948,8 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	tax_abund_dict = dict(zip(taxid_list, abundance_list))
 	distribution_vector = [0.] * (len(nodes_to_index))  # indexed by node_to_index
 	for tax in taxid_list:
-		distribution_vector[nodes_to_index[tax]] = tax_abund_dict[tax]
+		#distribution_vector[nodes_to_index[tax]] = tax_abund_dict[tax]
+		distribution_vector[nodes_to_index[tax]] = profile_obj._data[tax]['abundance']
 	if normalize:
 		distribution_vector = list(map(lambda x: x / 100., distribution_vector))
 	print(np.sum(distribution_vector))
