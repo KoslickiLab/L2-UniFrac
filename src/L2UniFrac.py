@@ -486,7 +486,6 @@ class Profile(object):
 		return
 
 	def _subtract_down(self):
-		print("hello", flush=True)
 		# helper function to push all the weights up by subtracting
 		# NOTE: when subtracting, need to start at root and go down
 		# NOTE: when adding, need to start at leaves and go up
@@ -500,9 +499,7 @@ class Profile(object):
 				if len(_data[key]["tax_path"]) == path_length:
 					descendants = _data[key]["descendants"]  # get all descendants
 					for descendant in descendants:
-						print(f'before subtract is {_data[key]["abundance"]}')
 						_data[key]["abundance"] -= _data[descendant]["abundance"]  # subtract the descendants abundance
-						print(f'after subtract is {_data[key]["abundance"]}')
 
 	def _add_up(self):
 		# helper function to push all the weights up by subtracting
@@ -945,6 +942,7 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	profile_list = open_profile_from_tsv(profile_path, False)
 	name, metadata, profile = profile_list[0]
 	profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
+	profile_obj._subtract_down()
 	taxid_list = [prediction.taxid for prediction in profile_obj.profile]
 	abundance_list = [prediction.percentage for prediction in profile_obj.profile]
 	tax_abund_dict = dict(zip(taxid_list, abundance_list))
