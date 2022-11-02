@@ -926,6 +926,7 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 		vector_list.append(pushed_up_vector)
 	mean_pushed_up = mean_of_vectors(vector_list)
 	rep_vector = inverse_push_up(mean_pushed_up, Tint, lint, nodes_in_order)
+	print('sum after inverse push up: %s' % np.sum(rep_vector))
 	return rep_vector
 
 def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
@@ -952,7 +953,7 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 		distribution_vector[nodes_to_index[tax]] = profile_obj._data[tax]['abundance']
 	if normalize:
 		distribution_vector = list(map(lambda x: x / 100., distribution_vector))
-	print(np.sum(distribution_vector))
+	#print(np.sum(distribution_vector))
 	return distribution_vector
 
 def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
