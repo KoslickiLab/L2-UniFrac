@@ -922,6 +922,7 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 	vector_list = []
 	sample_vector_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
 	for sample in sample_vector_dict.keys():
+		print('sum before push up', np.sum(sample_vector_dict[sample]))
 		pushed_up_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
 		vector_list.append(pushed_up_vector)
 	mean_pushed_up = mean_of_vectors(vector_list)
