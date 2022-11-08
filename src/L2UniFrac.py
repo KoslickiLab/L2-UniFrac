@@ -920,15 +920,19 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 	:return: the vector of the sample
 	'''
 	vector_list = []
+	original_vectors = []
 	sample_vector_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
 	for sample in sample_vector_dict.keys():
-		print('sum before push up', np.sum(sample_vector_dict[sample]))
+		#print('sum before push up', np.sum(sample_vector_dict[sample]))
 		pushed_up_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
 		vector_list.append(pushed_up_vector)
-		print('sum after push up', np.sum(pushed_up_vector))
+		#print('sum after push up', np.sum(pushed_up_vector))
+		original_vectors.append(sample)
 	mean_pushed_up = mean_of_vectors(vector_list)
 	print('sum of mean vector', np.sum(mean_pushed_up))
 	rep_vector = inverse_push_up(mean_pushed_up, Tint, lint, nodes_in_order)
+	print('rep sample by push up:', rep_vector)
+	print('component wise mean', mean_of_vectors(original_vectors))
 	print('sum after inverse push up: %s' % np.sum(rep_vector))
 	return rep_vector
 
