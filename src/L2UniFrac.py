@@ -934,7 +934,7 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 	print('rep sample by push up:', rep_vector)
 	print('component wise mean', mean_of_vectors(original_vectors))
 	print('sum after inverse push up: %s' % np.sum(rep_vector))
-	print('sum after inverse push up: %s' % np.sum(mean_of_vectors[original_vectors]))
+	print('sum after inverse push up: %s' % np.sum(mean_of_vectors(original_vectors)))
 
 	return rep_vector
 
