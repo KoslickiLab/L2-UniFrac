@@ -959,7 +959,7 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	profile_list = open_profile_from_tsv(profile_path, False)
 	name, metadata, profile = profile_list[0]
 	profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
-	profile_obj._subtract_down()
+	#profile_obj._subtract_down()
 	taxid_list = [prediction.taxid for prediction in profile_obj.profile]
 	abundance_list = [prediction.percentage for prediction in profile_obj.profile]
 	tax_abund_dict = dict(zip(taxid_list, abundance_list))
