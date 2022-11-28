@@ -929,14 +929,21 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 		#print('sum after push up', np.sum(pushed_up_vector))
 		original_vectors.append(sample_vector_dict[sample])
 	mean_pushed_up = mean_of_vectors(vector_list)
-	print('sum of mean vector', np.sum(mean_pushed_up))
+	#print('sum of mean vector', np.sum(mean_pushed_up))
 	rep_vector = inverse_push_up(mean_pushed_up, Tint, lint, nodes_in_order)
-	print('rep sample by push up:', rep_vector)
-	print('component wise mean', mean_of_vectors(original_vectors))
-	print('sum after inverse push up: %s' % np.sum(rep_vector))
-	print('sum after inverse push up: %s' % np.sum(mean_of_vectors(original_vectors)))
+	#print('rep sample by push up:', rep_vector)
+	#print('component wise mean', mean_of_vectors(original_vectors))
+	#print('sum after inverse push up: %s' % np.sum(rep_vector))
+	#print('sum after inverse push up: %s' % np.sum(mean_of_vectors(original_vectors)))
 
 	return rep_vector
+
+def get_representative_sample_wgs_component_mean(profile_path_list, nodes_to_index):
+	sample_vector_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
+	original_vectors = []
+	for sample in sample_vector_dict.keys():
+		original_vectors.append(sample_vector_dict[sample])
+	return mean_of_vectors(original_vectors)
 
 def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
 	'''
