@@ -958,13 +958,13 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	profile_list = open_profile_from_tsv(profile_path, False)
 	name, metadata, profile = profile_list[0]
 	profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
-	#profile_obj._subtract_down()
+	profile_obj._subtract_down()
 	profile_obj.normalize()
 	taxid_list = [prediction.taxid for prediction in profile_obj.profile]
 	distribution_vector = [0.] * (len(nodes_to_index))  # indexed by node_to_index
 	for tax in taxid_list:
 		distribution_vector[nodes_to_index[tax]] = profile_obj._data[tax]['abundance']
-	print(f'distribution vector sums to {np.sum(distribution_vector)} after biult-in normalization.')
+	print(f'distribution vector sums to {np.sum(distribution_vector)} after built-in normalization.')
 	if normalize:
 		distribution_vector = list(map(lambda x: x / 100., distribution_vector))
 	print(f'distribution vector sums to {np.sum(distribution_vector)} after internal normalization.')
