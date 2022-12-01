@@ -7,6 +7,8 @@ import warnings
 from scipy.sparse import dok_matrix
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import inv
+from sklearn.preprocessing import _data
+
 sys.path.append('../tests')
 import logging
 from collections import defaultdict
@@ -518,6 +520,16 @@ class Profile(object):
 					if ancestor in _data:  # don't do anything if this is a/the root node
 						_data[ancestor]["abundance"] += _data[key]["abundance"]  # add the descendants abundance
 
+	def _get_leaf_abundances(self):
+		#if rank==species, keep the abundance, and set everything else to 0
+		#specifically for motus with inconsistent abundances among ranks
+		_data = self._data
+		keys = _data.keys()
+		for key in keys:
+			if _data[key]['rank'] != 'species':
+				_data[key]['abundance'] = 0
+		return
+
 	def normalize(self):
 		# Need to really push it up while subtracting, then normalize, then push up wile adding
 		# self._push_up(operation="subtract")
@@ -935,6 +947,13 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 	return rep_vector
 
 def get_representative_sample_wgs_component_mean(profile_path_list, nodes_to_index):
+	'''
+	Simplified version of get_representative_sample_wgs_component_mean. Circumvents push up and push down. Only taking
+	component wise mean
+	:param profile_path_list:
+	:param nodes_to_index:
+	:return:
+	'''
 	sample_vector_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
 	original_vectors = []
 	for sample in sample_vector_dict.keys():
@@ -955,8 +974,9 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	profile_list = open_profile_from_tsv(profile_path, False)
 	name, metadata, profile = profile_list[0]
 	profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
-	profile_obj._subtract_down()
-	profile_obj.normalize()
+	#profile_obj._subtract_down()
+	#profile_obj.normalize()
+	profile_obj._get_leaf_abundances()
 	taxid_list = [prediction.taxid for prediction in profile_obj.profile]
 	distribution_vector = [0.] * (len(nodes_to_index))  # indexed by node_to_index
 	for tax in taxid_list:
