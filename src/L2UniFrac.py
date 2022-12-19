@@ -7,12 +7,11 @@ import warnings
 from scipy.sparse import dok_matrix
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import inv
-from sklearn.preprocessing import _data
-
 sys.path.append('../tests')
 import logging
 from collections import defaultdict
 import copy
+import re
 
 epsilon = sys.float_info.epsilon
 
@@ -334,7 +333,7 @@ class Prediction:
 		return {'rank': self.__rank, 'taxpath': self.__taxpath, 'taxpathsn': self.__taxpathsn}
 
 class Profile(object):
-	def __init__(self, sample_metadata=None, profile=None, branch_length_fun=lambda x: 1 / x):
+	def __init__(self, sample_metadata=None, profile=None, branch_length_fun=lambda x: 1 / x, leaves_only=False, check=False):
 		self.sample_metadata = sample_metadata
 		self.profile = profile
 		self._data = dict()
@@ -359,6 +358,9 @@ class Profile(object):
 		# is how long you want the branch length between n and ancestor(n) to be
 		self._data["-1"]["branch_length"] = self.root_len
 		self.parse_file()  # TODO: this sets all the branch lengths to 1 currentlclass Profile(object):
+		self.leaves_only = leaves_only
+		if check:
+			self._check_and_fix()
 
 
 	def parse_file(self):
@@ -564,6 +566,30 @@ class Profile(object):
 				_data[key]["abundance"] += _other_data[key]["abundance"]  # if already in there, add abundances
 			else:
 				_data[key] = copy.copy(_other_data[key])  # otherwise use the whole thing
+
+	def _check_and_fix(self):
+		#check a couple of things:
+		# 1.check for missing taxids like ||| and insert dummy ids
+		dummy_taxid = -1
+		_data = self._data
+		for key in _data.keys():
+			taxpath = _data[key]['tax_path']
+			while '||' in taxpath:
+				warnings.warn("Missing tax path detected, replaced with dummy variable.")
+				new = '|' + str(dummy_taxid) + '|'
+				taxpath = re.sub('\|\|', new, taxpath, count=1) #insert dummy one at a time
+				dummy_taxid-=1
+			self._data[key]['tax_path'] = taxpath
+		# 2.check descendant abund > ancestor abund. raise exception, unless leaves only set to True
+		if self.leaves_only:
+			self._get_leaf_abundances()
+		else:
+			for key in _data.keys():
+				this_abund = _data[key]["abundances"]
+				descendants = _data[key]["descendants"]
+				descendants_abundances = [_data[desc]["abundances"] for desc in descendants]
+				if np.sum(descendants_abundances) > this_abund:
+					raise ValueError(f"{key} has inconsistent abundances with that of descendants. Check the profile or set leaves_only to true.")
 
 	@staticmethod
 	def tax_path_to_branch_len(tax_path, func, root_len=1):
