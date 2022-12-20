@@ -12,6 +12,9 @@ import logging
 from collections import defaultdict
 import copy
 import re
+from ete3 import NCBITaxa
+ncbi = NCBITaxa()
+import datetime
 
 epsilon = sys.float_info.epsilon
 
@@ -1031,6 +1034,57 @@ def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_f
 		distribution_vector = extend_vector(file, nodes_to_index, branch_length_fun, normalize)
 		sample_dict[sample_id] = distribution_vector
 	return sample_dict
+
+def build_profiles_from_dict(rep_samples_dict, nodes_in_order):
+	'''
+	This function takes in a representative samples dict. For each item in this dict, creates a Profile object
+	:param rep_samples_dict: A dict that maps rep sample names to its corresponding vector
+	:param nodes_in_order: list of taxids in this case, of which the vector is in order
+	:return: A dict mapping rep sample names to Profiles
+	'''
+	rep_profiles_dict = {}
+	for id, vector in rep_samples_dict.items():
+		profile = build_profile_from_vector(vector, nodes_in_order)
+		rep_profiles_dict[id] = profile
+	return rep_profiles_dict
+
+def build_profile_from_vector(vector, nodes_in_order):
+	'''
+	Creates a profile object from given vector and nodes_in_order
+	:param vector: a probability vector of relative abundances. Same length as and corresponds to nodes_in_order
+	:param nodes_in_order: list of taxids in this case, corresponding to vector entries
+	:return: a profile object
+	'''
+	#for each entry in the vector, as long as abundance is not 0 (> eps, can be made adjustable later), create a
+	#prediction
+	profiles = [] #to contain predictions
+	valid_ranks = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+	for i, ab in enumerate(vector):
+		if ab > epsilon:
+			taxid = nodes_in_order[i]
+			prediction = Prediction()
+			prediction.percentage = ab * 100.
+			prediction.taxid = taxid
+			lineage = ncbi.get_lineage(taxid)
+			ranks = ncbi.get_rank(lineage)
+			prediction.rank = ranks[taxid]
+			rank_to_id = {r:id for id, r in ranks.items()}
+			taxpath_list = []
+			taxpathsn_list = []
+			lineage_translator = ncbi.get_taxid_translator(lineage)
+			for valid_rank in valid_ranks:
+				if valid_rank in rank_to_id:
+					this_taxid = rank_to_id[valid_rank]
+					taxpath_list.append(this_taxid)
+					taxpathsn_list.append(lineage_translator[this_taxid])
+			prediction.taxpath = '|'.join(taxpath_list)
+			prediction.taxpathsn = '|'.join(taxpathsn_list)
+			profiles.append(prediction)
+	metadata = {'VERSION':'0.9.3', 'RANKS': 'superkingdom|phylum|class|order|family|genus|species|strain'}
+	metadata['SAMPLEID'] = 'unnamed sample'
+	metadata['TAXONOMYID'] = datetime.now()
+	profile = Profile(metadata=metadata, profile=profiles)
+	return profile
 
 
 #def run_tests():
