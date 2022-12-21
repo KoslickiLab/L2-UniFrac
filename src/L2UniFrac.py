@@ -1075,7 +1075,7 @@ def build_profile_from_vector(vector, nodes_in_order):
 			for valid_rank in valid_ranks:
 				if valid_rank in rank_to_id:
 					this_taxid = rank_to_id[valid_rank]
-					taxpath_list.append(this_taxid)
+					taxpath_list.append(str(this_taxid))
 					taxpathsn_list.append(lineage_translator[this_taxid])
 			prediction.taxpath = '|'.join(taxpath_list)
 			prediction.taxpathsn = '|'.join(taxpathsn_list)
