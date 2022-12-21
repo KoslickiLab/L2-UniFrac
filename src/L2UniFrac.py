@@ -453,6 +453,25 @@ class Profile(object):
 			self._data[key]["descendants"] = clean_descendants
 		return
 
+	def write_CAMI_file(self, out_file_name=None):
+		#written by Wei Wei
+		if out_file_name is None:
+			raise Exception
+		predictions = self.profile
+		fid = open(out_file_name, 'w')
+		fid.write("# Taxonomic Profiling Output \n")
+		for head in self._header:
+			fid.write(f"@{head}\n")
+		fid.write("@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE\n")
+		for prediction in predictions:
+			fid.write(f"{prediction.taxid}\t")
+			fid.write(f"{prediction.rank}\t")
+			fid.write(f"{prediction.taxpath}\t")
+			fid.write(f"{prediction.taxpathsn}\t")
+			fid.write(f"{prediction.percentage}\n")
+		fid.close()
+		return
+
 	def write_file(self, out_file_name=None):
 		if out_file_name is None:
 			raise Exception
@@ -588,9 +607,9 @@ class Profile(object):
 			self._get_leaf_abundances()
 		else:
 			for key in _data.keys():
-				this_abund = _data[key]["abundances"]
+				this_abund = _data[key]["abundance"]
 				descendants = _data[key]["descendants"]
-				descendants_abundances = [_data[desc]["abundances"] for desc in descendants]
+				descendants_abundances = [_data[desc]["abundance"] for desc in descendants]
 				if np.sum(descendants_abundances) > this_abund:
 					raise ValueError(f"{key} has inconsistent abundances with that of descendants. Check the profile or set leaves_only to true.")
 
@@ -1005,15 +1024,13 @@ def extend_vector(profile_path, nodes_to_index, branch_length_fun=lambda x:1/x, 
 	profile_obj = Profile(sample_metadata=metadata, profile=profile, branch_length_fun=branch_length_fun)
 	#profile_obj._subtract_down()
 	#profile_obj.normalize()
-	profile_obj._get_leaf_abundances()
+	#profile_obj._get_leaf_abundances()
 	taxid_list = [prediction.taxid for prediction in profile_obj.profile]
 	distribution_vector = [0.] * (len(nodes_to_index))  # indexed by node_to_index
 	for tax in taxid_list:
 		distribution_vector[nodes_to_index[tax]] = profile_obj._data[tax]['abundance']
-	print(f'distribution vector sums to {np.sum(distribution_vector)} after built-in normalization.')
 	if normalize:
 		distribution_vector = list(map(lambda x: x / 100., distribution_vector))
-	print(f'distribution vector sums to {np.sum(distribution_vector)} after internal normalization.')
 	return distribution_vector
 
 def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_fun=lambda x:1/x, normalize=True):
@@ -1035,7 +1052,7 @@ def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_f
 		sample_dict[sample_id] = distribution_vector
 	return sample_dict
 
-def build_profiles_from_dict(rep_samples_dict, nodes_in_order):
+def build_profiles_from_dict(rep_samples_dict, nodes_in_order, index_to_nodes):
 	'''
 	This function takes in a representative samples dict. For each item in this dict, creates a Profile object
 	:param rep_samples_dict: A dict that maps rep sample names to its corresponding vector
@@ -1044,11 +1061,11 @@ def build_profiles_from_dict(rep_samples_dict, nodes_in_order):
 	'''
 	rep_profiles_dict = {}
 	for id, vector in rep_samples_dict.items():
-		profile = build_profile_from_vector(vector, nodes_in_order)
+		profile = build_profile_from_vector(vector, nodes_in_order, index_to_nodes)
 		rep_profiles_dict[id] = profile
 	return rep_profiles_dict
 
-def build_profile_from_vector(vector, nodes_in_order):
+def build_profile_from_vector(vector, nodes_in_order, index_to_nodes):
 	'''
 	Creates a profile object from given vector and nodes_in_order
 	:param vector: a probability vector of relative abundances. Same length as and corresponds to nodes_in_order
@@ -1059,15 +1076,18 @@ def build_profile_from_vector(vector, nodes_in_order):
 	#prediction
 	profiles = [] #to contain predictions
 	valid_ranks = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+	from pprint import pprint
 	for i, ab in enumerate(vector):
 		if ab > epsilon:
-			taxid = nodes_in_order[i]
+			taxid = index_to_nodes[nodes_in_order[i]]
 			prediction = Prediction()
 			prediction.percentage = ab * 100.
 			prediction.taxid = taxid
 			lineage = ncbi.get_lineage(taxid)
 			ranks = ncbi.get_rank(lineage)
-			prediction.rank = ranks[taxid]
+			if not ranks.get(int(taxid)):
+				ranks[int(taxid)] = 'unknown'
+			prediction.rank = ranks[int(taxid)]
 			rank_to_id = {r:id for id, r in ranks.items()}
 			taxpath_list = []
 			taxpathsn_list = []
@@ -1082,8 +1102,9 @@ def build_profile_from_vector(vector, nodes_in_order):
 			profiles.append(prediction)
 	metadata = {'VERSION':'0.9.3', 'RANKS': 'superkingdom|phylum|class|order|family|genus|species|strain'}
 	metadata['SAMPLEID'] = 'unnamed sample'
-	metadata['TAXONOMYID'] = datetime.now()
-	profile = Profile(metadata=metadata, profile=profiles)
+	metadata['TAXONOMYID'] = str(datetime.datetime.now())
+	profile = Profile(sample_metadata=metadata, profile=profiles, check=True, leaves_only=True)
+	#pprint(vars(profile))
 	return profile
 
 
