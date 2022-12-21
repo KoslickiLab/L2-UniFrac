@@ -1052,7 +1052,7 @@ def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_f
 		sample_dict[sample_id] = distribution_vector
 	return sample_dict
 
-def build_profiles_from_dict(rep_samples_dict, nodes_in_order, index_to_nodes):
+def build_profiles_from_dict(rep_samples_dict, nodes_in_order, index_to_nodes, leaves_only=False):
 	'''
 	This function takes in a representative samples dict. For each item in this dict, creates a Profile object
 	:param rep_samples_dict: A dict that maps rep sample names to its corresponding vector
@@ -1061,11 +1061,11 @@ def build_profiles_from_dict(rep_samples_dict, nodes_in_order, index_to_nodes):
 	'''
 	rep_profiles_dict = {}
 	for id, vector in rep_samples_dict.items():
-		profile = build_profile_from_vector(vector, nodes_in_order, index_to_nodes)
+		profile = build_profile_from_vector(vector, nodes_in_order, index_to_nodes, leaves_only)
 		rep_profiles_dict[id] = profile
 	return rep_profiles_dict
 
-def build_profile_from_vector(vector, nodes_in_order, index_to_nodes):
+def build_profile_from_vector(vector, nodes_in_order, index_to_nodes, leaves_only=False):
 	'''
 	Creates a profile object from given vector and nodes_in_order
 	:param vector: a probability vector of relative abundances. Same length as and corresponds to nodes_in_order
@@ -1103,7 +1103,7 @@ def build_profile_from_vector(vector, nodes_in_order, index_to_nodes):
 	metadata = {'VERSION':'0.9.3', 'RANKS': 'superkingdom|phylum|class|order|family|genus|species|strain'}
 	metadata['SAMPLEID'] = 'unnamed sample'
 	metadata['TAXONOMYID'] = str(datetime.datetime.now())
-	profile = Profile(sample_metadata=metadata, profile=profiles, check=True, leaves_only=True)
+	profile = Profile(sample_metadata=metadata, profile=profiles, check=True, leaves_only=leaves_only)
 	#pprint(vars(profile))
 	return profile
 
