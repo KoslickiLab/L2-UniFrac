@@ -1080,7 +1080,7 @@ def build_profile_from_vector(vector, nodes_in_order, index_to_nodes, leaves_onl
 	for i, ab in enumerate(vector):
 		if ab > epsilon:
 			taxid = index_to_nodes[nodes_in_order[i]]
-			if taxid == -1:
+			if taxid == '-1':
 				continue
 			print(taxid)
 			prediction = Prediction()
