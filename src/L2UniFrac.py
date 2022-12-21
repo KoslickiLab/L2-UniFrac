@@ -1082,6 +1082,7 @@ def build_profile_from_vector(vector, nodes_in_order, index_to_nodes, leaves_onl
 			taxid = index_to_nodes[nodes_in_order[i]]
 			if taxid == -1:
 				continue
+			print(taxid)
 			prediction = Prediction()
 			prediction.percentage = ab * 100.
 			prediction.taxid = taxid
