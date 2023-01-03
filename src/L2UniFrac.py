@@ -136,14 +136,15 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 	:param nodes_in_order: list returned from parse_envs
 	:param diffab: differential abundance vector (returned from one flavor of L2Unifrac)
 	:param P_label: label corresponding to the sample name for P (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
-	:param Q_label: label corresponding to the sample name for P (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
+	:param Q_label: label corresponding to the sample name for Q (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
 	:param plot_zeros: flag (either True or False) that specifies if the zero locations should be plotted. Warning, if your tree is large and plot_zeros=True, this can cause a crash.
 	:param thresh: only plot those parts of the diffab vector that are above thresh, specify everything else as zero
 	:return: None (makes plot)
 	'''
-	new_tax_in_order = []
-	for i in range(len(taxonomy_in_order)):
-		new_tax_in_order.append(taxonomy_in_order[i].split(';')[-2:-1][0])
+	#new_tax_in_order = []
+	#for i in range(len(taxonomy_in_order)):
+	#	new_tax_in_order.append(taxonomy_in_order[i].split(';')[-2:-1][0])
+	new_tax_in_order = taxonomy_in_order #test
 
 	x = range(len(nodes_in_order))
 	y = np.zeros(len(nodes_in_order))
@@ -151,13 +152,13 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 	for key in keys:
 		y[key[0]] = diffab[key]
 
-	pos_loc = [x[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
-	neg_loc = [x[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
-	zero_loc = [x[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in nodes_in_order[i]) or (-thresh <= y[i] <= thresh and includeTemp)]
+	pos_loc = [x[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp)]
+	neg_loc = [x[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp)]
+	zero_loc = [x[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (-thresh <= y[i] <= thresh and includeTemp)]
 
-	pos_val = [y[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
-	neg_val = [y[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
-	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in nodes_in_order[i]) or (-thresh <= y[i] <= thresh and includeTemp)]
+	pos_val = [y[i] for i in range(len(y)) if (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp)]
+	neg_val = [y[i] for i in range(len(y)) if (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp)]
+	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (-thresh <= y[i] <= thresh and includeTemp)]
 
 	# Increase threshold until pos and neg are less than the max display (very inefficient... TODO: optimize using by taking top 10 or so elements directly)
 	while True:
@@ -956,7 +957,7 @@ def get_wgs_tree(profile_path_list):
 			continue
 		profile_list = open_profile_from_tsv(profile, False)
 		name, metadata, profile = profile_list[0]
-		profile = Profile(sample_metadata=metadata, profile=profile)
+		profile = Profile(sample_metadata=metadata, profile=profile, check=True, leaves_only=True)
 		real_profile_lst.append(profile)
 		# merge profiles to get Tint, lint, nodes_in_order
 	i = 1
@@ -1047,7 +1048,6 @@ def merge_profiles_by_dir(list_of_profile_paths, nodes_to_index, branch_length_f
 	sample_dict = dict()
 	for file in list_of_profile_paths:
 		sample_id = os.path.splitext(os.path.basename(file))[0].split('.')[0] #get base name
-		print(sample_id)
 		distribution_vector = extend_vector(file, nodes_to_index, branch_length_fun, normalize)
 		sample_dict[sample_id] = distribution_vector
 	return sample_dict
@@ -1082,7 +1082,6 @@ def build_profile_from_vector(vector, nodes_in_order, index_to_nodes, leaves_onl
 			taxid = index_to_nodes[nodes_in_order[i]]
 			if taxid == '-1':
 				continue
-			print(taxid)
 			prediction = Prediction()
 			prediction.percentage = ab * 100.
 			prediction.taxid = taxid
@@ -1109,6 +1108,8 @@ def build_profile_from_vector(vector, nodes_in_order, index_to_nodes, leaves_onl
 	profile = Profile(sample_metadata=metadata, profile=profiles, check=True, leaves_only=leaves_only)
 	#pprint(vars(profile))
 	return profile
+
+
 
 
 #def run_tests():
