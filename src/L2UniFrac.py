@@ -252,6 +252,16 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=8)
 
 	plt.subplots_adjust(bottom=0.35, top=.93)
+	plt.text(plt.xticks()[0][-1] + 0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center',
+			 verticalalignment='top', multialignment='center', color='b', fontsize=14)
+	plt.text(plt.xticks()[0][-1] + 0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center',
+			 verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
+
+	if show:
+		plt.show()
+	else:
+		return fig
+	plt.subplots_adjust(bottom=0.35, top=.93)
 	plt.text(plt.xticks()[0][-1]+0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center', verticalalignment='top', multialignment='center', color='b', fontsize=14)
 	plt.text(plt.xticks()[0][-1]+0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center', verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
 	
@@ -259,6 +269,192 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 		plt.show()
 	else:
 		return fig
+
+
+def get_tax_level_index(taxid):
+	'''
+	Map a taxid to an integer depending on the taxonomic level, with a smaller number indicating a lower rank
+	:param taxid:
+	:return:
+	'''
+	rank_index_dict = {'species': 1,
+					   'genus': 2,
+					   'family': 3,
+					   'order': 4,
+					   'class': 5,
+					   'phylum': 6,
+					   'superkingdom': 7}
+	try:
+		tax_rank = ncbi.get_rank([taxid])[taxid]
+	except KeyError:
+		return 100 #temp fix.
+	else:
+		return rank_index_dict[tax_rank]
+
+def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label, max_tax_rank=1, plot_zeros=False, thresh=0, show=True, maxDisp=0, includeTemp=True):
+	'''
+	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
+	Plots the differential abundance vector.
+	:param nodes_in_order: list returned from parse_envs
+	:param taxid_in_order: list of taxids in order
+	:param diffab: differential abundance vector (returned from one flavor of L2Unifrac)
+	:param P_label: label corresponding to the sample name for P (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
+	:param Q_label: label corresponding to the sample name for Q (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
+	:param max_tax_rank: level of nodes to include in the plot. 1 for species, 2 for genus. And so forth. (Yet to decide only this tax level or this level and below)
+	:param plot_zeros: flag (either True or False) that specifies if the zero locations should be plotted. Warning, if your tree is large and plot_zeros=True, this can cause a crash.
+	:param thresh: only plot those parts of the diffab vector that are above thresh, specify everything else as zero
+	:return: None (makes plot)
+	'''
+	new_nodes_in_order = []
+	new_taxid_in_order = [] #taxids
+	new_tax_in_order = [] #scientific name
+	for i, taxid in enumerate(taxid_in_order):
+		taxid = int(taxid)
+		tax_name = ncbi.get_taxid_translator([taxid])[taxid]
+		new_tax_in_order.append(tax_name)
+		if taxid == -1:
+			continue
+		else:
+			rank_level = get_tax_level_index(taxid)
+			if rank_level <= max_tax_rank:
+				new_taxid_in_order.append(taxid)
+				new_nodes_in_order.append([nodes_in_order[i]])
+
+	x = range(len(nodes_in_order))
+	y = np.zeros(len(nodes_in_order))
+	keys = diffab.keys()
+	for key in keys:
+		y[key[0]] = diffab[key]
+
+	pos_loc = [x[i] for i in range(len(y)) if
+			   (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp)]
+	neg_loc = [x[i] for i in range(len(y)) if
+			   (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp)]
+	zero_loc = [x[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
+				-thresh <= y[i] <= thresh and includeTemp)]
+
+	pos_val = [y[i] for i in range(len(y)) if
+			   (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp)]
+	neg_val = [y[i] for i in range(len(y)) if
+			   (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp)]
+	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
+				-thresh <= y[i] <= thresh and includeTemp)]
+
+	# Increase threshold until pos and neg are less than the max display (very inefficient... TODO: optimize using by taking top 10 or so elements directly)
+	while True:
+		if (len(pos_val) > maxDisp or len(neg_val) > maxDisp) and maxDisp > 0:
+			thresh *= 1.05
+		else:
+			break
+
+		if len(pos_val) > maxDisp:
+			pos_loc = [x[i] for i in range(len(y)) if
+					   (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+		if len(neg_val) > maxDisp:
+			neg_loc = [x[i] for i in range(len(y)) if
+					   (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+
+		if len(pos_val) > maxDisp:
+			pos_val = [y[i] for i in range(len(y)) if
+					   (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+		if len(neg_val) > maxDisp:
+			neg_val = [y[i] for i in range(len(y)) if
+					   (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+
+	if not pos_loc:
+		raise Exception('Threshold too high or max too low! Please change and try again.')
+	if not neg_loc:
+		raise Exception('Threshold too high or max too low! Please change and try again.')
+
+	# The following is to get the indicies in order. Basically, I iterate down both pos_loc and neg_loc simultaneously
+	# and create new lists (pos_loc_adj and neg_loc_adj) that are in the same order as pos_loc and neg_loc, but whose
+	# union of indicies is equal to range(len(pos_loc + neg_loc)). Simply to make things pretty
+	if plot_zeros:
+		pos_loc_adj = pos_loc
+		neg_loc_adj = neg_loc
+		zero_loc_adj = zero_loc
+	else:
+		pos_loc_adj = []
+		neg_loc_adj = []
+		tick_names = []
+
+		# rename the indicies so they are increasing by 1
+		pos_ind = 0
+		neg_ind = 0
+		it = 0
+		while pos_ind < len(pos_loc) or neg_ind < len(neg_loc):
+			if pos_ind >= len(pos_loc):
+				neg_loc_adj.append(it)
+				tick_names.append(new_tax_in_order[neg_loc[neg_ind]])
+				it += 1
+				neg_ind += 1
+			elif neg_ind >= len(neg_loc):
+				pos_loc_adj.append(it)
+				tick_names.append(new_tax_in_order[pos_loc[pos_ind]])
+				it += 1
+				pos_ind += 1
+			elif pos_loc[pos_ind] < neg_loc[neg_ind]:
+				pos_loc_adj.append(it)
+				tick_names.append(new_tax_in_order[pos_loc[pos_ind]])
+				it += 1
+				pos_ind += 1
+			elif pos_loc[pos_ind] > neg_loc[neg_ind]:
+				neg_loc_adj.append(it)
+				tick_names.append(new_tax_in_order[neg_loc[neg_ind]])
+				it += 1
+				neg_ind += 1
+			else:
+				print('Something went wrong')
+				break
+
+	fig, ax = plt.subplots()
+
+	markerline, stemlines, baseline = ax.stem(neg_loc_adj, neg_val)
+	plt.setp(baseline, linewidth=1, color='k')
+	plt.setp(markerline, color='r')
+	plt.setp(stemlines, linewidth=3, color='r')
+
+	markerline, stemlines, baseline = ax.stem(pos_loc_adj, pos_val)
+	plt.setp(baseline, linewidth=1, color='k')
+	plt.setp(markerline, color='b')
+	plt.setp(stemlines, linewidth=3, color='b')
+
+	if plot_zeros:
+		markerline, stemlines, baseline = ax.stem(zero_loc, zero_val)
+		plt.setp(baseline, linewidth=1, color='k')
+		plt.setp(markerline, color='k')
+		plt.setp(stemlines, linewidth=3, color='k')
+
+	plt.ylabel('DiffAbund', fontsize=16)
+	plt.gcf().subplots_adjust(right=0.93, left=0.15)
+
+	# If you want the zeros plotted, label EVERYTHING, otherwise just label the things that are there...
+	if plot_zeros:
+		plt.xticks(x, nodes_in_order, rotation='vertical', fontsize=8)
+	else:
+		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=8)
+
+	plt.subplots_adjust(bottom=0.35, top=.93)
+	plt.text(plt.xticks()[0][-1] + 0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center',
+			 verticalalignment='top', multialignment='center', color='b', fontsize=14)
+	plt.text(plt.xticks()[0][-1] + 0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center',
+			 verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
+
+	if show:
+		plt.show()
+	else:
+		return fig
+	plt.subplots_adjust(bottom=0.35, top=.93)
+	plt.text(plt.xticks()[0][-1] + 0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center',
+			 verticalalignment='top', multialignment='center', color='b', fontsize=14)
+	plt.text(plt.xticks()[0][-1] + 0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center',
+			 verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
+
+	if show:
+		plt.show()
+	else:
+		return fig
+
 
 def get_representative_sample_16s(sample_vector_dict, meta_samples_dict, Tint, lint, nodes_in_order):
 	'''
