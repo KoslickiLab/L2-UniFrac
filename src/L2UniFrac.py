@@ -335,7 +335,6 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	keys = diffab.keys()
 	for key in keys:
 		y[key[0]] = diffab[key]
-	print(keys)
 
 	pos_loc = [x[i] for i in range(len(y)) if
 			   (i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
