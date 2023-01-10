@@ -291,7 +291,7 @@ def get_tax_level_index(taxid):
 	else:
 		return rank_index_dict[tax_rank]
 
-def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label, max_tax_rank=1, plot_zeros=False, thresh=0, show=True, maxDisp=0, includeTemp=True):
+def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label, max_tax_rank='species', plot_zeros=False, thresh=0, show=True, maxDisp=0, includeTemp=True):
 	'''
 	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
 	Plots the differential abundance vector.
@@ -300,7 +300,7 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	:param diffab: differential abundance vector (returned from one flavor of L2Unifrac)
 	:param P_label: label corresponding to the sample name for P (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
 	:param Q_label: label corresponding to the sample name for Q (e.g. when calling L2Unifrac_weighted(Tint, lint, nodes_in_order, P, Q))
-	:param max_tax_rank: level of nodes to include in the plot. 1 for species, 2 for genus. And so forth. (Yet to decide only this tax level or this level and below)
+	:param max_tax_rank: level of nodes to include in the plot. e.g. species, genus, etc
 	:param plot_zeros: flag (either True or False) that specifies if the zero locations should be plotted. Warning, if your tree is large and plot_zeros=True, this can cause a crash.
 	:param thresh: only plot those parts of the diffab vector that are above thresh, specify everything else as zero
 	:return: None (makes plot)
@@ -308,6 +308,13 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	new_nodes_in_order = []
 	new_taxid_in_order = [] #taxids
 	new_tax_in_order = [] #scientific name
+	rank_index_dict = {'species': 1,
+					   'genus': 2,
+					   'family': 3,
+					   'order': 4,
+					   'class': 5,
+					   'phylum': 6,
+					   'superkingdom': 7}
 	for i, taxid in enumerate(taxid_in_order):
 		if taxid == -1:
 			continue
@@ -316,7 +323,7 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 			tax_name = ncbi.get_taxid_translator([taxid])[taxid]
 			new_tax_in_order.append(tax_name)
 			rank_level = get_tax_level_index(taxid)
-			if rank_level == max_tax_rank:
+			if rank_level == rank_index_dict[max_tax_rank]:
 				new_taxid_in_order.append(taxid)
 				new_nodes_in_order.append(nodes_in_order[i])
 	#print(new_nodes_in_order)
