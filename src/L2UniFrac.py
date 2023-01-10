@@ -309,36 +309,40 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	new_taxid_in_order = [] #taxids
 	new_tax_in_order = [] #scientific name
 	for i, taxid in enumerate(taxid_in_order):
-		taxid = int(taxid)
-		tax_name = ncbi.get_taxid_translator([taxid])[taxid]
-		new_tax_in_order.append(tax_name)
 		if taxid == -1:
 			continue
 		else:
+			taxid = int(taxid)
+			tax_name = ncbi.get_taxid_translator([taxid])[taxid]
+			new_tax_in_order.append(tax_name)
 			rank_level = get_tax_level_index(taxid)
-			if rank_level <= max_tax_rank:
+			if rank_level == max_tax_rank:
 				new_taxid_in_order.append(taxid)
-				new_nodes_in_order.append([nodes_in_order[i]])
+				new_nodes_in_order.append(nodes_in_order[i])
+	#print(new_nodes_in_order)
+	#print(nodes_in_order)
+	#print(set(nodes_in_order).difference(set(new_nodes_in_order)))
 
 	x = range(len(nodes_in_order))
 	y = np.zeros(len(nodes_in_order))
 	keys = diffab.keys()
 	for key in keys:
 		y[key[0]] = diffab[key]
+	print(keys)
 
 	pos_loc = [x[i] for i in range(len(y)) if
-			   (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp)]
+			   (i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
 	neg_loc = [x[i] for i in range(len(y)) if
-			   (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp)]
-	zero_loc = [x[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
-				-thresh <= y[i] <= thresh and includeTemp)]
+			   (i in new_nodes_in_order and (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp))]
+	zero_loc = [x[i] for i in range(len(y)) if  (i in new_nodes_in_order and ((-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
+				-thresh <= y[i] <= thresh and includeTemp)))]
 
 	pos_val = [y[i] for i in range(len(y)) if
-			   (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp)]
+			   ( i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
 	neg_val = [y[i] for i in range(len(y)) if
-			   (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp)]
-	zero_val = [y[i] for i in range(len(y)) if (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
-				-thresh <= y[i] <= thresh and includeTemp)]
+			   (i in new_nodes_in_order and (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp))]
+	zero_val = [y[i] for i in range(len(y)) if (i in new_nodes_in_order and (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
+				-thresh <= y[i] <= thresh and includeTemp))]
 
 	# Increase threshold until pos and neg are less than the max display (very inefficient... TODO: optimize using by taking top 10 or so elements directly)
 	while True:
@@ -349,17 +353,17 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 
 		if len(pos_val) > maxDisp:
 			pos_loc = [x[i] for i in range(len(y)) if
-					   (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+					   i in new_nodes_in_order and ((y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp))]
 		if len(neg_val) > maxDisp:
 			neg_loc = [x[i] for i in range(len(y)) if
-					   (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+					   i in new_nodes_in_order and ((y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp))]
 
 		if len(pos_val) > maxDisp:
 			pos_val = [y[i] for i in range(len(y)) if
-					   (y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp)]
+					   i in new_nodes_in_order and ((y[i] > thresh and 'temp' not in nodes_in_order[i]) or (y[i] > thresh and includeTemp))]
 		if len(neg_val) > maxDisp:
 			neg_val = [y[i] for i in range(len(y)) if
-					   (y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp)]
+					   i in new_nodes_in_order and ((y[i] < -thresh and 'temp' not in nodes_in_order[i]) or (y[i] < -thresh and includeTemp))]
 
 	if not pos_loc:
 		raise Exception('Threshold too high or max too low! Please change and try again.')
