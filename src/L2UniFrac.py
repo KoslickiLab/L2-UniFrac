@@ -194,7 +194,7 @@ def plot_diffab(nodes_in_order, taxonomy_in_order, diffab, P_label, Q_label, plo
 		neg_loc_adj = []
 		tick_names = []
 
-		# rename the indicies so they are increasing by 1
+		# rename the indices so they are increasing by 1
 		pos_ind = 0
 		neg_ind = 0
 		it = 0
@@ -294,7 +294,7 @@ def get_tax_level_index(taxid):
 def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label, max_tax_rank='species', plot_zeros=False, thresh=0, show=True, maxDisp=0, includeTemp=True):
 	'''
 	plot_diffab(nodes_in_order, diffab, P_label, Q_label)
-	Plots the differential abundance vector.
+	Plots differential abundance according to tax rank. Flips the positive and negative sign of the actual flow
 	:param nodes_in_order: list returned from parse_envs
 	:param taxid_in_order: list of taxids in order
 	:param diffab: differential abundance vector (returned from one flavor of L2Unifrac)
@@ -336,16 +336,16 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	for key in keys:
 		y[key[0]] = diffab[key]
 
-	pos_loc = [x[i] for i in range(len(y)) if
-			   (i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
 	neg_loc = [x[i] for i in range(len(y)) if
+			   (i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
+	pos_loc = [x[i] for i in range(len(y)) if
 			   (i in new_nodes_in_order and (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp))]
 	zero_loc = [x[i] for i in range(len(y)) if  (i in new_nodes_in_order and ((-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
 				-thresh <= y[i] <= thresh and includeTemp)))]
 
-	pos_val = [y[i] for i in range(len(y)) if
-			   ( i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
 	neg_val = [y[i] for i in range(len(y)) if
+			   ( i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
+	pos_val = [y[i] for i in range(len(y)) if
 			   (i in new_nodes_in_order and (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp))]
 	zero_val = [y[i] for i in range(len(y)) if (i in new_nodes_in_order and (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
 				-thresh <= y[i] <= thresh and includeTemp))]
@@ -435,7 +435,7 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 		plt.setp(markerline, color='k')
 		plt.setp(stemlines, linewidth=3, color='k')
 
-	plt.ylabel('DiffAbund', fontsize=16)
+	plt.ylabel('Differential Abundances', fontsize=16)
 	plt.gcf().subplots_adjust(right=0.93, left=0.15)
 
 	# If you want the zeros plotted, label EVERYTHING, otherwise just label the things that are there...
@@ -444,21 +444,21 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	else:
 		plt.xticks(range(len(pos_loc_adj + neg_loc_adj)), tick_names, rotation='vertical', fontsize=8)
 
-	plt.subplots_adjust(bottom=0.35, top=.93)
-	plt.text(plt.xticks()[0][-1] + 0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center',
-			 verticalalignment='top', multialignment='center', color='b', fontsize=14)
-	plt.text(plt.xticks()[0][-1] + 0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center',
-			 verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
+	plt.subplots_adjust(bottom=0.3, top=.93)
+	plt.text(plt.xticks()[0][-1] + 1.2, max(pos_val), P_label, rotation=90, horizontalalignment='right',
+			 verticalalignment='top', multialignment='right', color='b', fontsize=14)
+	plt.text(plt.xticks()[0][-1] + 1.2, min(neg_val), Q_label, rotation=90, horizontalalignment='right',
+			 verticalalignment='bottom', multialignment='right', color='r', fontsize=14)
 
 	if show:
 		plt.show()
 	else:
 		return fig
-	plt.subplots_adjust(bottom=0.35, top=.93)
-	plt.text(plt.xticks()[0][-1] + 0.1, max(pos_val), P_label, rotation=90, horizontalalignment='center',
-			 verticalalignment='top', multialignment='center', color='b', fontsize=14)
-	plt.text(plt.xticks()[0][-1] + 0.1, min(neg_val), Q_label, rotation=90, horizontalalignment='center',
-			 verticalalignment='bottom', multialignment='center', color='r', fontsize=14)
+	plt.subplots_adjust(bottom=0.3, top=.93)
+	plt.text(plt.xticks()[0][-1] + 1.2, max(pos_val), P_label, rotation=90, horizontalalignment='right',
+			 verticalalignment='top', multialignment='right', color='b', fontsize=14)
+	plt.text(plt.xticks()[0][-1] + 1.2, min(neg_val), Q_label, rotation=90, horizontalalignment='right',
+			 verticalalignment='bottom', multialignment='right', color='r', fontsize=14)
 
 	if show:
 		plt.show()
