@@ -10,3 +10,4 @@ biom-format
 h5py
 
 ###### Requirements with Version Specifiers ######
+motu-profile

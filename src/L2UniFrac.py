@@ -336,16 +336,16 @@ def plot_diffab_by_tax(nodes_in_order, taxid_in_order, diffab, P_label, Q_label,
 	for key in keys:
 		y[key[0]] = diffab[key]
 
-	neg_loc = [x[i] for i in range(len(y)) if
-			   (i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
 	pos_loc = [x[i] for i in range(len(y)) if
+			   (i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
+	neg_loc = [x[i] for i in range(len(y)) if
 			   (i in new_nodes_in_order and (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp))]
 	zero_loc = [x[i] for i in range(len(y)) if  (i in new_nodes_in_order and ((-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
 				-thresh <= y[i] <= thresh and includeTemp)))]
 
-	neg_val = [y[i] for i in range(len(y)) if
-			   ( i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
 	pos_val = [y[i] for i in range(len(y)) if
+			   ( i in new_nodes_in_order and (y[i] > thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] > thresh and includeTemp))]
+	neg_val = [y[i] for i in range(len(y)) if
 			   (i in new_nodes_in_order and (y[i] < -thresh and 'temp' not in str(nodes_in_order[i])) or (y[i] < -thresh and includeTemp))]
 	zero_val = [y[i] for i in range(len(y)) if (i in new_nodes_in_order and (-thresh <= y[i] <= thresh and 'temp' not in str(nodes_in_order[i])) or (
 				-thresh <= y[i] <= thresh and includeTemp))]
