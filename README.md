@@ -6,67 +6,35 @@ Later noted by Dr. McClelland, L2 metrics hold more biological significance due 
 
 To further demonstrate the usefulness of L2-UniFrac in finding the biologically meaningful average sample of an environment, another set of results were published by Wei Wei, Andrew Millward and Dr. Koslicki in 2023, which can be found [here](https://academic.oup.com/bioinformatics/article/39/Supplement_1/i57/7210517). This repo now contains the supporting functions for this publication, which also serves as a prototype for users to explore the potential usages of L2-UniFrac.
 
-## Requirements ##
-+ [dendropy](http://www.dendropy.org/)
-+ numpy 
-+ matplotlib - for plotting
-+ scipy 
-+ [scikit-bio](http://scikit-bio.org/) - for PCoA and Distance Matrix
-+ [pandas](https://pandas.pydata.org/) - for metadata frame
-+ [biom-format](https://biom-format.org/) - for chosen dataset
-+ h5py
+## Installation ##
 
-## Setup ##
-
-Miniconda Setup:
 ```
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-chmod +777 Miniconda3-latest-Linux-x86_64.sh
-bash
-./Miniconda3-latest-Linux-x86_64.sh
-conda create -n env1
-conda activate env1
-conda install -c conda-forge xorg-makedepend
-```
-
-Git and Curl Setup
-```
-sudo apt update && sudo apt upgrade
-sudo apt-get install aptitude
-sudo aptitude install git
-sudo aptitude install curl
-sudo aptitude install build essential
-```
-
-Krona Setup:
-```
-git clone https://github.com/marbl/Krona.git
-cd Krona/KronaTools/
-sudo ./install.pl
-mkdir taxonomy/
-sudo ./updateTaxonomy.sh #If fails to download taxdump.tar.gz, download directly from https://ftp.ncbi.nih.gov/pub/taxonomy/ and move to taxonomy/ folder.
-sudo ./updateAccessions.sh #NOT REQUIRED. If fails, mkdir accession2taxid/ in taxonomy, and download dead_nucl.accession2taxid.gz, dead_prot.accession2taxid.gz, dead_wgs.accession2taxid.gz, nucl_gb.accession2taxid.gz, nucl_wgs.accession2taxid.gz, and prot.accession2taxid.gz from https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid
-```
-
-L2-UniFrac Install
-```
-git clone https://github.com/KoslickiLab/L2-UniFrac.git
-```
-
-Python Dependencies
-```
-sudo apt-get update
-sudo apt-key adv --refresh-keys --keyserver keyserver.ubuntu.com
-sudo apt-get -y install software-properties-common
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt-get update
-sudo apt-get -y install python3.9 python3.9-distutils
-sudo apt remove python3.5-minimal -y
-sudo ln -sf /usr/bin/python3.9 /usr/bin/python3
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python3.9 get-pip.py
-rm get-pip.py
-conda install -c conda-forge scikit-bio
-cd L2-UniFrac/
+git clone -b user --single-branch https://github.com/KoslickiLab/L2-UniFrac.git
+cd L2-UniFrac
+conda create -n L2UniFrac python=3.10
+conda activate L2UniFrac
 python -m pip install -r requirements.txt
 ```
+
+## Usage ##
+### 1. Finding the average sample with respect to L2UniFrac - 16s data
+- Required input:
+  - Metagenomic samples in OTU table format. An example of such a table can be found in the data directory.
+  - A metadata file that specifies the phenotype/environment each sample. The user is also required to specify the column of this file based on which the average samples will be generated.
+  - Tree file. The default option is `gg_13_5_otus_99_annotated.tree` from Greengenes. 
+
+- Output:
+  - An OTU file containing the average sample for each of the environments/phenotypes under the specified column of the metadata file.
+
+### 2. Finding the average sample with respect to L2UniFrac - WGS data
+This extension is based on the method [WGSUniFrac](https://drops.dagstuhl.de/opus/volltexte/2022/17049/). The input and output will be in the format of CAMI profiles.
+
+- Required input:
+  - A directory containing WGS profiles, one for each sample
+  - A metadata file that specifies the phenotype/environment each sample. The user is also required to specify the column of this file based on which the average samples will be generated.
+
+- Output:
+  - A profile for each of the representative samples
+
+### 3. Cluster in L2UniFrac space
+- To be continued...
