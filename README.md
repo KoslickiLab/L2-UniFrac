@@ -26,6 +26,13 @@ python -m pip install -r requirements.txt
 - Output:
   - An OTU file containing the average sample for each of the environments/phenotypes under the specified column of the metadata file.
 
+- Running the code:
+```angular2html
+python script/get_16s_L2UniFrac_average.py -h
+```
+
+An example run will be provided soon.
+
 ### 2. Finding the average sample with respect to L2UniFrac - WGS data
 This extension is based on the method [WGSUniFrac](https://drops.dagstuhl.de/opus/volltexte/2022/17049/). The input and output will be in the format of CAMI profiles.
 
