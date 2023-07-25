@@ -8,6 +8,3 @@ scikit-learn-extra
 pandas
 biom-format
 h5py
-
-###### Requirements with Version Specifiers ######
-motu-profile
