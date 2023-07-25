@@ -24,9 +24,9 @@ def argument_parser():
                                                                                                          'gg_13_5_otus_99_annotated.tree')
     parser.add_argument('-o', '--output_file', type=str, help='File path to save the new otu file as.')
     parser.add_argument('-m', '--meta_file', type=str, required=True, help='Path to metadata file.')
-    parser.add_argument('-k', '--key', type=str, help="Key column name in metadata file. Usually sample ids.", default=
+    parser.add_argument('-k', '--id_col', type=str, help="Key column name in metadata file. Usually sample ids.", default=
                         'sample_name')
-    parser.add_argument('-v', '--val', type=str, help="Value column name in metadata file. e.g. diagnosis, "
+    parser.add_argument('-v', '--env_col', type=str, help="Value column name in metadata file. e.g. diagnosis, "
                                                       "environment, etc.", default='body_site')
     return parser
 
@@ -40,7 +40,7 @@ def main():
     elif args.otu_file.endswith('.biom'):
         sample_vector_dict, sample_ids = extract_samples_direct(args.otu_file, args.tree_file)
     #push up all the samples
-    simple_meta_dict = get_metadata_dict(args.meta_file, val_col=args.val, key_col=args.key)
+    simple_meta_dict = get_metadata_dict(args.meta_file, val_col=args.env_col, key_col=args.id_col)
     meta_samples_dict = get_meta_samples_dict(simple_meta_dict)
     rep_sample_dict = L2U.get_representative_sample_16s(sample_vector_dict, meta_samples_dict, Tint, lint, nodes_in_order)
     df = pd.DataFrame.from_dict(rep_sample_dict)
