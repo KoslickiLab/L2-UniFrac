@@ -8,3 +8,4 @@ scikit-learn-extra
 pandas
 biom-format
 h5py
+ete3
