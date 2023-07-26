@@ -26,15 +26,23 @@ python -m pip install -r requirements.txt
 - Output:
   - An OTU file containing the average sample for each of the environments/phenotypes under the specified column of the metadata file.
 
+#### Example
+```
+python scripts/get_16s_L2UniFrac_average.py -i data/example_data/otu_table_body_sites.biom -m data/example_data/metadata_body_sites.txt -k sample_name -v body_site -o data/example_output/representative_otu_by_body_site.tsv 
+```
+
+The output after running the above command will be saved in `data/example_output`.
+
 ### 2. Finding the average sample with respect to L2UniFrac - WGS data
 This extension is based on the method [WGSUniFrac](https://drops.dagstuhl.de/opus/volltexte/2022/17049/). The input and output will be in the format of CAMI profiles.
 
 - Required input:
-  - A directory containing WGS profiles, one for each sample
+  - A directory containing WGS profiles, one for each sample. An example of such files can be found under `data/example_data/adenoma_266076/profiles`.
   - A metadata file that specifies the phenotype/environment each sample. The user is also required to specify the column of this file based on which the average samples will be generated.
+  - Output format and path
 
 - Output:
-  - A profile for each of the representative samples
+  - The user has two choices of output format, the CAMI profile format in which a each representative sample is represented as one single profile in the directory specified by the user. Or, an OTU table format in which the representative samples will be saved in one single OTU table under the name specified by the user.
 
 ### 3. Cluster in L2UniFrac space
 - To be continued...
