@@ -49,13 +49,12 @@ if __name__ == '__main__':
 	parser.add_argument('-d', '--pdir', type=str, help="Directory of profiles")
 	parser.add_argument('-l', '--leaves_only', type=str, help="Only have abundances on leaf notes?", nargs='?', default='n', choices=['y','n'])
 	parser.add_argument('-e', '--env_col', type=str, help='A selected phenotype corresponding to a column name in the metadata file.', nargs='?', default="HMgDB_diagnosis")
-	parser.add_argument('-f', '--out_format', type=str, help='The format of output files. Choices: cami, otu. If otu is chosen, '
-														'-s flag is required. Otherwise, -o is required.', choices=['cami', 'otu'], nargs='?', default='cami')
+	parser.add_argument('-f', '--out_format', type=str, help='The format of output files. Choices: cami, otu. ', choices=['cami', 'otu'], nargs='?', default='cami')
 
 	args = parser.parse_args()
 	metadata_file = args.meta_file
 	profile_dir = args.pdir
-	metadata_key = args.phenotype
+	metadata_key = args.env_col
 	id_col = args.id_col
 	outfile_name = args.save
 	if args.leaves_only == 'y':
@@ -64,6 +63,6 @@ if __name__ == '__main__':
 		leaves_only = False
 
 	meta_dict = get_metadata_dict(metadata_file, val_col=metadata_key, key_col=id_col)
-	rep_sample_dict = generate_rep_sample_from_metadata(meta_dict, profile_dir, outfile_name, args.out_format, args.leaves_only)
+	generate_rep_sample_from_metadata(meta_dict, profile_dir, outfile_name, args.out_format, args.leaves_only)
 
 
