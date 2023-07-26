@@ -44,5 +44,10 @@ This extension is based on the method [WGSUniFrac](https://drops.dagstuhl.de/opu
 - Output:
   - The user has two choices of output format, the CAMI profile format in which a each representative sample is represented as one single profile in the directory specified by the user. Or, an OTU table format in which the representative samples will be saved in one single OTU table under the name specified by the user.
 
+### Example
+```angular2html
+python scripts/get_wgs_L2UniFrac_average.py -m data/example_data/adenoma_266076/hmgdb_adenoma_bioproject266076.csv -id_col library_id -d data/example_data/adenoma_266076/profiles -e HMgDB_diagnosis -f otu -s data/example_output/adenoma_representatives.tsv
+```
+
 ### 3. Cluster in L2UniFrac space
 - To be continued...
