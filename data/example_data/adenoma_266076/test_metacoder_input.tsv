@@ -1,0 +1,4 @@
+otu_id	lineage	cancer	control	adenoma
+1292	k__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Staphylococcaceae;g__Staphylococcus;s__Staphylococcus warneri	6.828059778674124e-07	3.3209702645163006e-06	0.0
+1262803	k__Bacteria;p__Firmicutes;c__Clostridia;o__Eubacteriales;f__Clostridiaceae;g__Clostridium;s__Clostridium sp. CAG:413	0.000314125232377325	0.00026971227615460154	0.0004701592272232799
+35787	k__Bacteria;p__Firmicutes;c__Bacilli;o__Lactobacillales;f__Lactobacillaceae;g__Limosilactobacillus;s__Limosilactobacillus pontis	1.892945855059086e-05	0.0	0.0
