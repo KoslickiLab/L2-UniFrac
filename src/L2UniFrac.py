@@ -665,7 +665,7 @@ class Profile(object):
 		if out_file_name is None:
 			raise Exception
 		predictions = self.profile
-		fid = open(out_file_name, 'w')
+		fid = open(out_file_name, 'w+')
 		fid.write("# Taxonomic Profiling Output \n")
 		for head in self._header:
 			fid.write(f"@{head}\n")
@@ -1190,13 +1190,10 @@ def get_representative_sample_wgs(profile_path_list, Tint, lint, nodes_in_order,
 	original_vectors = []
 	sample_vector_dict = merge_profiles_by_dir(profile_path_list, nodes_to_index)
 	for sample in sample_vector_dict.keys():
-		#print('sum before push up', np.sum(sample_vector_dict[sample]))
 		pushed_up_vector = push_up(sample_vector_dict[sample], Tint, lint, nodes_in_order)
 		vector_list.append(pushed_up_vector)
-		#print('sum after push up', np.sum(pushed_up_vector))
 		original_vectors.append(sample_vector_dict[sample])
 	mean_pushed_up = mean_of_vectors(vector_list)
-	#print('sum of mean vector', np.sum(mean_pushed_up))
 	rep_vector = inverse_push_up(mean_pushed_up, Tint, lint, nodes_in_order)
 	print('sum after inverse push up: %s' % np.sum(rep_vector))
 	return rep_vector
